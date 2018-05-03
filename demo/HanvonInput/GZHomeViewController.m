@@ -28,11 +28,6 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.title = @"设置";
 
-    NSNumber *penW = [[GZUserDefaults shareUserDefaults] getGroupValueForKey:@"penWidth"];
-    if (penW == NULL) {
-        //如果没有存储过设置，则先设置默认
-    }
-
     _dataArray = @[@[@"手写设置"],@[@"快捷短语"],@[@"键盘指导",@"使用帮助"],@[@"用户反馈",@"去评分",@"关于"]];
 
     [self createTableUI];

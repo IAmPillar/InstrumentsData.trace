@@ -19,14 +19,7 @@
 
 
 #import "Header.h"
-#import "GZUserDefaults.h"
-#import "GZUserPlist.h"
-#import "GZPublicMethod.h"
-
-//键盘使用
-#import "GZButton.h" //按钮声音
 #import "UIColor+GZColorHex.h"
-#import "GZView.h"
 
 
 #endif /* text_pch */

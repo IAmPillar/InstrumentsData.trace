@@ -12,7 +12,7 @@
  *键盘输入 候选区
  ***/
 
-@interface GZCandidateBarView : GZKeyboardCandidateView
+@interface GZCandidateBarView : UIView
 
 /**点击删除键 删除第一个候选的 最后一个字符 （手写键盘专用）
  *回删按钮 成功回传

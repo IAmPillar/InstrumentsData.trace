@@ -7,9 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "GZGuideViewController.h"
 #import "GZHomeViewController.h"
-#import "GZRootNavigationController.h"
 
 @interface AppDelegate ()
 
@@ -17,15 +15,7 @@
 
 @implementation AppDelegate
 
-//ipad 禁止横屏
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(nullable UIWindow *)window {
-    return UIInterfaceOrientationMaskPortrait;
-}
 
-//进入动画？
-- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
-    return YES;
-}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     UIColor * tintColor = [UIColor colorWithRed:29.0/255.0 green:173.0/255.0 blue:234.0/255.0 alpha:1.0];
@@ -42,26 +32,11 @@
 #pragma mark -- 跳转根页面
 - (void)createRootController {
     GZHomeViewController *root = [[GZHomeViewController alloc] init];
-    GZRootNavigationController *rnvc = [[GZRootNavigationController alloc] initWithRootViewController:root];
+    UINavigationController *rnvc = [[UINavigationController alloc] initWithRootViewController:root];
     self.window.rootViewController = rnvc;
 }
 
 
-
-#pragma mark -- 区分进入app跳转至
-//9.0以后使用新API接口
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    NSLog(@"url_new=%@", url);
-    return YES;
-}
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    NSLog(@"url_old=%@", url);
-    return YES;
-}
-//识别需要跳转的页面
-- (void)recognizeWithURL:(NSString*)url {
-
-}
 
 
 

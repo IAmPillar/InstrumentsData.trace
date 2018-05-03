@@ -65,7 +65,7 @@
 
 #pragma mark -- PrepareUI
 - (void)addNavigationBarView {
-    GZKeyboardNavigationView *navigationBarView = [[GZKeyboardNavigationView alloc] init];
+    UIView *navigationBarView = [[UIView alloc] init];
     navigationBarView.backgroundColor = [UIColor whiteColor];
     navigationBarView.layer.borderWidth = 0.5;
     navigationBarView.layer.borderColor = [Color_background_kb CGColor];
@@ -133,7 +133,7 @@
                             nil];
     for (int i=0; i<3; i++) {
         for (int j=0; j<[buttonNames[i] count]; j++) {
-            GZKeyButton *button = [GZKeyButton buttonWithType:UIButtonTypeCustom];
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             [button setBackgroundColor:[UIColor lightGrayColor]];
             button.layer.cornerRadius = 5;
             [button addTarget:self action:@selector(didButtonTap:) forControlEvents:UIControlEventTouchUpInside];
@@ -159,7 +159,7 @@
     CGFloat funcButtonW = (SCREEN_WIDTH - 7*spaceX)/(4+2*1.5); //width+spaceX*2.4; //功能按钮的宽度
 
     //删除键
-    GZFunctionButton *button2 = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+    UIButton *button2 = [UIButton buttonWithType:UIButtonTypeCustom];
     button2.backgroundColor = [UIColor colorWithHexString:float_Color_button_function alpha:1];
     button2.layer.cornerRadius = 5;
     [button2 addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpInside];
@@ -183,7 +183,7 @@
             continue;
         }
 
-        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.tag = 51+i;
         [button addTarget:self action:@selector(didFuncTap:) forControlEvents:UIControlEventTouchUpInside];
         [button setBackgroundColor:[UIColor colorWithHexString:float_Color_button_function alpha:1]];

@@ -11,24 +11,14 @@
 		4304BD6C1FAC60EB00581CC9 /* HanvonInputUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD6B1FAC60EB00581CC9 /* HanvonInputUITests.m */; };
 		4304BD881FAC63ED00581CC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4304BD811FAC63ED00581CC9 /* Assets.xcassets */; };
 		4304BD8C1FAC63ED00581CC9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD871FAC63ED00581CC9 /* main.m */; };
-		4304BD911FAC646D00581CC9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD8F1FAC646C00581CC9 /* AppDelegate.m */; };
-		4304BD971FAC659300581CC9 /* GZHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD961FAC659300581CC9 /* GZHomeViewController.m */; };
-		4304BD9A1FAC65E100581CC9 /* GZGuideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD991FAC65E100581CC9 /* GZGuideViewController.m */; };
-		4304BD9D1FAC662200581CC9 /* GZRootNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */; };
 		4304BDBC1FADA9DD00581CC9 /* KeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */; };
 		4304BDC01FADA9DD00581CC9 /* HanvonKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4304BDE81FADB68A00581CC9 /* GZCandidateBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDE71FADB68A00581CC9 /* GZCandidateBarView.m */; };
-		4332A0DE209AF575009C4730 /* GZPublicMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0D6209AF575009C4730 /* GZPublicMethod.m */; };
-		4332A0DF209AF575009C4730 /* GZPublicMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0D6209AF575009C4730 /* GZPublicMethod.m */; };
 		4332A0E0209AF575009C4730 /* UIColor+GZColorHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DB209AF575009C4730 /* UIColor+GZColorHex.m */; };
 		4332A0E1209AF575009C4730 /* UIColor+GZColorHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DB209AF575009C4730 /* UIColor+GZColorHex.m */; };
-		4332A0E2209AF575009C4730 /* GZUserPlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DC209AF575009C4730 /* GZUserPlist.m */; };
-		4332A0E3209AF575009C4730 /* GZUserPlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DC209AF575009C4730 /* GZUserPlist.m */; };
-		4332A0E4209AF575009C4730 /* GZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DD209AF575009C4730 /* GZUserDefaults.m */; };
-		4332A0E5209AF575009C4730 /* GZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0DD209AF575009C4730 /* GZUserDefaults.m */; };
+		4332A0EA209B12AA009C4730 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0E8209B12AA009C4730 /* AppDelegate.m */; };
+		4332A0EB209B12AA009C4730 /* GZHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4332A0E9209B12AA009C4730 /* GZHomeViewController.m */; };
 		4378D662208ED15000A3510E /* GZCandidateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4378D661208ED15000A3510E /* GZCandidateCell.m */; };
-		437F69C41FCFBA170060E4D0 /* GZView.m in Sources */ = {isa = PBXBuildFile; fileRef = 437F69C31FCFBA170060E4D0 /* GZView.m */; };
-		43BD3B6F1FB54F7D00721696 /* GZButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD3B6E1FB54F7D00721696 /* GZButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,36 +70,22 @@
 		4304BD811FAC63ED00581CC9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4304BD861FAC63ED00581CC9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4304BD871FAC63ED00581CC9 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		4304BD8E1FAC646C00581CC9 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		4304BD8F1FAC646C00581CC9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		4304BD951FAC659300581CC9 /* GZHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZHomeViewController.h; sourceTree = "<group>"; };
-		4304BD961FAC659300581CC9 /* GZHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZHomeViewController.m; sourceTree = "<group>"; };
-		4304BD981FAC65E100581CC9 /* GZGuideViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZGuideViewController.h; sourceTree = "<group>"; };
-		4304BD991FAC65E100581CC9 /* GZGuideViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZGuideViewController.m; sourceTree = "<group>"; };
-		4304BD9B1FAC662200581CC9 /* GZRootNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZRootNavigationController.h; sourceTree = "<group>"; };
-		4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZRootNavigationController.m; sourceTree = "<group>"; };
 		4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HanvonKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4304BDBA1FADA9DD00581CC9 /* KeyboardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardViewController.h; sourceTree = "<group>"; };
 		4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardViewController.m; sourceTree = "<group>"; };
 		4304BDBD1FADA9DD00581CC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4304BDE61FADB68A00581CC9 /* GZCandidateBarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZCandidateBarView.h; sourceTree = "<group>"; };
 		4304BDE71FADB68A00581CC9 /* GZCandidateBarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZCandidateBarView.m; sourceTree = "<group>"; };
-		4332A0D6209AF575009C4730 /* GZPublicMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZPublicMethod.m; sourceTree = "<group>"; };
-		4332A0D7209AF575009C4730 /* GZUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZUserDefaults.h; sourceTree = "<group>"; };
-		4332A0D8209AF575009C4730 /* GZPublicMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZPublicMethod.h; sourceTree = "<group>"; };
-		4332A0D9209AF575009C4730 /* GZUserPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZUserPlist.h; sourceTree = "<group>"; };
 		4332A0DA209AF575009C4730 /* UIColor+GZColorHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+GZColorHex.h"; sourceTree = "<group>"; };
 		4332A0DB209AF575009C4730 /* UIColor+GZColorHex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+GZColorHex.m"; sourceTree = "<group>"; };
-		4332A0DC209AF575009C4730 /* GZUserPlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZUserPlist.m; sourceTree = "<group>"; };
-		4332A0DD209AF575009C4730 /* GZUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZUserDefaults.m; sourceTree = "<group>"; };
+		4332A0E6209B12AA009C4730 /* GZHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZHomeViewController.h; sourceTree = "<group>"; };
+		4332A0E7209B12AA009C4730 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		4332A0E8209B12AA009C4730 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		4332A0E9209B12AA009C4730 /* GZHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZHomeViewController.m; sourceTree = "<group>"; };
 		435C65881FB0728C00986313 /* Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Header.h; sourceTree = "<group>"; };
 		435C65891FB0728C00986313 /* NSlog.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSlog.pch; sourceTree = "<group>"; };
 		4378D660208ED14F00A3510E /* GZCandidateCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZCandidateCell.h; sourceTree = "<group>"; };
 		4378D661208ED15000A3510E /* GZCandidateCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZCandidateCell.m; sourceTree = "<group>"; };
-		437F69C21FCFBA170060E4D0 /* GZView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZView.h; sourceTree = "<group>"; };
-		437F69C31FCFBA170060E4D0 /* GZView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZView.m; sourceTree = "<group>"; };
-		43BD3B6D1FB54F7D00721696 /* GZButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZButton.h; sourceTree = "<group>"; };
-		43BD3B6E1FB54F7D00721696 /* GZButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,9 +145,11 @@
 		4304BD461FAC60EA00581CC9 /* HanvonInput */ = {
 			isa = PBXGroup;
 			children = (
+				4332A0E7209B12AA009C4730 /* AppDelegate.h */,
+				4332A0E8209B12AA009C4730 /* AppDelegate.m */,
+				4332A0E6209B12AA009C4730 /* GZHomeViewController.h */,
+				4332A0E9209B12AA009C4730 /* GZHomeViewController.m */,
 				4304BD9E1FAC667900581CC9 /* Support */,
-				4304BD8D1FAC646C00581CC9 /* RootViewController */,
-				4304BD901FAC646C00581CC9 /* ViewControllers */,
 				4304BD801FAC63ED00581CC9 /* HanvonInputSupport */,
 			);
 			path = HanvonInput;
@@ -205,39 +183,11 @@
 			path = HanvonInputSupport;
 			sourceTree = "<group>";
 		};
-		4304BD8D1FAC646C00581CC9 /* RootViewController */ = {
-			isa = PBXGroup;
-			children = (
-				4304BD8E1FAC646C00581CC9 /* AppDelegate.h */,
-				4304BD8F1FAC646C00581CC9 /* AppDelegate.m */,
-				4304BD981FAC65E100581CC9 /* GZGuideViewController.h */,
-				4304BD991FAC65E100581CC9 /* GZGuideViewController.m */,
-				4304BD9B1FAC662200581CC9 /* GZRootNavigationController.h */,
-				4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */,
-			);
-			path = RootViewController;
-			sourceTree = "<group>";
-		};
-		4304BD901FAC646C00581CC9 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				4304BD951FAC659300581CC9 /* GZHomeViewController.h */,
-				4304BD961FAC659300581CC9 /* GZHomeViewController.m */,
-			);
-			path = ViewControllers;
-			sourceTree = "<group>";
-		};
 		4304BD9E1FAC667900581CC9 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				435C65891FB0728C00986313 /* NSlog.pch */,
 				435C65881FB0728C00986313 /* Header.h */,
-				4332A0D8209AF575009C4730 /* GZPublicMethod.h */,
-				4332A0D6209AF575009C4730 /* GZPublicMethod.m */,
-				4332A0D7209AF575009C4730 /* GZUserDefaults.h */,
-				4332A0DD209AF575009C4730 /* GZUserDefaults.m */,
-				4332A0D9209AF575009C4730 /* GZUserPlist.h */,
-				4332A0DC209AF575009C4730 /* GZUserPlist.m */,
 				4332A0DA209AF575009C4730 /* UIColor+GZColorHex.h */,
 				4332A0DB209AF575009C4730 /* UIColor+GZColorHex.m */,
 			);
@@ -249,22 +199,10 @@
 			children = (
 				4304BDBA1FADA9DD00581CC9 /* KeyboardViewController.h */,
 				4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */,
-				4304BDC61FADACAE00581CC9 /* Support */,
 				4304BDE51FADB44B00581CC9 /* CandidateBar */,
 				4304BDBD1FADA9DD00581CC9 /* Info.plist */,
 			);
 			path = HanvonKeyboard;
-			sourceTree = "<group>";
-		};
-		4304BDC61FADACAE00581CC9 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				43BD3B6D1FB54F7D00721696 /* GZButton.h */,
-				43BD3B6E1FB54F7D00721696 /* GZButton.m */,
-				437F69C21FCFBA170060E4D0 /* GZView.h */,
-				437F69C31FCFBA170060E4D0 /* GZView.m */,
-			);
-			path = Support;
 			sourceTree = "<group>";
 		};
 		4304BDE51FADB44B00581CC9 /* CandidateBar */ = {
@@ -451,15 +389,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4304BD9D1FAC662200581CC9 /* GZRootNavigationController.m in Sources */,
-				4304BD9A1FAC65E100581CC9 /* GZGuideViewController.m in Sources */,
-				4332A0E4209AF575009C4730 /* GZUserDefaults.m in Sources */,
 				4332A0E0209AF575009C4730 /* UIColor+GZColorHex.m in Sources */,
-				4304BD911FAC646D00581CC9 /* AppDelegate.m in Sources */,
-				4332A0E2209AF575009C4730 /* GZUserPlist.m in Sources */,
-				4304BD971FAC659300581CC9 /* GZHomeViewController.m in Sources */,
-				4332A0DE209AF575009C4730 /* GZPublicMethod.m in Sources */,
 				4304BD8C1FAC63ED00581CC9 /* main.m in Sources */,
+				4332A0EB209B12AA009C4730 /* GZHomeViewController.m in Sources */,
+				4332A0EA209B12AA009C4730 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,13 +418,8 @@
 			files = (
 				4378D662208ED15000A3510E /* GZCandidateCell.m in Sources */,
 				4304BDBC1FADA9DD00581CC9 /* KeyboardViewController.m in Sources */,
-				4332A0E5209AF575009C4730 /* GZUserDefaults.m in Sources */,
 				4332A0E1209AF575009C4730 /* UIColor+GZColorHex.m in Sources */,
-				43BD3B6F1FB54F7D00721696 /* GZButton.m in Sources */,
-				4332A0E3209AF575009C4730 /* GZUserPlist.m in Sources */,
 				4304BDE81FADB68A00581CC9 /* GZCandidateBarView.m in Sources */,
-				4332A0DF209AF575009C4730 /* GZPublicMethod.m in Sources */,
-				437F69C41FCFBA170060E4D0 /* GZView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

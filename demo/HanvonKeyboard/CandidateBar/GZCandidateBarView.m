@@ -196,7 +196,7 @@
     //背景色
     self.backgroundColor = [UIColor whiteColor];
 
-    GZFunctionButton *showButton = (GZFunctionButton*)[self viewWithTag:7];
+    UIButton *showButton = (UIButton*)[self viewWithTag:7];
     showButton.backgroundColor = [UIColor whiteColor];
 
     //拼音
@@ -260,9 +260,9 @@
     CGFloat showButtonH = self.frame.size.height-pinyinHeight-0.5; //展开更多按钮的宽高
     CGFloat showButtonX = self.frame.size.width - showButtonH;
     CGFloat showButtonY = pinyinHeight+0.5;
-    GZFunctionButton *showButton = (GZFunctionButton*)[self viewWithTag:7];
+    UIButton *showButton = (UIButton*)[self viewWithTag:7];
     if (!showButton) {
-        showButton = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        showButton = [UIButton buttonWithType:UIButtonTypeCustom];
         showButton.backgroundColor = [UIColor whiteColor];
         showButton.frame = CGRectMake(showButtonX, showButtonY, showButtonH, showButtonH);
         [showButton addTarget:self action:@selector(showMoreTap:) forControlEvents:UIControlEventTouchUpInside];
@@ -411,22 +411,7 @@
 
 //候选点击声音
 - (void)playSound:(int)soundID {
-//    GZPublicMethod *public = [GZPublicMethod sharedPublicMethod];
-//    if ([public isAllowFullAccess]) {
-//        GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
-//        NSNumber *shock = [share getValueForKey:@"shock"];
-//        NSNumber *sound = [share getValueForKey:@"sound"];
-//        if ([shock isEqualToNumber:@1]) {
-//            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); //震动
-//        }
-//        if ([sound isEqualToNumber:@1]) {
-//            AudioServicesPlaySystemSound(soundID);
-//        }
-//        share = nil;
-//        shock = nil;
-//        sound = nil;
-//    }
-//    public = nil;
+
 }
 
 - (void)dealloc {

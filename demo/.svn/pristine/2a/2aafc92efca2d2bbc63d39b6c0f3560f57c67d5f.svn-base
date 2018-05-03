@@ -1,0 +1,1095 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4304BD611FAC60EB00581CC9 /* HanvonInputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD601FAC60EB00581CC9 /* HanvonInputTests.m */; };
+		4304BD6C1FAC60EB00581CC9 /* HanvonInputUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD6B1FAC60EB00581CC9 /* HanvonInputUITests.m */; };
+		4304BD881FAC63ED00581CC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4304BD811FAC63ED00581CC9 /* Assets.xcassets */; };
+		4304BD891FAC63ED00581CC9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4304BD821FAC63ED00581CC9 /* LaunchScreen.storyboard */; };
+		4304BD8A1FAC63ED00581CC9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4304BD841FAC63ED00581CC9 /* Main.storyboard */; };
+		4304BD8B1FAC63ED00581CC9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4304BD861FAC63ED00581CC9 /* Info.plist */; };
+		4304BD8C1FAC63ED00581CC9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD871FAC63ED00581CC9 /* main.m */; };
+		4304BD911FAC646D00581CC9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD8F1FAC646C00581CC9 /* AppDelegate.m */; };
+		4304BD971FAC659300581CC9 /* GZHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD961FAC659300581CC9 /* GZHomeViewController.m */; };
+		4304BD9A1FAC65E100581CC9 /* GZGuideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD991FAC65E100581CC9 /* GZGuideViewController.m */; };
+		4304BD9D1FAC662200581CC9 /* GZRootNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */; };
+		4304BDB01FADA2EA00581CC9 /* GZSetHelpController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDAF1FADA2EA00581CC9 /* GZSetHelpController.m */; };
+		4304BDBC1FADA9DD00581CC9 /* KeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */; };
+		4304BDC01FADA9DD00581CC9 /* HanvonKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4304BDDA1FADAE8C00581CC9 /* GZWright.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDD91FADAE8C00581CC9 /* GZWright.m */; };
+		4304BDDD1FADAF8800581CC9 /* GZWrightKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDDC1FADAF8800581CC9 /* GZWrightKeyboard.m */; };
+		4304BDDE1FADB0A100581CC9 /* UIStrokeShowerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDD51FADAD3A00581CC9 /* UIStrokeShowerView.m */; };
+		4304BDE11FADB15E00581CC9 /* GZQwertyKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDE01FADB15E00581CC9 /* GZQwertyKeyboard.m */; };
+		4304BDE41FADB1C300581CC9 /* GZQwerty.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDE31FADB1C300581CC9 /* GZQwerty.m */; };
+		4304BDE81FADB68A00581CC9 /* GZCandidateBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDE71FADB68A00581CC9 /* GZCandidateBarView.m */; };
+		4304BDEB1FADB8C900581CC9 /* GZNumberKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDEA1FADB8C900581CC9 /* GZNumberKeyboard.m */; };
+		4304BDEC1FADB9CC00581CC9 /* LibraryUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304BDD11FADAD1600581CC9 /* LibraryUtility.mm */; };
+		4304BDEF1FADB9FE00581CC9 /* 18030.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDCA1FADAD1500581CC9 /* 18030.bin */; };
+		4304BDF01FADB9FE00581CC9 /* ChsSysDic.dic in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDCB1FADAD1500581CC9 /* ChsSysDic.dic */; };
+		4304BDF11FADB9FE00581CC9 /* ChsUserDic.dic in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDC91FADAD1500581CC9 /* ChsUserDic.dic */; };
+		4304BDF21FADB9FE00581CC9 /* HW_REC_CN.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDCD1FADAD1500581CC9 /* HW_REC_CN.bin */; };
+		4304BDF31FADB9FE00581CC9 /* HW_REC_EN.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDCE1FADAD1500581CC9 /* HW_REC_EN.bin */; };
+		4304BDF61FAF25D900581CC9 /* libfree_key-armV7s.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4304BDD21FADAD1600581CC9 /* libfree_key-armV7s.a */; settings = {ATTRIBUTES = (Required, ); }; };
+		431F00761FBABC85007483F0 /* libColorpenCore_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431F00751FBABC5B007483F0 /* libColorpenCore_64.a */; };
+		431F007C1FBAD1DC007483F0 /* GZAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 431F007B1FBAD1DC007483F0 /* GZAboutController.m */; };
+		431F00841FBAD966007483F0 /* GZOpinionFeedbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 431F00831FBAD966007483F0 /* GZOpinionFeedbackController.m */; };
+		431F00861FBAE071007483F0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431F00851FBAE071007483F0 /* StoreKit.framework */; };
+		431F008A1FBAE7B4007483F0 /* setting_help.html in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDAB1FAC799800581CC9 /* setting_help.html */; };
+		431F008B1FBAE7B4007483F0 /* setting_keyboard_enable_guide.html in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDAC1FAC799800581CC9 /* setting_keyboard_enable_guide.html */; };
+		431F008C1FBAE7B4007483F0 /* setting_user_agreement.html in Resources */ = {isa = PBXBuildFile; fileRef = 4304BDAD1FAC799800581CC9 /* setting_user_agreement.html */; };
+		431F00901FBB0086007483F0 /* GZKeyboardSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 431F008F1FBB0086007483F0 /* GZKeyboardSettingController.m */; };
+		431F00931FBB00A9007483F0 /* GZWrightSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 431F00921FBB00A9007483F0 /* GZWrightSettingController.m */; };
+		431F00961FBB0601007483F0 /* GZSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 431F00951FBB0601007483F0 /* GZSwitchCell.m */; };
+		4323410E1FBD64E20046B6EF /* GZCandidateMoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4323410D1FBD64E20046B6EF /* GZCandidateMoreView.m */; };
+		432341111FBD6CA10046B6EF /* GZCandidateMoreCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 432341101FBD6CA10046B6EF /* GZCandidateMoreCell.m */; };
+		432341141FBD73940046B6EF /* appIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 432341131FBD73940046B6EF /* appIcon.png */; };
+		435082A11FB29D7200C25B7E /* GZPublicMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 435082A01FB29D7200C25B7E /* GZPublicMethod.m */; };
+		435082A21FB29D7200C25B7E /* GZPublicMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 435082A01FB29D7200C25B7E /* GZPublicMethod.m */; };
+		435082AC1FB4347A00C25B7E /* GZSymbolKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 435082AB1FB4347A00C25B7E /* GZSymbolKeyboard.m */; };
+		435082AF1FB4552400C25B7E /* GZSymbolCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 435082AE1FB4552400C25B7E /* GZSymbolCollectionCell.m */; };
+		435C658E1FB0730F00986313 /* UIColor+GZColorHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 435C658A1FB0730F00986313 /* UIColor+GZColorHex.m */; };
+		435C658F1FB0730F00986313 /* UIColor+GZColorHex.m in Sources */ = {isa = PBXBuildFile; fileRef = 435C658A1FB0730F00986313 /* UIColor+GZColorHex.m */; };
+		435C65901FB0730F00986313 /* GZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 435C658C1FB0730F00986313 /* GZUserDefaults.m */; };
+		435C65911FB0730F00986313 /* GZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 435C658C1FB0730F00986313 /* GZUserDefaults.m */; };
+		43BD3B6F1FB54F7D00721696 /* GZButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD3B6E1FB54F7D00721696 /* GZButton.m */; };
+		43BD3B771FB55C6200721696 /* GZSoundPlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 43BD3B761FB55C6200721696 /* GZSoundPlay.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4304BD5D1FAC60EB00581CC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4304BD3C1FAC60EA00581CC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4304BD431FAC60EA00581CC9;
+			remoteInfo = HanvonInput;
+		};
+		4304BD681FAC60EB00581CC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4304BD3C1FAC60EA00581CC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4304BD431FAC60EA00581CC9;
+			remoteInfo = HanvonInput;
+		};
+		4304BDBE1FADA9DD00581CC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4304BD3C1FAC60EA00581CC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4304BDB71FADA9DD00581CC9;
+			remoteInfo = HanvonKeyboard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4304BDC41FADA9DD00581CC9 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4304BDC01FADA9DD00581CC9 /* HanvonKeyboard.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4304BD441FAC60EA00581CC9 /* HanvonInput.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HanvonInput.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304BD5C1FAC60EB00581CC9 /* HanvonInputTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HanvonInputTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304BD601FAC60EB00581CC9 /* HanvonInputTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HanvonInputTests.m; sourceTree = "<group>"; };
+		4304BD621FAC60EB00581CC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4304BD671FAC60EB00581CC9 /* HanvonInputUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HanvonInputUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304BD6B1FAC60EB00581CC9 /* HanvonInputUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HanvonInputUITests.m; sourceTree = "<group>"; };
+		4304BD6D1FAC60EB00581CC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4304BD811FAC63ED00581CC9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4304BD831FAC63ED00581CC9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4304BD851FAC63ED00581CC9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4304BD861FAC63ED00581CC9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4304BD871FAC63ED00581CC9 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4304BD8E1FAC646C00581CC9 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		4304BD8F1FAC646C00581CC9 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		4304BD951FAC659300581CC9 /* GZHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZHomeViewController.h; sourceTree = "<group>"; };
+		4304BD961FAC659300581CC9 /* GZHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZHomeViewController.m; sourceTree = "<group>"; };
+		4304BD981FAC65E100581CC9 /* GZGuideViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZGuideViewController.h; sourceTree = "<group>"; };
+		4304BD991FAC65E100581CC9 /* GZGuideViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZGuideViewController.m; sourceTree = "<group>"; };
+		4304BD9B1FAC662200581CC9 /* GZRootNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZRootNavigationController.h; sourceTree = "<group>"; };
+		4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZRootNavigationController.m; sourceTree = "<group>"; };
+		4304BDAB1FAC799800581CC9 /* setting_help.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = setting_help.html; sourceTree = "<group>"; };
+		4304BDAC1FAC799800581CC9 /* setting_keyboard_enable_guide.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = setting_keyboard_enable_guide.html; sourceTree = "<group>"; };
+		4304BDAD1FAC799800581CC9 /* setting_user_agreement.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = setting_user_agreement.html; sourceTree = "<group>"; };
+		4304BDAE1FADA2EA00581CC9 /* GZSetHelpController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZSetHelpController.h; sourceTree = "<group>"; };
+		4304BDAF1FADA2EA00581CC9 /* GZSetHelpController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZSetHelpController.m; sourceTree = "<group>"; };
+		4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HanvonKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304BDBA1FADA9DD00581CC9 /* KeyboardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardViewController.h; sourceTree = "<group>"; };
+		4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardViewController.m; sourceTree = "<group>"; };
+		4304BDBD1FADA9DD00581CC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4304BDC91FADAD1500581CC9 /* ChsUserDic.dic */ = {isa = PBXFileReference; lastKnownFileType = file; path = ChsUserDic.dic; sourceTree = "<group>"; };
+		4304BDCA1FADAD1500581CC9 /* 18030.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = 18030.bin; sourceTree = "<group>"; };
+		4304BDCB1FADAD1500581CC9 /* ChsSysDic.dic */ = {isa = PBXFileReference; lastKnownFileType = file; path = ChsSysDic.dic; sourceTree = "<group>"; };
+		4304BDCC1FADAD1500581CC9 /* HW_API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HW_API.h; sourceTree = "<group>"; };
+		4304BDCD1FADAD1500581CC9 /* HW_REC_CN.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = HW_REC_CN.bin; sourceTree = "<group>"; };
+		4304BDCE1FADAD1500581CC9 /* HW_REC_EN.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = HW_REC_EN.bin; sourceTree = "<group>"; };
+		4304BDCF1FADAD1600581CC9 /* HW_RangeMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HW_RangeMask.h; sourceTree = "<group>"; };
+		4304BDD01FADAD1600581CC9 /* HWIM_SDK5W.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HWIM_SDK5W.h; sourceTree = "<group>"; };
+		4304BDD11FADAD1600581CC9 /* LibraryUtility.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibraryUtility.mm; sourceTree = "<group>"; };
+		4304BDD21FADAD1600581CC9 /* libfree_key-armV7s.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libfree_key-armV7s.a"; sourceTree = "<group>"; };
+		4304BDD31FADAD1600581CC9 /* LibraryUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryUtility.h; sourceTree = "<group>"; };
+		4304BDD41FADAD3A00581CC9 /* UIStrokeShowerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIStrokeShowerView.h; sourceTree = "<group>"; };
+		4304BDD51FADAD3A00581CC9 /* UIStrokeShowerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIStrokeShowerView.m; sourceTree = "<group>"; };
+		4304BDD81FADAE8C00581CC9 /* GZWright.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZWright.h; sourceTree = "<group>"; };
+		4304BDD91FADAE8C00581CC9 /* GZWright.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZWright.m; sourceTree = "<group>"; };
+		4304BDDB1FADAF8800581CC9 /* GZWrightKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZWrightKeyboard.h; sourceTree = "<group>"; };
+		4304BDDC1FADAF8800581CC9 /* GZWrightKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZWrightKeyboard.m; sourceTree = "<group>"; };
+		4304BDDF1FADB15E00581CC9 /* GZQwertyKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZQwertyKeyboard.h; sourceTree = "<group>"; };
+		4304BDE01FADB15E00581CC9 /* GZQwertyKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZQwertyKeyboard.m; sourceTree = "<group>"; };
+		4304BDE21FADB1C300581CC9 /* GZQwerty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZQwerty.h; sourceTree = "<group>"; };
+		4304BDE31FADB1C300581CC9 /* GZQwerty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZQwerty.m; sourceTree = "<group>"; };
+		4304BDE61FADB68A00581CC9 /* GZCandidateBarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZCandidateBarView.h; sourceTree = "<group>"; };
+		4304BDE71FADB68A00581CC9 /* GZCandidateBarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZCandidateBarView.m; sourceTree = "<group>"; };
+		4304BDE91FADB8C900581CC9 /* GZNumberKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZNumberKeyboard.h; sourceTree = "<group>"; };
+		4304BDEA1FADB8C900581CC9 /* GZNumberKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZNumberKeyboard.m; sourceTree = "<group>"; };
+		4304BDF41FADBA6A00581CC9 /* HanvonInput.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HanvonInput.entitlements; sourceTree = "<group>"; };
+		4304BDF51FADBABC00581CC9 /* HanvonKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HanvonKeyboard.entitlements; sourceTree = "<group>"; };
+		431F00751FBABC5B007483F0 /* libColorpenCore_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libColorpenCore_64.a; sourceTree = "<group>"; };
+		431F007A1FBAD1DC007483F0 /* GZAboutController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZAboutController.h; sourceTree = "<group>"; };
+		431F007B1FBAD1DC007483F0 /* GZAboutController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZAboutController.m; sourceTree = "<group>"; };
+		431F00821FBAD966007483F0 /* GZOpinionFeedbackController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZOpinionFeedbackController.h; sourceTree = "<group>"; };
+		431F00831FBAD966007483F0 /* GZOpinionFeedbackController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZOpinionFeedbackController.m; sourceTree = "<group>"; };
+		431F00851FBAE071007483F0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		431F008E1FBB0086007483F0 /* GZKeyboardSettingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZKeyboardSettingController.h; sourceTree = "<group>"; };
+		431F008F1FBB0086007483F0 /* GZKeyboardSettingController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZKeyboardSettingController.m; sourceTree = "<group>"; };
+		431F00911FBB00A9007483F0 /* GZWrightSettingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZWrightSettingController.h; sourceTree = "<group>"; };
+		431F00921FBB00A9007483F0 /* GZWrightSettingController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZWrightSettingController.m; sourceTree = "<group>"; };
+		431F00941FBB0601007483F0 /* GZSwitchCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZSwitchCell.h; sourceTree = "<group>"; };
+		431F00951FBB0601007483F0 /* GZSwitchCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZSwitchCell.m; sourceTree = "<group>"; };
+		4323410C1FBD64E20046B6EF /* GZCandidateMoreView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZCandidateMoreView.h; sourceTree = "<group>"; };
+		4323410D1FBD64E20046B6EF /* GZCandidateMoreView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZCandidateMoreView.m; sourceTree = "<group>"; };
+		4323410F1FBD6CA10046B6EF /* GZCandidateMoreCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZCandidateMoreCell.h; sourceTree = "<group>"; };
+		432341101FBD6CA10046B6EF /* GZCandidateMoreCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZCandidateMoreCell.m; sourceTree = "<group>"; };
+		432341131FBD73940046B6EF /* appIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon.png; sourceTree = "<group>"; };
+		4323FFCD1FB98CC20019FE31 /* HWColorPen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWColorPen.h; sourceTree = "<group>"; };
+		4350829F1FB29D7200C25B7E /* GZPublicMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZPublicMethod.h; sourceTree = "<group>"; };
+		435082A01FB29D7200C25B7E /* GZPublicMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZPublicMethod.m; sourceTree = "<group>"; };
+		435082AA1FB4347A00C25B7E /* GZSymbolKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZSymbolKeyboard.h; sourceTree = "<group>"; };
+		435082AB1FB4347A00C25B7E /* GZSymbolKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZSymbolKeyboard.m; sourceTree = "<group>"; };
+		435082AD1FB4552400C25B7E /* GZSymbolCollectionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZSymbolCollectionCell.h; sourceTree = "<group>"; };
+		435082AE1FB4552400C25B7E /* GZSymbolCollectionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZSymbolCollectionCell.m; sourceTree = "<group>"; };
+		435C65881FB0728C00986313 /* Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Header.h; sourceTree = "<group>"; };
+		435C65891FB0728C00986313 /* NSlog.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSlog.pch; sourceTree = "<group>"; };
+		435C658A1FB0730F00986313 /* UIColor+GZColorHex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+GZColorHex.m"; sourceTree = "<group>"; };
+		435C658B1FB0730F00986313 /* UIColor+GZColorHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+GZColorHex.h"; sourceTree = "<group>"; };
+		435C658C1FB0730F00986313 /* GZUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZUserDefaults.m; sourceTree = "<group>"; };
+		435C658D1FB0730F00986313 /* GZUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZUserDefaults.h; sourceTree = "<group>"; };
+		43BD3B6D1FB54F7D00721696 /* GZButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZButton.h; sourceTree = "<group>"; };
+		43BD3B6E1FB54F7D00721696 /* GZButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZButton.m; sourceTree = "<group>"; };
+		43BD3B751FB55C6200721696 /* GZSoundPlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GZSoundPlay.h; sourceTree = "<group>"; };
+		43BD3B761FB55C6200721696 /* GZSoundPlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GZSoundPlay.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4304BD411FAC60EA00581CC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431F00861FBAE071007483F0 /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD591FAC60EB00581CC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD641FAC60EB00581CC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BDB51FADA9DD00581CC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431F00761FBABC85007483F0 /* libColorpenCore_64.a in Frameworks */,
+				4304BDF61FAF25D900581CC9 /* libfree_key-armV7s.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4304BD3B1FAC60EA00581CC9 = {
+			isa = PBXGroup;
+			children = (
+				4304BD461FAC60EA00581CC9 /* HanvonInput */,
+				4304BD5F1FAC60EB00581CC9 /* HanvonInputTests */,
+				4304BD6A1FAC60EB00581CC9 /* HanvonInputUITests */,
+				4304BDB91FADA9DD00581CC9 /* HanvonKeyboard */,
+				4304BD451FAC60EA00581CC9 /* Products */,
+				4304BDED1FADB9E400581CC9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		4304BD451FAC60EA00581CC9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD441FAC60EA00581CC9 /* HanvonInput.app */,
+				4304BD5C1FAC60EB00581CC9 /* HanvonInputTests.xctest */,
+				4304BD671FAC60EB00581CC9 /* HanvonInputUITests.xctest */,
+				4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4304BD461FAC60EA00581CC9 /* HanvonInput */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDF41FADBA6A00581CC9 /* HanvonInput.entitlements */,
+				4304BD9E1FAC667900581CC9 /* Support */,
+				432341121FBD73940046B6EF /* Images */,
+				4304BD8D1FAC646C00581CC9 /* RootViewController */,
+				4304BD901FAC646C00581CC9 /* ViewControllers */,
+				4304BD801FAC63ED00581CC9 /* HanvonInputSupport */,
+			);
+			path = HanvonInput;
+			sourceTree = "<group>";
+		};
+		4304BD5F1FAC60EB00581CC9 /* HanvonInputTests */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD601FAC60EB00581CC9 /* HanvonInputTests.m */,
+				4304BD621FAC60EB00581CC9 /* Info.plist */,
+			);
+			path = HanvonInputTests;
+			sourceTree = "<group>";
+		};
+		4304BD6A1FAC60EB00581CC9 /* HanvonInputUITests */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD6B1FAC60EB00581CC9 /* HanvonInputUITests.m */,
+				4304BD6D1FAC60EB00581CC9 /* Info.plist */,
+			);
+			path = HanvonInputUITests;
+			sourceTree = "<group>";
+		};
+		4304BD801FAC63ED00581CC9 /* HanvonInputSupport */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD811FAC63ED00581CC9 /* Assets.xcassets */,
+				4304BD821FAC63ED00581CC9 /* LaunchScreen.storyboard */,
+				4304BD841FAC63ED00581CC9 /* Main.storyboard */,
+				4304BD861FAC63ED00581CC9 /* Info.plist */,
+				4304BD871FAC63ED00581CC9 /* main.m */,
+			);
+			path = HanvonInputSupport;
+			sourceTree = "<group>";
+		};
+		4304BD8D1FAC646C00581CC9 /* RootViewController */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD8E1FAC646C00581CC9 /* AppDelegate.h */,
+				4304BD8F1FAC646C00581CC9 /* AppDelegate.m */,
+				4304BD981FAC65E100581CC9 /* GZGuideViewController.h */,
+				4304BD991FAC65E100581CC9 /* GZGuideViewController.m */,
+				4304BD9B1FAC662200581CC9 /* GZRootNavigationController.h */,
+				4304BD9C1FAC662200581CC9 /* GZRootNavigationController.m */,
+			);
+			path = RootViewController;
+			sourceTree = "<group>";
+		};
+		4304BD901FAC646C00581CC9 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				4304BD951FAC659300581CC9 /* GZHomeViewController.h */,
+				4304BD961FAC659300581CC9 /* GZHomeViewController.m */,
+				4304BDA91FAC731200581CC9 /* HomeControllers */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		4304BD9E1FAC667900581CC9 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				435C65891FB0728C00986313 /* NSlog.pch */,
+				435C65881FB0728C00986313 /* Header.h */,
+				4304BD9F1FAC667900581CC9 /* Other */,
+				4304BDA01FAC667900581CC9 /* Own */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		4304BD9F1FAC667900581CC9 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
+		4304BDA01FAC667900581CC9 /* Own */ = {
+			isa = PBXGroup;
+			children = (
+				435C658D1FB0730F00986313 /* GZUserDefaults.h */,
+				435C658C1FB0730F00986313 /* GZUserDefaults.m */,
+				435C658B1FB0730F00986313 /* UIColor+GZColorHex.h */,
+				435C658A1FB0730F00986313 /* UIColor+GZColorHex.m */,
+				4350829F1FB29D7200C25B7E /* GZPublicMethod.h */,
+				435082A01FB29D7200C25B7E /* GZPublicMethod.m */,
+			);
+			path = Own;
+			sourceTree = "<group>";
+		};
+		4304BDA91FAC731200581CC9 /* HomeControllers */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDAA1FAC799800581CC9 /* Html */,
+				4304BDAE1FADA2EA00581CC9 /* GZSetHelpController.h */,
+				4304BDAF1FADA2EA00581CC9 /* GZSetHelpController.m */,
+				431F007A1FBAD1DC007483F0 /* GZAboutController.h */,
+				431F007B1FBAD1DC007483F0 /* GZAboutController.m */,
+				431F00821FBAD966007483F0 /* GZOpinionFeedbackController.h */,
+				431F00831FBAD966007483F0 /* GZOpinionFeedbackController.m */,
+				431F008E1FBB0086007483F0 /* GZKeyboardSettingController.h */,
+				431F008F1FBB0086007483F0 /* GZKeyboardSettingController.m */,
+				431F00911FBB00A9007483F0 /* GZWrightSettingController.h */,
+				431F00921FBB00A9007483F0 /* GZWrightSettingController.m */,
+				431F00941FBB0601007483F0 /* GZSwitchCell.h */,
+				431F00951FBB0601007483F0 /* GZSwitchCell.m */,
+			);
+			path = HomeControllers;
+			sourceTree = "<group>";
+		};
+		4304BDAA1FAC799800581CC9 /* Html */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDAB1FAC799800581CC9 /* setting_help.html */,
+				4304BDAC1FAC799800581CC9 /* setting_keyboard_enable_guide.html */,
+				4304BDAD1FAC799800581CC9 /* setting_user_agreement.html */,
+			);
+			path = Html;
+			sourceTree = "<group>";
+		};
+		4304BDB91FADA9DD00581CC9 /* HanvonKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				43E0F2661FBD7FB20054F9C8 /* New Group */,
+				4304BDF51FADBABC00581CC9 /* HanvonKeyboard.entitlements */,
+				4304BDBA1FADA9DD00581CC9 /* KeyboardViewController.h */,
+				4304BDBB1FADA9DD00581CC9 /* KeyboardViewController.m */,
+				43099E601FB152680056617C /* Images */,
+				4304BDC61FADACAE00581CC9 /* Support */,
+				4304BDE51FADB44B00581CC9 /* CandidateBar */,
+				435082A91FB4344800C25B7E /* SymbolKeyboard */,
+				4304BDC51FADACAE00581CC9 /* NumberKeyboard */,
+				4304BDC71FADACAF00581CC9 /* QwertyKeyboard */,
+				4304BDC81FADACAF00581CC9 /* WrightKeyboard */,
+				4304BDBD1FADA9DD00581CC9 /* Info.plist */,
+			);
+			path = HanvonKeyboard;
+			sourceTree = "<group>";
+		};
+		4304BDC51FADACAE00581CC9 /* NumberKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDE91FADB8C900581CC9 /* GZNumberKeyboard.h */,
+				4304BDEA1FADB8C900581CC9 /* GZNumberKeyboard.m */,
+			);
+			path = NumberKeyboard;
+			sourceTree = "<group>";
+		};
+		4304BDC61FADACAE00581CC9 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDCA1FADAD1500581CC9 /* 18030.bin */,
+				4304BDCB1FADAD1500581CC9 /* ChsSysDic.dic */,
+				4304BDC91FADAD1500581CC9 /* ChsUserDic.dic */,
+				4304BDCD1FADAD1500581CC9 /* HW_REC_CN.bin */,
+				4304BDCE1FADAD1500581CC9 /* HW_REC_EN.bin */,
+				4304BDD21FADAD1600581CC9 /* libfree_key-armV7s.a */,
+				431F00751FBABC5B007483F0 /* libColorpenCore_64.a */,
+				4304BDCC1FADAD1500581CC9 /* HW_API.h */,
+				4304BDCF1FADAD1600581CC9 /* HW_RangeMask.h */,
+				4304BDD01FADAD1600581CC9 /* HWIM_SDK5W.h */,
+				4323FFCD1FB98CC20019FE31 /* HWColorPen.h */,
+				4304BDD31FADAD1600581CC9 /* LibraryUtility.h */,
+				4304BDD11FADAD1600581CC9 /* LibraryUtility.mm */,
+				43BD3B6D1FB54F7D00721696 /* GZButton.h */,
+				43BD3B6E1FB54F7D00721696 /* GZButton.m */,
+				43BD3B751FB55C6200721696 /* GZSoundPlay.h */,
+				43BD3B761FB55C6200721696 /* GZSoundPlay.m */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		4304BDC71FADACAF00581CC9 /* QwertyKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDDF1FADB15E00581CC9 /* GZQwertyKeyboard.h */,
+				4304BDE01FADB15E00581CC9 /* GZQwertyKeyboard.m */,
+				4304BDE21FADB1C300581CC9 /* GZQwerty.h */,
+				4304BDE31FADB1C300581CC9 /* GZQwerty.m */,
+			);
+			path = QwertyKeyboard;
+			sourceTree = "<group>";
+		};
+		4304BDC81FADACAF00581CC9 /* WrightKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDDB1FADAF8800581CC9 /* GZWrightKeyboard.h */,
+				4304BDDC1FADAF8800581CC9 /* GZWrightKeyboard.m */,
+				4304BDD41FADAD3A00581CC9 /* UIStrokeShowerView.h */,
+				4304BDD51FADAD3A00581CC9 /* UIStrokeShowerView.m */,
+				4304BDD81FADAE8C00581CC9 /* GZWright.h */,
+				4304BDD91FADAE8C00581CC9 /* GZWright.m */,
+			);
+			path = WrightKeyboard;
+			sourceTree = "<group>";
+		};
+		4304BDE51FADB44B00581CC9 /* CandidateBar */ = {
+			isa = PBXGroup;
+			children = (
+				4304BDE61FADB68A00581CC9 /* GZCandidateBarView.h */,
+				4304BDE71FADB68A00581CC9 /* GZCandidateBarView.m */,
+				4323410C1FBD64E20046B6EF /* GZCandidateMoreView.h */,
+				4323410D1FBD64E20046B6EF /* GZCandidateMoreView.m */,
+				4323410F1FBD6CA10046B6EF /* GZCandidateMoreCell.h */,
+				432341101FBD6CA10046B6EF /* GZCandidateMoreCell.m */,
+			);
+			path = CandidateBar;
+			sourceTree = "<group>";
+		};
+		4304BDED1FADB9E400581CC9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				431F00851FBAE071007483F0 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		43099E601FB152680056617C /* Images */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		432341121FBD73940046B6EF /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				432341131FBD73940046B6EF /* appIcon.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		435082A91FB4344800C25B7E /* SymbolKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				435082AA1FB4347A00C25B7E /* GZSymbolKeyboard.h */,
+				435082AB1FB4347A00C25B7E /* GZSymbolKeyboard.m */,
+				435082AD1FB4552400C25B7E /* GZSymbolCollectionCell.h */,
+				435082AE1FB4552400C25B7E /* GZSymbolCollectionCell.m */,
+			);
+			path = SymbolKeyboard;
+			sourceTree = "<group>";
+		};
+		43E0F2661FBD7FB20054F9C8 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4304BD431FAC60EA00581CC9 /* HanvonInput */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4304BD701FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInput" */;
+			buildPhases = (
+				4304BD401FAC60EA00581CC9 /* Sources */,
+				4304BD411FAC60EA00581CC9 /* Frameworks */,
+				4304BD421FAC60EA00581CC9 /* Resources */,
+				4304BDC41FADA9DD00581CC9 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4304BDBF1FADA9DD00581CC9 /* PBXTargetDependency */,
+			);
+			name = HanvonInput;
+			productName = HanvonInput;
+			productReference = 4304BD441FAC60EA00581CC9 /* HanvonInput.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4304BD5B1FAC60EB00581CC9 /* HanvonInputTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4304BD731FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInputTests" */;
+			buildPhases = (
+				4304BD581FAC60EB00581CC9 /* Sources */,
+				4304BD591FAC60EB00581CC9 /* Frameworks */,
+				4304BD5A1FAC60EB00581CC9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4304BD5E1FAC60EB00581CC9 /* PBXTargetDependency */,
+			);
+			name = HanvonInputTests;
+			productName = HanvonInputTests;
+			productReference = 4304BD5C1FAC60EB00581CC9 /* HanvonInputTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4304BD661FAC60EB00581CC9 /* HanvonInputUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4304BD761FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInputUITests" */;
+			buildPhases = (
+				4304BD631FAC60EB00581CC9 /* Sources */,
+				4304BD641FAC60EB00581CC9 /* Frameworks */,
+				4304BD651FAC60EB00581CC9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4304BD691FAC60EB00581CC9 /* PBXTargetDependency */,
+			);
+			name = HanvonInputUITests;
+			productName = HanvonInputUITests;
+			productReference = 4304BD671FAC60EB00581CC9 /* HanvonInputUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		4304BDB71FADA9DD00581CC9 /* HanvonKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4304BDC11FADA9DD00581CC9 /* Build configuration list for PBXNativeTarget "HanvonKeyboard" */;
+			buildPhases = (
+				4304BDB41FADA9DD00581CC9 /* Sources */,
+				4304BDB51FADA9DD00581CC9 /* Frameworks */,
+				4304BDB61FADA9DD00581CC9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HanvonKeyboard;
+			productName = HanvonKeyboard;
+			productReference = 4304BDB81FADA9DD00581CC9 /* HanvonKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4304BD3C1FAC60EA00581CC9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = GZ;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = hanvon;
+				TargetAttributes = {
+					4304BD431FAC60EA00581CC9 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+					4304BD5B1FAC60EB00581CC9 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 4304BD431FAC60EA00581CC9;
+					};
+					4304BD661FAC60EB00581CC9 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 4304BD431FAC60EA00581CC9;
+					};
+					4304BDB71FADA9DD00581CC9 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 4304BD3F1FAC60EA00581CC9 /* Build configuration list for PBXProject "HanvonInput" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4304BD3B1FAC60EA00581CC9;
+			productRefGroup = 4304BD451FAC60EA00581CC9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4304BD431FAC60EA00581CC9 /* HanvonInput */,
+				4304BD5B1FAC60EB00581CC9 /* HanvonInputTests */,
+				4304BD661FAC60EB00581CC9 /* HanvonInputUITests */,
+				4304BDB71FADA9DD00581CC9 /* HanvonKeyboard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4304BD421FAC60EA00581CC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				432341141FBD73940046B6EF /* appIcon.png in Resources */,
+				431F008A1FBAE7B4007483F0 /* setting_help.html in Resources */,
+				431F008B1FBAE7B4007483F0 /* setting_keyboard_enable_guide.html in Resources */,
+				431F008C1FBAE7B4007483F0 /* setting_user_agreement.html in Resources */,
+				4304BD8B1FAC63ED00581CC9 /* Info.plist in Resources */,
+				4304BD8A1FAC63ED00581CC9 /* Main.storyboard in Resources */,
+				4304BD881FAC63ED00581CC9 /* Assets.xcassets in Resources */,
+				4304BD891FAC63ED00581CC9 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD5A1FAC60EB00581CC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD651FAC60EB00581CC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BDB61FADA9DD00581CC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4304BDEF1FADB9FE00581CC9 /* 18030.bin in Resources */,
+				4304BDF01FADB9FE00581CC9 /* ChsSysDic.dic in Resources */,
+				4304BDF11FADB9FE00581CC9 /* ChsUserDic.dic in Resources */,
+				4304BDF21FADB9FE00581CC9 /* HW_REC_CN.bin in Resources */,
+				4304BDF31FADB9FE00581CC9 /* HW_REC_EN.bin in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4304BD401FAC60EA00581CC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4304BD9D1FAC662200581CC9 /* GZRootNavigationController.m in Sources */,
+				435C65901FB0730F00986313 /* GZUserDefaults.m in Sources */,
+				431F00961FBB0601007483F0 /* GZSwitchCell.m in Sources */,
+				4304BD9A1FAC65E100581CC9 /* GZGuideViewController.m in Sources */,
+				435082A11FB29D7200C25B7E /* GZPublicMethod.m in Sources */,
+				431F00841FBAD966007483F0 /* GZOpinionFeedbackController.m in Sources */,
+				431F00931FBB00A9007483F0 /* GZWrightSettingController.m in Sources */,
+				4304BDB01FADA2EA00581CC9 /* GZSetHelpController.m in Sources */,
+				435C658E1FB0730F00986313 /* UIColor+GZColorHex.m in Sources */,
+				4304BD911FAC646D00581CC9 /* AppDelegate.m in Sources */,
+				431F00901FBB0086007483F0 /* GZKeyboardSettingController.m in Sources */,
+				4304BD971FAC659300581CC9 /* GZHomeViewController.m in Sources */,
+				431F007C1FBAD1DC007483F0 /* GZAboutController.m in Sources */,
+				4304BD8C1FAC63ED00581CC9 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD581FAC60EB00581CC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4304BD611FAC60EB00581CC9 /* HanvonInputTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BD631FAC60EB00581CC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4304BD6C1FAC60EB00581CC9 /* HanvonInputUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4304BDB41FADA9DD00581CC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435082A21FB29D7200C25B7E /* GZPublicMethod.m in Sources */,
+				43BD3B771FB55C6200721696 /* GZSoundPlay.m in Sources */,
+				4323410E1FBD64E20046B6EF /* GZCandidateMoreView.m in Sources */,
+				432341111FBD6CA10046B6EF /* GZCandidateMoreCell.m in Sources */,
+				4304BDEC1FADB9CC00581CC9 /* LibraryUtility.mm in Sources */,
+				4304BDEB1FADB8C900581CC9 /* GZNumberKeyboard.m in Sources */,
+				4304BDE41FADB1C300581CC9 /* GZQwerty.m in Sources */,
+				4304BDDE1FADB0A100581CC9 /* UIStrokeShowerView.m in Sources */,
+				435082AF1FB4552400C25B7E /* GZSymbolCollectionCell.m in Sources */,
+				4304BDBC1FADA9DD00581CC9 /* KeyboardViewController.m in Sources */,
+				435C65911FB0730F00986313 /* GZUserDefaults.m in Sources */,
+				4304BDDD1FADAF8800581CC9 /* GZWrightKeyboard.m in Sources */,
+				435C658F1FB0730F00986313 /* UIColor+GZColorHex.m in Sources */,
+				4304BDE11FADB15E00581CC9 /* GZQwertyKeyboard.m in Sources */,
+				4304BDDA1FADAE8C00581CC9 /* GZWright.m in Sources */,
+				43BD3B6F1FB54F7D00721696 /* GZButton.m in Sources */,
+				4304BDE81FADB68A00581CC9 /* GZCandidateBarView.m in Sources */,
+				435082AC1FB4347A00C25B7E /* GZSymbolKeyboard.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4304BD5E1FAC60EB00581CC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4304BD431FAC60EA00581CC9 /* HanvonInput */;
+			targetProxy = 4304BD5D1FAC60EB00581CC9 /* PBXContainerItemProxy */;
+		};
+		4304BD691FAC60EB00581CC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4304BD431FAC60EA00581CC9 /* HanvonInput */;
+			targetProxy = 4304BD681FAC60EB00581CC9 /* PBXContainerItemProxy */;
+		};
+		4304BDBF1FADA9DD00581CC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4304BDB71FADA9DD00581CC9 /* HanvonKeyboard */;
+			targetProxy = 4304BDBE1FADA9DD00581CC9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4304BD821FAC63ED00581CC9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4304BD831FAC63ED00581CC9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4304BD841FAC63ED00581CC9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4304BD851FAC63ED00581CC9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4304BD6E1FAC60EB00581CC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "armv7 armv7s arm64";
+			};
+			name = Debug;
+		};
+		4304BD6F1FAC60EB00581CC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4304BD711FAC60EB00581CC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HanvonInput/HanvonInput.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/HanvonInput/Support/NSlog.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/HanvonInput/HanvonInputSupport/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInput;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
+			};
+			name = Debug;
+		};
+		4304BD721FAC60EB00581CC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HanvonInput/HanvonInput.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/HanvonInput/Support/NSlog.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/HanvonInput/HanvonInputSupport/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInput;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4304BD741FAC60EB00581CC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				INFOPLIST_FILE = HanvonInputTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInputTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HanvonInput.app/HanvonInput";
+			};
+			name = Debug;
+		};
+		4304BD751FAC60EB00581CC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				INFOPLIST_FILE = HanvonInputTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInputTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HanvonInput.app/HanvonInput";
+			};
+			name = Release;
+		};
+		4304BD771FAC60EB00581CC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				INFOPLIST_FILE = HanvonInputUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInputUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HanvonInput;
+			};
+			name = Debug;
+		};
+		4304BD781FAC60EB00581CC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				INFOPLIST_FILE = HanvonInputUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInputUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HanvonInput;
+			};
+			name = Release;
+		};
+		4304BDC21FADA9DD00581CC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HanvonKeyboard/HanvonKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/HanvonInput/Support/NSlog.pch";
+				INFOPLIST_FILE = HanvonKeyboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HanvonKeyboard/Support",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInput.HanvonKeyboard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
+			};
+			name = Debug;
+		};
+		4304BDC31FADA9DD00581CC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HanvonKeyboard/HanvonKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RQJ35TZY2P;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/HanvonInput/Support/NSlog.pch";
+				INFOPLIST_FILE = HanvonKeyboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HanvonKeyboard/Support",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanvon.HanvonInput.HanvonKeyboard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4304BD3F1FAC60EA00581CC9 /* Build configuration list for PBXProject "HanvonInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4304BD6E1FAC60EB00581CC9 /* Debug */,
+				4304BD6F1FAC60EB00581CC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4304BD701FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInput" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4304BD711FAC60EB00581CC9 /* Debug */,
+				4304BD721FAC60EB00581CC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4304BD731FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInputTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4304BD741FAC60EB00581CC9 /* Debug */,
+				4304BD751FAC60EB00581CC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4304BD761FAC60EB00581CC9 /* Build configuration list for PBXNativeTarget "HanvonInputUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4304BD771FAC60EB00581CC9 /* Debug */,
+				4304BD781FAC60EB00581CC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4304BDC11FADA9DD00581CC9 /* Build configuration list for PBXNativeTarget "HanvonKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4304BDC21FADA9DD00581CC9 /* Debug */,
+				4304BDC31FADA9DD00581CC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4304BD3C1FAC60EA00581CC9 /* Project object */;
+}

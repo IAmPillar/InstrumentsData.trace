@@ -1,0 +1,14 @@
+//
+//  GZExpressionCollectionCell.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/18.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface GZExpressionCollectionCell : UICollectionViewCell
+@property (nonatomic,copy) UILabel *titleLabel; //标题
+- (void)setTitleText:(NSString*)text;
+@end

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd";>
+<HTML>
+<HEAD>
+<TITLE> New Document </TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<style type="text/css">
+<!--
+.style2 {font-size: 24px}
+.style3 {font-size: 20px}
+.style4 {font-size: 16px}
+.style5 {font-size: 12px}
+-->
+</style>
+<BODY>
+<h1 align="center" class="style2">使用帮助</h1>
+<h2 class="style3">第一步 输入方式选择</h2>
+<p class="style5">汉王输入法包含手写输入和英文输入两种方式。在汉王输入法界面，点击<img src="setting_help_02.png" width="25" height="25" align="middle" >来切换手写输入方式和英文输入方式。</p>
+<div align="center"><img src="setting_help_4.png" width="200" height="160" align="middle"></div>
+
+<p class="style5">也可以长按地球键来进行输入方式的切换：</p>
+<div align="center"><img src="setting_help_5.png" width="200" height="160" align="middle"></div>
+</br>
+</br>
+
+<h2 class="style3">第二步 输入法界面及功能</h2>
+<h3 class="style4">手写输入界面</h3>
+<h4 class="style5">1、手写输入界面见下图所示：</h4>
+<div align="center"><img src="setting_help_6.png" width="200" height="160" align="middle"></div>
+<p class="style5">在空白处手写输入字符，即可显示出候选字。</p>
+<p class="style5">输入“汉”字，显示如下：</p>
+<div align="center"><img src="setting_help_7.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击<img src="setting_help_03.png" width="25" height="25" align="middle">右侧按键显示全部候选字：</p>
+<div align="center"><img src="setting_help_8.png" width="200" height="160" align="middle"></div>
+<h4 class="style5"> 2、手写工具栏按键及功能介绍</h4>
+<div align="center"><img src="setting_help_9.png" width="200" height="160" align="middle"></div>
+<p class="style5">汉王输入法在手写工具栏上显示了常用的逗号、空格及句号，使用户输入更加方便、快捷。</p>
+<p class="style5">手写输入法支持单字、多字及整句输入。</p>
+<p class="style5">点击<img src="setting_help_04.png" width="25" height="25" align="middle" >显示常用数字及符号：</p>
+<div align="center"><img src="setting_help_10.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击<img src="setting_help_05.png" width="30" height="25"align="middle">显示特殊符号：</p>
+<div align="center"><img src="setting_help_11.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击返回按键则返回到手写输入界面。</p>
+<div align="center"><img src="setting_help_6.png" width="200" height="160" align="middle"></div>
+<h3 class="style4">英文输入界面</h3>
+<div align="center"><img src="setting_help_13.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击键盘字母可以进行英文大小的输入。</p>
+<p class="style5">单击<img src="setting_help_06.png" width="25" height="25" align="middle">单次调出字母的大写格式。</p>
+<div align="center"><img src="setting_help_14.png" width="200" height="160" align="middle"></div>
+<p class="style5">双击<img src="setting_help_06.png" width="25" height="25" align="middle">连续调出字母的大写格式。</p>
+<div align="center"><img src="setting_help_15.png" width="200" height="160" align="middle"></div>
+<p class="style5">单击<img src="setting_help_06.png" width="25" height="25" align="middle">返回字母的小写格式。</p>
+<div align="center"><img src="setting_help_13.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击按键<img src="setting_help_04.png" width="25" height="25" align="middle">显示常用数字及符号；点击<img src="setting_help_05.png" width="30" height="25" align="middle">显示特殊符号。</p>
+<h3 class="style4">设置界面</h3>
+<div align="center"><img src="setting_help_16.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击<img src="setting_help_07.png" width="25" height="25" align="middle">将切换到夜间模式，效果如下：</p>
+<div align="center"><img src="setting_help_17.png" width="200" height="160" align="middle"></div>
+<p class="style5">点击<img src="setting_help_08.png" width="25" height="25" align="middle">切换到汉王输入法的设置页面，可以设置笔画的粗细及颜色等，也可以查看汉王输入法其它相关信息：</p>
+<div align="center"><img src="setting_help_18.png" width="200" height="380" align="middle"></div>
+<br/>
+<br/>
+<br/>
+<br/>
+</BODY>
+</HTML>

@@ -1,0 +1,1277 @@
+/*
+ * Copyright (C) 2009 Hanwang Technology Company
+ *
+ * file name: HWIM_SDK.h
+ * date created: June 18, 2009
+ */
+
+#ifndef __HW_INPUT_METHOD_SDKW__
+#define __HW_INPUT_METHOD_SDKW__
+
+/* ------------ Recognition Language ------------- */
+#define HWLANG_Simp_Chinese     0x1000
+#define HWLANG_Trad_Chinese     0x1010
+
+#define HWLANG_Afrikaans        0x011D
+#define HWLANG_Albanian         0x0115
+#define HWLANG_Catalan          0x0112
+#define HWLANG_Danish           0x0107
+
+#define HWLANG_German_GER       0x0135
+#define HWLANG_German_SUI       0x0136
+
+#define HWLANG_English_AUS      0x0133
+#define HWLANG_English_CAN      0x0132
+#define HWLANG_English_GBR      0x0131
+#define HWLANG_English_NZL      0x0134
+#define HWLANG_English_USA      0x0130
+
+#define HWLANG_Filipino         0x0110
+#define HWLANG_Finnish          0x010D
+#define HWLANG_French           0x0102
+#define HWLANG_Dutch            0x0105
+#define HWLANG_Indonesian       0x010F
+#define HWLANG_Irish            0x0109
+#define HWLANG_Italian          0x0104
+#define HWLANG_Malay            0x010E
+#define HWLANG_Bokmaal          0x013B
+#define HWLANG_Nynorsk          0x013C
+#define HWLANG_Portuguese_POR   0x0137
+#define HWLANG_Portuguese_BRA   0x0138
+
+#define HWLANG_Spanish_ESP      0x0139
+#define HWLANG_Spanish_MEX      0x013A
+#define HWLANG_Swahili          0x0117
+#define HWLANG_Swedish          0x010C
+#define HWLANG_Russian          0x1040
+
+/* ----- Define Character Set Range(Chinese), Single-Choice ----- */
+/* Simplified Chinese */
+#define ALC_GB2312              0x0001
+#define ALC_GBK_ADDED           0x0002
+#define ALC_GB18030_ADDED       0x0004
+#define ALC_GBK                 (ALC_GB2312 | ALC_GBK_ADDED)
+#define ALC_GB18030             (ALC_GB2312 | ALC_GBK_ADDED | ALC_GB18030_ADDED)
+
+/* Traditional Chinese */
+#define ALC_BIG5                0x0001
+#define ALC_HKSCS               0x0002
+
+/* ----- Fuzzy Pinyin Setting-Multiple-Choice ----- */
+#define HW_FUZZY_Z_ZH           0x0001 /* z<-->zh */
+#define HW_FUZZY_C_CH           0x0002 /* c<-->ch */
+#define HW_FUZZY_S_SH           0x0004 /* s<-->sh */
+#define HW_FUZZY_F_H            0x0008 /* f<-->h */
+#define HW_FUZZY_K_G            0x0010 /* k<-->g */
+#define HW_FUZZY_L_H            0x1000 /* l<-->h */
+#define HW_FUZZY_L_N            0x0020 /* l<-->n */
+#define HW_FUZZY_L_R            0x0040 /* l<-->r */
+#define HW_FUZZY_IAN_IANG       0x0080 /* ian<-->iang */
+#define HW_FUZZY_UAN_UANG       0x0100 /* uan<-->uang */
+#define HW_FUZZY_AN_ANG         0x0200 /* an<-->ang */
+#define HW_FUZZY_EN_ENG         0x0400 /* en<-->eng */
+#define HW_FUZZY_IN_ING         0x0800 /* in<-->ing */
+
+/* ------ Pinyin Error Correct switch ----- */
+#define HWIME_LRERRCORRECTFORCN    0x001 /* Pinyin: left and right neighbors */
+#define HWIME_TBERRCORRECTFORCN    0x002 /* Pinyin: up and down neighbors */
+#define HWIME_ERRCORRECTFOREN      0x004 /* English: all neighbors */
+
+/* ------ Same Pinyin with different writing type ----- */
+#define HW_SAMEPHONETIC_JU_JV           0x00000001
+#define HW_SAMEPHONETIC_JUE_JVE         0x00000002
+#define HW_SAMEPHONETIC_LUE_LVE         0x00000004
+#define HW_SAMEPHONETIC_NUE_NVE         0x00000008
+#define HW_SAMEPHONETIC_QU_QV           0x00000010
+#define HW_SAMEPHONETIC_QUE_QVE         0x00000020
+#define HW_SAMEPHONETIC_XU_XV           0x00000040
+#define HW_SAMEPHONETIC_XUE_XVE         0x00000080
+#define HW_SAMEPHONETIC_YU_YV           0x00000100
+#define HW_SAMEPHONETIC_YUE_YVE         0x00000200
+#define HW_SAMEPHONETIC_JUAN_JVAN       0x00000400
+#define HW_SAMEPHONETIC_QUAN_QVAN       0x00000800
+#define HW_SAMEPHONETIC_XUAN_XVAN       0x00001000
+#define HW_SAMEPHONETIC_YUAN_YVAN       0x00002000
+#define HW_SAMEPHONETIC_JUN_JVN         0x00004000
+#define HW_SAMEPHONETIC_QUN_QVN         0x00008000
+#define HW_SAMEPHONETIC_XUN_XVN         0x00010000
+#define HW_SAMEPHONETIC_YUN_YVN         0x00020000
+
+/* ----------------- Constant ---------------------- */
+#define HWIM_MAX_PHONETIC_LEN           6
+#define HWRE_MAX_CHINESE_WORD_LEN       6
+#define HWRE_MAX_LATIN_WORD_LEN         31
+#define HWRE_MAX_PHONETIC_GROUP_NUM     20
+
+#define HWRE_OUT_PHONETIC_BUFSIZE	\
+    (HWRE_MAX_PHONETIC_GROUP_NUM * (HWIM_MAX_PHONETIC_LEN + 1))
+#define HW_MAX_INPUTSTR_LEN	\
+    (64 * (HWIM_MAX_PHONETIC_LEN + 1)) /* include separator */
+#define HW_MAX_INPUT_SHOW_LEN  (HW_MAX_INPUTSTR_LEN *2)
+
+/* --------- Ram Size ---------- */
+#define HWKEYIM_MIN_RAMSIZE        (80 * 1024)
+
+/* ----- Output Mode of Uppercase and Lowercase(English) ----- */
+#define HWIM_ENGLISH_OUTPUT_SENSITIVITY         0 /* Case sensitivity */
+#define HWIM_ENGLISH_OUTPUT_LOWERCASE           1 /* output lowercase */
+#define HWIM_ENGLISH_OUTPUT_UPPERCASE           2 /* output uppercase */
+
+/* -------------------Keyboard Mode---------------- */
+#define HWIM_KEYBOARD_NOTREDUCE         1 /* One-to-one */
+#define HWIM_KEYBOARD_REDUCE            2 /* Compact Keyboard Mode.One-to-many */
+#define HWIM_KEYBOARD_USERDEFINE        3 /* Customized.One-to-one or One-to-many */
+
+/* -------------------Chinese Input Method---------------- */
+/*
+Pinyin:
+ 	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE, HWIM_KEYBOARD_REDUCE,
+	                     HWIM_KEYBOARD_USERDEFINE.
+	HWIM_KEYBOARD_REDUCE means Numeric Keyboard layout,
+		valid input: '2-9' and HW_KEY_Separator_Code.
+	HWIM_KEYBOARD_NOTREDUCE: valid input: 'a-z' and HW_KEY_Separator_Code.
+*/
+#define HWIM_MODE_PHONETIC      1 
+/*
+Stroke
+	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE.
+	Valid input:'1-5',HW_KEY_Separator_Code, HW_KEY_Wildcard_Code.
+*/
+#define HWIM_MODE_STROKE        3
+/*
+Cangjie
+	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE.
+	Valid input:'a-y'.
+*/
+#define HWIM_MODE_CANGJIE       4
+/*
+Bopomofo
+	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE, HWIM_KEYBOARD_REDUCE,
+	                     HWIM_KEYBOARD_USERDEFINE.
+	HWIM_KEYBOARD_REDUCE is same with “–ÃÏ layout, 
+		Valid Input: 'a-z', HW_KEY_SpaceBar_Code, HW_KEY_Separator_Code
+	HWIM_KEYBOARD_NOTREDUCE
+		Valid Input: all the Bopomofo symbols, HW_KEY_SpaceBar_Code and
+		             HW_KEY_Separator_Code.
+*/
+#define HWIM_MODE_ZHUYIN        5
+/*
+Quick Cangjie
+	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE
+*/
+#define HWIM_MODE_CANGJIE_Q     6
+/*
+WuBi 
+	Valid Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE.
+	Valid input:'a-y'.
+*/
+#define HWIM_MODE_WUBI          7
+
+/* ---------------------- SLM ---------------------------- */
+#define HW_SLM                  8
+
+/* ----------------- Word Type ---------------- */
+#define HWIM_WORDTYPE_SYS               3 /* system words */
+#define HWIM_WORDTYPE_USER_AUTOLEARN    0 /* auto-learn words */
+#define HWIM_WORDTYPE_USER_CUSTOM       1 /* custom words (user-defined) */
+#define HWIM_WORDTYPE_USER_ADDRESSBOOK  2 /* address book word (user-defined) */
+#define HWIM_WORDTYPE_USER_ALL          (-1) /* all user-defined words */
+
+/* HWIM_KEYBOARD_USERDEFINE max key-mapped value */
+#define HWIM_MAX_KEYPROJECT_NUM         8 
+
+/* ------------------- Code ----------------------- */
+#define HW_KEY_SpaceBar_Code    (0x20)
+#define HW_KEY_Separator_Code   (0x27)
+#define HW_KEY_Wildcard_Code    (0x2A)
+#define HW_KEY_BackSpace_Code   (0x08)
+
+/* ------------- Error Code --------------------------- */
+#define HWERR_SUCCESS                   (0) /* Success */
+#define HWERR_INVALID_PARAM             (-1) /* Invalid parameter */
+#define HWERR_NOT_ENOUGH_MEMORY         (-2) /* Not enough memory */
+#define HWERR_INVALID_DATA              (-3) /* Invalid data */
+#define HWERR_INVALID_MEMORY            (-4) /* Invalid memory pointer */
+#define HWERR_READ_DICT_FAIL            (-5) /* Read dictionary failed */
+#define HWERR_HANDLE_NOT_ENOUGH         (-6) /* Not enough handle memory */
+#define HWERR_NO_FILE_NAME              (-7) /* Lack filename */
+#define HWERR_NO_LOADER_CALLBACK        (-8) /* Lack callback function that loads dictionary */
+#define HWERR_NO_CHINESE                (-9) /* Not chinese input method */
+#define HWERR_NEED_INIT                 (-10) /* Need initialization */
+#define HWERR_NO_SYSDICT                (-11) /* Not load System dictionary */
+#define HWERR_INVALID_INPUT             (-12) /* Invalid input */
+#define HWERR_INVALID_SYSDICT           (-13) /* Invalid system dictionary */
+#define HWERR_INVALID_USERDICT          (-14) /* Invalid user dictionary */
+#define HWERR_NO_RELEASER_CALLBACK      (-15) /* Lack callback function that releases dictionary */
+#define HWERR_INVALID_POINTER           (-16) /* Invalid pointer */
+#define HWERR_WRITE_FILE_FAIL           (-17) /* Write file failed */
+#define HWERR_NEED_WORKSPACE            (-18) /* Not enough workspace */
+#define HWERR_NOT_SUPORT_LANGUAGE       (-19) /* Not supported language */
+#define HWERR_NOT_SUPORT_COMMAND        (-20) /* Not supported command */
+#define HWERR_OPEN_FILE_FAIL            (-21) /* Open file failed */
+#define HWERR_NOT_SUPPORT_KEYBOARDMODE  (-22) /* The keyboard Mode is not supported for current input mode */
+#define HWERR_WORD_EXIST                (-23) /* Word exists */
+#define HWERR_INVALID_UDB_WORDTYPE      (-24) /* Invalid user word type */
+#define HWERR_INVALID_CHARACTER         (-25) /* The character is not included in the current charset */
+#define HWERR_NO_USERDICT               (-26) /* Not load user dictionary */
+
+#define x86_64
+#ifndef x86_64
+#define HWKIM_MAKE_POINTER_ALIGN(p) ((((unsigned long)(p)) + 3) & 0xFFFFFFFCUL)
+#else
+#define HWKIM_MAKE_POINTER_ALIGN(p) ((((unsigned long long)(p)) + 7) & 0xFFFFFFFFFFFFFFF8UL)
+#endif
+
+/* HWIM_HANDLE  Handle space */
+typedef struct tagHWIM_HANDLE {
+#ifndef x86_64
+	unsigned long Handle[128];
+#else
+	unsigned long long Handle[128];
+#endif
+} HWIM_HANDLE;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/*
+HWCBK_LoadDict: Callback function that loads the dictionary.
+Function: Open the dictionary file,and load into memory.
+Parameter:
+	const char* : [in] the pathname of the dictionary file.
+	int*        : [out] the size of the dictionary file.
+Return value:
+	a memory pointer to the loaded dictionary which should be 4-byte alignment
+*/
+typedef long*(*HWCBK_LoadDict)(const char*, int*);
+
+
+/*
+HWCBK_SaveDict: Callback function that saves the dictionary.
+Function: Save the dictionary in the memory to the file.
+Parameter:
+	const char*    : [in] the pathname of the dictionary file.
+	unsigned char* : [in] the memory pointer to be saved.
+	int            : [in] the size of the memory.
+Return value:
+	error code.
+*/
+typedef int(*HWCBK_SaveDict)(const char*, unsigned char*, int);
+
+/*
+HWCBK_ReleaseDict: Callback function which releases the dictionary.
+Function: Release the dictionary in the memory.
+Parameter:
+	unsigned char* : [in] the pointer to the dictionary in the memory.
+Return value:
+	error code.
+*/
+typedef int(*HWCBK_ReleaseDict)(unsigned char *);
+
+/*
+HWKIM_GetVersion: Get the version information.
+Function: get the HWKey Engine version information
+Return value:
+	version number
+*/
+char *HWKIM_GetVersion(void);
+
+/*
+HWKIM_Init: Initialize the input method
+Function: Set the configuration of the input method to the default values.
+
+The default values are set as follows:
+	Input method language: not set
+	Workspace: not set
+	System dictonary: not set
+	User dictionary: invalidate the user dictionary feature
+	Input method mode: HWIM_MODE_PHONETIC
+	Keyboard Mode: HWIM_KEYBOARD_NOTREDUCE.
+	Fuzzy Pinyin options: 0  (Fuzzy Pinyin is invalid)
+	Chinese Character Set: 0x1
+	Output Mode of Uppercase and Lowercase(English):
+		HWIM_ENGLISH_OUTPUT_LOWERCASE.
+
+Parameter:
+	pHandle            : [in] The handle pointer of the input method.
+	CallbackFileLoader : [in] Callback function that loads dictionary.
+	CallbackReleaser   : [in] Callback function that releases dictionary.
+Return value:
+	error code
+*/
+int HWKIM_Init(HWIM_HANDLE *pHandle,
+               HWCBK_LoadDict CallbackFileLoader,
+               HWCBK_ReleaseDict CallbackReleaser);
+
+/*
+HWKIM_CopyHandleSetting: Copy the settings of the handle.
+Function: Copy the settings in the source handle to the destination handle.
+Parameter:
+	pDstHandle : [in/out] the pointer to the destination handle.
+	pSrcHandle : [in] the pointer to the source handle.
+Return value:
+	error code.
+*/
+int HWKIM_CopyHandleSetting(HWIM_HANDLE *pDstHandle,
+                            const HWIM_HANDLE *pSrcHandle);
+
+/*
+HWKIM_SetWorkSpace: Set the workspace of the input method.
+Function: Set the workspace of the input method.
+Parameter:
+	pHandle  : [in] handle pointer of the input method.
+	pcRam    : [in] the pointer to the workspace, 4-byte alignment.
+	lRamSize : [in] workspace size, which is a multiple of 4.
+	                Minimum is HWKEYIM_MIN_RAMSIZE
+Return value:
+	error code.
+*/
+int HWKIM_SetWorkSpace(HWIM_HANDLE *pHandle,
+                       char *pcRam,
+                       long lRamSize);
+
+/*
+HWKIM_SetLanguageDict: Set the system dictionary.
+Function: save the system dictionary pointer to the handle.
+Parameter:
+	pHandle             : [in] handle pointer of the input method.
+	nLanguage           : [in] the code of input method language.
+	pszDictFilePathName : [in] the pathname of the dictionary file.
+Return value:
+	error code.
+*/
+int HWKIM_SetLanguageDict(HWIM_HANDLE *pHandle,
+                          int  nLanguage,
+                          const char *pszDictFilePathName);
+
+/*
+HWKIM_ReleaseLanguageDict: Release the system dictionary.
+Function: Release the memory of the system dictionary.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	error code.
+*/
+int HWKIM_ReleaseLanguageDict(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_GetLanguage: Get the setting of the input method language.
+Function: Get the setting of the input method language in the handle.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	the setting of input method language, or error code.
+*/
+int HWKIM_GetLanguage(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetUserDict: Set user dictionary.
+Function: Save the user dictionary pointer to the handle.
+Parameter:
+	pHandle             : [in] handle pointer of the input method.
+	pszDictFilePathName : [in] the pathname of the dictionary file.
+Return value:
+	error code.
+*/
+int HWKIM_SetUserDict(HWIM_HANDLE *pHandle,
+                      const char *pszDictFilePathName);
+
+/*
+HWKIM_SaveUserDict: Save the user dictionary.
+Function: Save the user dictionary in the memory to the file
+Parameter:
+	pHandle             : [in] handle pointer of the input method.
+	pszDictFilePathName : [in] the pathname of the dictionary file.
+Return value:
+	error code.
+*/
+int HWKIM_SaveUserDict(HWIM_HANDLE *pHandle,
+                       const char *pszDictFilePathName,
+                       HWCBK_SaveDict CBK_DictSaver);
+
+/*
+HWKIM_ReleaseUserDict: Release the user dictionary.
+Function: Release the user dictionary.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	error code.
+*/
+int HWKIM_ReleaseUserDict(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetKeyboardMode: Set keyboard mode.
+Function: Set keyboard mode.
+Parameter:
+	pHandle   : [in] handle pointer of the input method.
+	nKeyboard : [in] keyboard mode.
+Return value:
+	error code.
+*/
+int HWKIM_SetKeyboardMode(HWIM_HANDLE *pHandle,
+                          int nKeyboard);
+
+/*
+HWKIM_GetKeyboardMode:Get current keyboard mode.
+Function:Get current keyboard mode.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	keyboard mode or error code.
+*/
+int HWKIM_GetKeyboardMode(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetUserDefineKeyBoard:
+	Set the keyboard layout to user defined mode. If the target input method
+	or language will use a specified user defined keyboard layout, please
+	invoke this function before switch to the target input method to
+	initialize the layout.
+Function:
+	Return the current keyboard setting in the handle
+Parameter:
+	pHandle  : [in] handle of the input method
+	pwKeyPrj : [in] Mapping Array of the user defined keyboard layout.
+	                "HW_KEY_Separator_Code and HW_KEY_Wildcard_Code" are
+	                illegal codes for this array. The user defined keyboard
+	                layout is only available in Pinyin Input and Bopomofo
+	                Input.
+	iKeyNum  : [in] key number of the User defined keyboard
+Return Value:
+	error code.
+
+Samples: (The Numeric keyboard of Pinyin input)
+#define HWKIM_KEYNUM 8
+unsigned short awKeyBoardLayOut[HWKIM_KEYNUM][HWIM_MAX_KEYPROJECT_NUN + 2] = {
+	// The first element is the input symbol,
+	// the ones in the middle are the mapping keys,
+	// the last one is the ending mark.
+	{ '2', 'a', 'b', 'c', '\0' },
+	{ '3', 'd', 'e', 'f', '\0' },
+	{ '4', 'g', 'h', 'i', '\0' },
+	{ '5', 'j', 'k', 'l', '\0' },
+	{ '6', 'm', 'n', 'o', '\0' },
+	{ '7', 'p', 'q', 'r', 's', '\0' },
+	{ '8', 't', 'u', 'v', '\0' },
+	{ '9', 'w', 'x', 'y', 'z', '\0' },
+};
+Notice:
+	1.For user defined keyboard layout, only the valid symbols(all the
+	  internal legal symbols for the current input method) can be set as
+	  mapping keys.If some special mapping keys are need rather than the
+	  internal ones, the interface HWKIM_ChangeDispCode should be invoke to
+	  modify the mapping relation.
+	2.the input symbol should not be one member of the mappping keys except
+	  that this mapping is one-one mapping.
+	  for example, "{ L'a', L'a', L'b', L'c', L'\0' }" is wrong.
+*/
+int HWKIM_SetUserDefineKeyBoardMode(HWIM_HANDLE *pHandle,
+               unsigned short (*pwKeyBoardLayOut)[HWIM_MAX_KEYPROJECT_NUM + 2],
+               int iKeyNum);
+
+/*
+HWKIM_SetChineseInputMode: Set Chinese input mode.
+Function: Set Chinese input mode in the handle.
+Parameter:
+	pHandle           : [in] handle pointer of the input method.
+	nChineseInputMode : [in] the code of Chinese input method.
+Return value:
+	error code.
+*/
+int HWKIM_SetChineseInputMode(HWIM_HANDLE *pHandle, int nChineseInputMode);
+
+/*
+HWKIM_GetChineseInputMode: Get the mode of Chinese input method.
+Function: Get the mode of Chinese input method in the handle.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	Chinese input mode or error code.
+*/
+int HWKIM_GetChineseInputMode(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetChineseFuzzy: Set Chinese Pinyin fuzzy tone.
+Function: Set Chinese Pinyin fuzzy tone in the handle.
+Parameter:
+	pHandle    : [in] handle pointer of the input method.
+	nFuzzyCode : [in] the code of the fuzzy tone
+Return value:
+	error code.
+*/
+int HWKIM_SetChineseFuzzy(HWIM_HANDLE *pHandle, int nFuzzyCode);
+
+/*
+HWKIM_GetChineseFuzzy: Get chinese Pinyin fuzzy tone.
+Function: Get chinese Pinyin fuzzy tone in the handle.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	Setting of chinese Pinyin fuzzy tone, or error code.
+*/
+int HWKIM_GetChineseFuzzy(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetChineseErrorCorrect:
+	Set error correct options of Chinese Pinyin and English input
+Function:
+	Set error correct options of Chinese Pinyin and English input
+Parameter:
+	pHandle       : [in] handle pointer of the input method.
+	nErrorCorrect : [in] error correct type.
+Return value:
+	error code.
+*/
+int HWKIM_SetErrorCorrect(HWIM_HANDLE *pHandle, int nErrorCorrect);
+
+/*
+HWKIM_GetChineseErrorCorrect:
+	Get error correct options of Chinese Pinyin and English input
+Function:
+	Get error correct options of Chinese Pinyin and English input
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	error correct options or error code.
+*/
+int HWKIM_GetErrorCorrect(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetEnMixCn: Set the En Cn mixed cand, for example "ƒ„out¡À".
+Function:
+	Set the En Cn mixed cand
+Parameter:
+	pHandle  : [in] handle pointer of the input method.
+	nEnMixCn : [in] Cn mixed cand type 0 or 1
+Return value:
+	error code.
+*/
+int HWKIM_SetEnMixCn(HWIM_HANDLE *pHandle, int nEnMixCn);
+
+/*
+HWKIM_GetEnMixCn: Get the En Cn mixed cand options
+Function:
+	Get the En Cn mixed cand options
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	En Cn mixed cand options or error code.
+*/
+int HWKIM_GetEnMixCn(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetRareSingleWord: Set the rare word input options
+Function:
+	Set the En rare word input options.
+	For example, input "tututu" get candidate "àê"
+Parameter:
+	pHandle         : [in] handle pointer of the input method.
+	nRareSingleWord : [in] get rare word cand or not, 0 or 1
+Return value:
+	error code.
+*/
+int HWKIM_SetRareSingleWord(HWIM_HANDLE *pHandle, int nRareSingleWord);
+
+/*
+HWKIM_GetRareSingleWord: Get the rare word input options
+Function:
+	Get the En rare word input options.
+	For example, input "tututu" get candidate "àê"
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	rare word input options or error code.
+*/
+int HWKIM_GetRareSingleWord(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetUserDefinePhrase: Set user define phrase options
+Function: Set user define phrase options
+	
+Parameter:
+	pHandle           : [in] handle pointer of the input method.
+	nUserDefinePhrase : [in] get user define phrase or not, 0 or 1.
+Return value:
+	error code.
+*/
+int HWKIM_SetUDPhrase(HWIM_HANDLE *pHandle, int nUserDefinePhrase);
+
+/*
+HWKIM_GetUserDefinePhrase: Get user define phrase options
+Function: Get user define phrase options
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	user define phrase options or error code.
+*/
+int HWKIM_GetUDPhrase(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_GetUDPhrase:set user define fuzzy options
+Function: Set user define fuzzy options
+Parameter:
+	pHandle          : [in] handle pointer of the input method.
+	nUserDefineFuzzy : [in] set user define fuzzy or not, 0 or 1.
+Return value:
+	error code.
+*/
+int HWKIM_SetUDFuzzy(HWIM_HANDLE *pHandle, int nUserDefineFuzzy);
+
+/*
+HWKIM_GetUDFuzzy: Get user define fuzzy options
+Function: Get user define fuzzy options
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	user define fuzzy options or error code.
+*/
+int HWKIM_GetUDFuzzy(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetSamePhoneticFlag:
+	Set flag code for same phonetic with different writing type.
+Function: Set flag for same phonetic with different writing type.
+Parameter:
+	pHandle   : [in] handle pointer of the input method.
+	nFlagCode : [in] the flag. For example, "HW_SAMEPHONETIC_JU_JV", etc.
+Return value:
+	error code.
+*/
+int HWKIM_SetSamePhoneticFlag(HWIM_HANDLE *pHandle, int nFlagCode);
+
+/*
+HWKIM_GetSamePhoneticFlag:
+	Get flag code for same phonetic with different writing type.
+Function:
+	Get flag code for same phonetic with different writing type.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	setting of flag code for same phonetic with different writing type.
+*/
+int HWKIM_GetSamePhoneticFlag(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetChineseCharset: Set Chinese character set.
+Function: Set chinese character set in the handle.
+Parameter:
+	pHandle  : [in] handle pointer of the input method.
+	nCharset : [in] the range of the character set
+Return value:
+	error code.
+*/
+int HWKIM_SetChineseCharset(HWIM_HANDLE *pHandle, int nCharset);
+
+/*
+HWKIM_GetChineseCharset: Get chinese character set.
+Function: Get chinese character set in the handle.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	the setting of chinese character set, or error code.
+*/
+int HWKIM_GetChineseCharset(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetEnglishCapital: Set English output mode of uppercase and lowercase.
+Function: Set English output mode of uppercase and lowercase.
+Parameter:
+	pHandle       : [in] handle pointer of the input method.
+	nLatinCapital : [in] the setting of uppercase and lowercase.
+Return value:
+	error code.
+*/
+int HWKIM_SetEnglishCapital(HWIM_HANDLE *pHandle, int nLatinCapital);
+
+/*
+HWKIM_GetEnglishCapital: Get English output mode of uppercase and lowercase.
+Function: Get English output mode of uppercase and lowercase.
+Parameter:
+	pHandle : [in] handle pointer of the input method.
+Return value:
+	the output mode of uppercase and lowercase, or error code
+*/
+int HWKIM_GetEnglishCapital(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetChineseEnglishMix: Set Chinese Pinyin and English mixed input mode
+Function:
+	Set mix mode that allow English input in Chinese Pinyin input
+	mode. while nIsMix == 1, then load the specified English system
+	dictionary by the parameter, otherwise, release the English system
+	dictionary.
+Parameter:
+	pHandle             : [in] handle of the input method
+	nIsMix              : [in] 1: yes; 0 :no.
+	nLanguage           : [in] language code, such as HWLANG_English_USA.
+	pszDictFilePathName : [in] system dictionary specified by nLanguage.
+Return value:
+	error code.
+*/
+int HWKIM_SetChineseEnglishMix(HWIM_HANDLE *pHandle,
+                               int  nIsMix,
+                               int  nLanguage,
+                               const char *pszDictFilePathName);
+
+/*
+HWKIM_GetChineseEnglishMix:
+	Get the status of input method that if the mix mode is active or not.
+Function: Get the mix mode status.
+Parameter:
+	pHandle : [in] handle of the input method
+Return value:
+	1, the mix mode is activated.
+	0, the mix mode is off.
+	error code
+*/
+int HWKIM_GetChineseEnglishMix(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_SetOutCandGroup:
+	Set the output mode that if the recognize result is grouping or not.
+	This feature is only available in Pinyin input and Bopomofo input.
+	And not support in Stroke input and Cangjie.
+Function:
+	Set the recognized result is grouping or not. The default status is no
+	grouping.
+Suggestion:
+	For not reduced keyboard layout(such as QWERTY keyboard in Pinyin
+	Input), the grouping is no necessary. Rather the grouping is useful in
+	reduced keyboard layout(the layout that one key mapping more than one
+	symbols). Pinyin input and Bopomofo input support automatically divide
+	the recognized results to different groups according to the dictionary
+	(the grouping is depend on the location of the first separator in the
+	input string).This feature can reduce the selection operation and
+	facilitate user input speed.
+Parameter:
+	pHandle     : [in] handle pointer of the input method
+	iIsOutGroup : [in] flag of the grouping feature.
+	                   1: divide the results.
+	                   0: this feature is off.
+Return value:
+	error code.
+*/
+int HWKIM_SetOutCandGroup(HWIM_HANDLE *pHandle, int iIsOutGroup);
+
+/*
+HWKIM_IsOutCandGroup: Check if the grouping feature is on or off.
+Function: Get the current status that if the engine is in grouping mode or not.
+Parameter:
+	pHandle     : [in] handle pointer of input method
+	iIsOutGroup : [in] flag of the grouping mode
+Return value:
+	1.Yes
+	0.No
+*/
+int HWKIM_IsOutCandGroup(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_ChangeDispCode:
+	Modify the default mapping codes that support by the engine. If the
+	character that used for display is not the just one that user required,
+	then this function will be useful to change this mapping relation.
+	such as:  In stroke input:
+	the default mapping codes are:
+		0x2014, 0x4E28, 0x4E3F, 0x4E36, 0x003C
+		L"1°™",  L"2ÿ≠",  L"3ÿØ", L"4ÿº", L"5<"
+	If user want to display "Å^"  on the UI, but the current default m
+	mapping code is "<", then this can be updated by invoke pwSrcDispCode.
+Function: Get the transformed result of the input string.
+Parameter:
+	pHandle       :[in] handle pointer
+	pwSrcDispCode :[in] default mapping code, ends with '\0'.
+	pwDstDispCode :[in] required mapping code that will be used for
+	                    displaying, ends with '\0'.
+Return value:
+	error code.
+*/
+int HWKIM_ChangeDispCode(HWIM_HANDLE *pHandle,
+                         unsigned short *pwSrcDispCode,
+                         unsigned short *pwDstDispCode);
+
+/*
+HWKIM_IsValidCharacter:
+	Check whether wCode is valid in the current system dictionary.
+Function:
+	Check whether wCode is valid in the current system dictionary.
+Parameter:
+	pHandle : [in] handle pointer
+	wCode   : [in] the Unicode of the target character
+Return value:
+	error code.
+*/
+int HWKIM_IsValidCharacter(HWIM_HANDLE *pHandle, unsigned short wCode);
+
+/*
+HWKIM_InputStrClean : Initialize the input string to NULL.
+Function: Can be used to clear the middle results of the input string.
+Parameter:
+	pHandle : [in] handle pointer
+Return value:
+	error code.
+*/
+int HWKIM_InputStrClean(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_AddChar: Add a new char input the unrecognized input string.
+Function: Add a new character to the target input string.
+Parameter:
+	pHandle : [in] handle pointer
+	wChar   : [in] target char.(HWIM_KEY_BackSpace_Code is legal)
+Return value:
+	error code.
+*/
+int HWKIM_AddChar(HWIM_HANDLE *pHandle, unsigned short wChar);
+
+/*
+HWKIM_AddStr: Add a sub-string input the unrecognized string.
+Function: Add a sub-string input the target input string.
+Parameter:
+	pHandle : [in] Handle pointer
+	wAddStr : [in] target sub-string(HWIM_KEY_BackSpace_Code is legal)
+Return value:
+	error code.
+*/
+int HWKIM_AddStr(HWIM_HANDLE *pHandle, unsigned short *pwAddStr);
+
+/*
+HWKIM_GetInputStr: Get input string
+Function: Get input string
+Parameter:
+	pHandle : [in] handle pointer
+	pwStr   : [out] buffer for input string.
+Return value:
+	error code.
+*/
+int HWKIM_GetInputStr(HWIM_HANDLE *pHandle, unsigned short *pwStr);
+
+/*
+HWKIM_GetInputTransResult: Get the transformed results of the input string.
+Function: Get the transformed string result correspond to the input string.
+Parameter:
+	pHandle     : [in] handle pointer
+	pwOutString : [out] buffer that used to store the display string,
+	              size:HW_MAX_INPUT_SHOW_LEN * 2 + 2,
+	              with wide character encoding.
+Return value:
+	displaying string or error code.
+*/
+int HWKIM_GetInputTransResult(HWIM_HANDLE *pHandle,
+                              unsigned short *pwOutString);
+
+/*
+HWKIM_GetConvertedCharNum: Get the number of converted Chinese character(s).
+Function: After calling HWKIM_ChooseCandWord() success, some Pinyins were
+          converted to Chinese character(s). This function counts the number of
+          the converted Chinese character(s).
+Parameter:
+	pHandle     : [in] handle pointer
+Return value:
+	number of converted Chinese character(s) or error code.
+*/
+int HWKIM_GetConvertedCharNum(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_GetPhoneticGroup: Get the grouping results.
+Function: Get the grouping results.
+Parameter:
+	pHandle             : [in] handle pointer
+	pwOutPhoneticGroups : [out] the Phonetic groups end with '\0'
+	                      The minimum buffer size: HWRE_OUT_PHONETIC_BUFSIZE
+Return value:
+	groups number according to the phonetic string.
+*/
+int HWKIM_GetPhoneticGroup(HWIM_HANDLE *pHandle,
+                           unsigned short *pwOutPhoneticGroups);
+
+/*
+HWKIM_GetWordCandidates: Get the candidates.
+Function: Get the recognized candidate results
+Comment:
+	For Latin languages, HWKIM_GetPredictResult is recommended for get the
+	recognized candidates rather than HWKIM_GetWordCandidates.
+	If HWKIM_GetWordCandidates is used for get the candidates, the
+	parameter nStartWordIndex should be set to 0.
+Parameter:
+	pHandle           : [in] handle pointer
+	nSelectPhoneIndex : [in] Index of the groups
+	                    The nSelectPhoneIndex is range from -1 to
+	                    (groups_number - 1) when output groups candidate is
+	                    active. When the parameter value is -1, it's mean
+	                    there has no selection, the returned candidate is
+	                    the optimized candidate. When output groups
+	                    candidate is off, the parameter nSelectPhoneIndex
+                            is not in use, so the value of the parameter has no
+                            limit.
+	nStartWordIndex   : [in] index of the target candidate
+	pwCandWordBuf     : [out] candidates buffer, 4 bytes alignment.
+	                    In Chinese input mode:
+	                    reserve (HWRE_MAX_CHINESE_WORD_LEN + 1) character
+	                    size for results and end mark.
+	                    In Latin input mode:
+	                    reserve (HWRE_MAX_LATIN_WORD_LEN + 1) character size
+	                    for results and the end mark.
+	nCandWordBufSize  : [in] candidates buffer size, counted by bytes.
+Return Value:
+	candidates number
+*/
+int HWKIM_GetWordCandidates(HWIM_HANDLE *pHandle,
+                            int nSelectPhoneIndex,
+                            int nStartWordIndex,
+                            unsigned short *pwCandWordBuf,
+                            int nCandWordBufSize);
+
+/*
+HWKIM_SelectCandWord: Select the specified candidate.
+Function:
+	Select the target candidate from the candidate groups.
+Parameter:
+	pHandle    : [in] handle pointer
+	nWordIndex : [in] absolute(not relative) index of the selected candidate
+Return value:
+	error code.
+*/
+int HWKIM_ChooseCandWord(HWIM_HANDLE *pHandle, int nWordIndex);
+
+/*
+HWKIM_IsFinish: Test if the user input has been finished or not.
+Function:
+	Test if all the input string has been recognized as candidate results
+	or not.
+Parameters:
+	pHandle : [in] handle pointer
+Return value:
+	1:yes
+	0:no
+	error code.
+*/
+int HWKIM_IsFinish(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_GetFullPhonetic: Get the complete Pinyin String of the final result.
+Function: Get the complete Pinyin String in Chinese Pinyin Input mode.
+	If the input string contains some simplified Pinyin string,
+	the function can return the complete Pinyin string of the candidate.
+	For example: if the input string is "hw", and user select "∫∫Õı"
+	as candidates, when the selection is finished, invoke this function can
+	get the complete Pinyin string "han'wang".
+Parameter:
+	pHandle        : [in] handle pointer
+	pwFullPhonetic : [out] output the complete Pinyin string of the
+	                 selected final candidates. the minimum size is
+	                 HW_MAX_INPUTSTR_LEN * (HWIM_MAX_PHONETIC_LEN + 1).
+Return value:
+	length of the complete Pinyin string or error code.
+*/
+int HWKIM_GetFullPhonetic(HWIM_HANDLE *pHandle,
+                          unsigned short *pwFullPhonetic);
+
+/*
+HWKIM_UpdateUserDict: Update the user dictionary.
+Function: Update the user dictionary.
+Note:
+	If the input word has exist in system dictionary or user dictionary,
+	the frequency of the word will be updated, and the Return value will be
+	HWERR_WORD_EXIST.
+Parameter:
+	pHandle        : [in] handle pointer
+	pwFullPhonetic : [in] the complete Pinyin string which will be separated
+	                      by HW_KEY_Separator_Code, and end with \0.
+	pwWord         : [in] Unicode string of the candidate, ends with \0.
+	                 No-Chinese input mode:
+	                 the user defined phrase stored in pwFullPhonetic, the
+	                 parameter pwWord should set to be NULL.
+	                 In Chinese input mode:
+	                 if any one of pwFullPhonetic and pwWord is NULL, then
+	                 update the user dictionary with the default internal
+	                 result. If none of the 2 parameter is NULL, 
+	                 then use the input phrase for update.
+Return value:
+	Error code.
+*/
+int HWKIM_UpdateUserDict(HWIM_HANDLE *pHandle,
+                         const unsigned short *pwFullPhonetic,
+                         const unsigned short *pwWord);
+
+/*
+HWKIM_GetPredictResult: Get the prediction word.
+Function: Get the prediction word.
+Parameter:
+	pHandle        : [in] handle pointer
+	pwInWordPrefix : [in] the target word or sub-string that will be used
+	                        as predicting search. The string should be ended
+	                        with '\0'.
+	                   It doesn't need allocate extra memory for predicting
+	                   of recognized candidates string. But for predicting
+	                   of the prediction candidates string, extra memory is
+	                   need to allocate.
+	pwInPhonetic   : [in] the Pinyin String specified by pwInWordPrefix
+	                        and separated by code HW_KEY_Separator_Code.
+	                        If no Pinyin string is available, can be set to
+	                        NULL.
+	pwResultBuf    : [out] prediction results buffer, each prediction
+	                         result is separated with 0.
+	                   For Chinese Input:
+	                   ((max(8ÔøΩÔøΩHWRE_MAX_WORD_LEN * 2) * (expected candidates number))
+	                   bytes required.
+	                   For English Input:
+	                   (64 * (expected candidates number)) bytes required.
+	                   pwCandWordBuf should be 4 bytes alignment.
+	nResultBufSize : [in] prediction results buffer size, counted by bytes.
+Return value:
+	prediction word number or error code.
+*/
+int HWKIM_GetPredictResult(HWIM_HANDLE *pHandle,
+                           unsigned short *pwInWordPrefix,
+                           unsigned short *pwInPhonetic,
+                           unsigned short *pwResultBuf,
+                           int nResultBufSize);
+
+/*
+Function:
+	Convert Chinese Character from simplified type to tradition type or
+	convert Chinese Character from tradition type to simplified type.
+Parameters:
+	pwDstCode    : [out] output string
+	iDstBufLen   : [out] pwDstCode buffer size
+	pwSrcCode    : [in] input string, max lenth is 8
+	iConvertFlag : [in]
+                       1, simplified type to tradition type.
+	               2, tradition type to simplified type.
+	               3, turn simplified type or tradition type to each other
+Return value:
+	number of the output string
+*/
+int HWKIM_TradSimpConvert(unsigned short *pwDstCode,
+                          int iDstBufLen,
+                          unsigned short *pwSrcCode,
+                          int iConvertFlag);
+
+/*
+Function:
+	Get the source code of a Chinese character specified by Input Mode.
+	This feature is only available for Pinyin and Stroke.
+	Bopomofo(Zhuyin) and Cangjie do not support this feature.
+Parameters:
+	pHandle   : [in] handle pointer
+	wUnicode  : [in] the Unicode code of the input character
+	pwSrcCode : [out] the source code specified by parameter wUnicode.
+	                  The Pinyin source codes for multiple pronunciation
+	                  character is separated by '\0'.
+Buffer size:
+	Pinyin input: ([10 * (HWIM_MAX_PHONETIC_LEN + 1)] * 2) bytes. Each
+	Pinyin string is separated with '\0'.
+	Stroke input: ([48 + 1] * 2) bytes. Each Stroke string is separated with
+	'\0'.
+	The buffer is allocated and maintained by developer.
+Return value:
+	For Pinyin input: Pinyin string number.
+	For stroke input: 1.
+	or error code.
+*/
+int HWKIM_GetSrcSequence(HWIM_HANDLE *pHandle,
+                         unsigned short wUnicode,
+                         unsigned short *pwSrcCode);
+
+/*
+Function: Set user define fuzzy pair
+Parameters:
+	pHandle             : [in] handle pointer
+	pwYourPronounce     : [in] fuzzy pronounce
+	pwStandardPronounce : [in] standard pronounce
+	nIsAddOrDel         : [in] 1: add user define fuzzy pair
+	                           2: delete user define fuzzy pair
+Return value:
+	error code.
+*/
+int HWKIM_SetUserDefineFuzzyPair(HWIM_HANDLE *pHandle,
+                                 unsigned short *pwYourPronounce,
+                                 unsigned short *pwStandardPronounce,
+                                 int nIsAddOrDel);
+
+/*
+Function: Get user define fuzzy pair or user define phrase
+Parameters:
+	pwInputStr : [in] input string
+	pwAimedStr : [in] aimed string
+	pnPairNum  : [in] pair number
+	nGetType   : [in] 1: get define fuzzy pair and number
+	                  2: get user define phrase and number
+Return value:
+	error code.
+*/
+int HWKIM_GetUDFuzzyPairORUDPhrase(HWIM_HANDLE *pHandle,
+                                   unsigned short *pwInputStr,
+                                   unsigned short *pwAimedStr,
+                                   int *pnPairNum,
+                                   int nGetType);
+
+/*
+Function: Define a short string as the input string of a long emotional string.
+	Such as specify "haha" as the input string of "O(°…_°…)O" and etc.
+Parameters:
+	awPYStr     : [in] input string
+	awUDPhrase  : [in] target string
+	nIsAddOrDel : [in] 1: add user define phrase
+	                    2: delete user define phrase
+Return value:
+	error code.
+*/
+int HWKIM_SetUserDefinePhrase(HWIM_HANDLE *pHandle,
+                              unsigned short *awPYStr,
+                              unsigned short *awUDPhrase,
+                              int nIsAddOrDel);
+
+/*
+HWKIM_UpdateUserDictEx: Update the user dictionary.
+Function: Update the user dictionary.
+Note:
+	If iWordType is set to be HWIM_WORDTYPE_USER_AUTOLEARN, and the input
+	word has exist in system dictionary or user dictionary, the frequency
+	of the word will be updated, and the Return value will be HWERR_SUCCESS.
+	If iWordType is set to be HWIM_WORDTYPE_USER_CUSTOM or
+	HWIM_WORDTYPE_USER_ADDRESSBOOK, and the the input word has exist in
+	system dictionary or user dictionary, the Return value will be
+	HWERR_WORD_EXIST.
+Parameter:
+	pHandle        : [in] handle pointer
+	pwFullPhonetic : [in] the complete Pinyin string which will be
+	                      separated by HW_KEY_Separator_Code, and ends with
+	                      '\0'.
+	pwWord         : [in] Unicode string of the candidate which ends with '\0'.
+	                 In Chinese HWIM_MODE_PHONETIC input mode:
+	                 if any one of pwFullPhonetic and pwWord is NULL, then
+	                 update the user dictionary with the default internal
+	                 result. If none of the 2 parameter is NULL, then use
+	                 the input phrase for update.
+                         No-Chinese input mode:
+                         the user defined phrase stored in pwFullPhonetic, the
+	                 parameter pwWord should set to be NULL.
+	iWordType      : [in] must be one of HWIM_WORDTYPE_USER_AUTOLEARN,
+	                      HWIM_WORDTYPE_USER_CUSTOM and
+	                      HWIM_WORDTYPE_USER_ADDRESSBOOK.
+	                      For System word, should be
+	                      HWIM_WORDTYPE_USER_AUTOLEARN.
+Return value:
+	error code.
+*/
+int HWKIM_UpdateUserDictEx(HWIM_HANDLE *pHandle,
+                           const unsigned short *pwFullPhonetic,
+                           const unsigned short *pwWord, int iWordType);
+
+/*
+Function: Get the user-defined word number
+Parameter:
+	pHandle   : [in] handle pointer
+	iWordType : [in] must be one of HWIM_WORDTYPE_USER_AUTOLEARN,
+	                 HWIM_WORDTYPE_USER_CUSTOM,
+	                 HWIM_WORDTYPE_USER_ADDRESSBOOK and
+	                 HWIM_WORDTYPE_USER_ALL
+
+Return value:
+	number of iWordType user-defined words 
+*/
+int HWKIM_GetUserWordCount(HWIM_HANDLE *pHandle, int iWordType);
+
+/*
+Function: Retrieve the user-defined words
+Parameters:
+	pHandle     : [in] handle pointer
+	pwPhonetics : [out] buffer for the zero-terminated phonetics
+	                    (separated by HW_KEY_Separator_Code) of all the
+	                    user-defined words.
+	pwWords     : [out] buffer for the Unicode zero-terminated strings of
+	                    all the user-defined words, unsigned short data
+	                    type.
+	iWordType   : [in] must be one of HWIM_WORDTYPE_USER_AUTOLEARN,
+	                        HWIM_WORDTYPE_USER_CUSTOM,
+	                        HWIM_WORDTYPE_USER_ADDRESSBOOK and
+	                        HWIM_WORDTYPE_USER_ALL
+	iGetWordNum : [out] word number. When the pwPhonetics is set to be null,
+	                    the value of "*iGetWordNum" maybe less than the
+	                    value got from HWKIM_GetUserWordCount. The reason is
+	                    some same phonetic word was deleted.
+Return value:
+	error code.
+*/
+int HWKIM_RetriveUserDefinedWords(HWIM_HANDLE *pHandle,
+                                  unsigned short *pwPhonetics,
+                                  unsigned short *pwWords,
+                                  int iWordType,
+                                  int *iGetWordNum);
+
+/*
+Function: Check the word exist or not.
+Parameters:
+	pHandle     : [in] handle pointer
+	pwPhonetics : [out] buffer for the zero-terminated phonetics
+	                    (separated by HW_KEY_Separator_Code) of all the
+	                    user-defined words.
+	pwWords     : [out] buffer for the Unicode zero-terminated strings of
+	                    all the user-defined words, unsigned short data type.
+	iWordType   : [in] must be one of HWIM_WORDTYPE_USER_AUTOLEARN,
+	                   HWIM_WORDTYPE_USER_CUSTOM,
+	                   HWIM_WORDTYPE_USER_ADDRESSBOOK,
+	                   HWIM_WORDTYPE_USER_ALL and HWIM_WORDTYPE_SYS
+Return value:
+	1:  exist.
+	0:  not exist
+	<0: error code.
+*/
+int HWKIM_WordExists(HWIM_HANDLE *pHandle,
+                     const unsigned short *pwFullPhonetic,
+                     const unsigned short *pwWord,
+                     int iWordType);
+
+/*
+HWKIM_DeleteUserWord: Delete User Words (or phrases), for Chinese.
+Function: Delete User Words (or phrases)
+Parameter:
+	pHandle        : [in] handle pointer
+	pwFullPhonetic : [in] the complete Pinyin string which will be
+	                      separated by HW_KEY_Separator_Code, and end with
+	                      '\0'. If the parameter pwFullPhonetic is set to be
+	                      NULL, all the user word whose Unicode string
+	                      matching with pwWord will be deleted.
+	pwWord         : [in] the Unicode string of the candidate which ends
+	                      with \0. If the parameter pwWords is set to be
+	                      NULL, all the user words will be deleted.
+	iWordType      : [in] must be one of HWIM_WORDTYPE_USER_AUTOLEARN,
+	                      HWIM_WORDTYPE_USER_CUSTOM,
+	                      HWIM_WORDTYPE_USER_ADDRESSBOOK and
+	                      HWIM_WORDTYPE_USER_ALL
+Return value:
+	error code.
+*/
+int HWKIM_DeleteUserWord(HWIM_HANDLE *pHandle,
+                         const unsigned short *pwFullPhonetic,
+                         const unsigned short *pwWord,
+                         int iWordType);
+
+/*
+HWKIM_ResetUserDict: Reset user dictionary
+Function: Reset user dictionary
+Parameter:
+	pHandle : [in] handle pointer
+Return value:
+	error code.
+*/
+int HWKIM_ResetChsUserDict(HWIM_HANDLE *pHandle);
+
+/*
+HWKIM_UpgradeUserDict: Upgrade user dictionary by old & new system dictionary
+Function: Upgrade user dictionary. Modify old user dictionary directly.
+Parameter:
+	pOldHandle: [in/out] For old system and user dictionary.
+	pNewHandle: [in] For new system dictionary.
+*/
+int HWKIM_UpgradeUserDict(HWIM_HANDLE *pOldHandle, HWIM_HANDLE *pNewHandle);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /*__HW_INPUT_METHOD_SDKW__*/

@@ -1,0 +1,20 @@
+//
+//  GZQwerty.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/4.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface GZQwerty : NSObject
+typedef void (^SuccesInputBlock)(NSString *compontText, NSArray *candiateArray);//输入 成功回传数据
+typedef void (^SuccesPredictBlock)(NSArray *candiateArray);//联想 成功回传数据
+
++ (id)defaultQwerty;
+- (void)sendInput:(int)inputCode complation:(SuccesInputBlock)data; //键盘输入
+- (void)predicInput:(NSString*)text complation:(SuccesPredictBlock)data; //文字联想
+- (void)keyboardReset; // 重置
+- (void)releaseWorkspace; // 释放工作空间
+@end

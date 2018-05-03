@@ -1,0 +1,210 @@
+//
+//  StrokeShowerView.m
+//  HanvonNotePad
+//
+//  Created by gao guoling on 11-10-20.
+//  Copyright (c) 2011年 Hanwang Technology Co. All rights reserved.
+//
+
+#import "StrokeShowerView.h"
+#import "HWColorPen.h"
+#import "LibraryUtility.h"
+
+
+#define STROKE_WIDTH 5.0
+
+
+@interface StrokeShowerView ()
+{
+
+    CGFloat SelfWidth;
+    CGFloat SelfHeight;
+    CGFloat MEMORY;
+
+    BOOL penColorTemp;
+    unsigned char *imRam;
+    color userColor;
+
+    float penWidth;
+    float penColorRed;
+    float penColorGreen;
+    float penColorBlue;
+    float penColorAlpha;
+}
+@end
+
+@implementation StrokeShowerView
+
+//add by myself
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor whiteColor];
+
+
+        SelfWidth = self.frame.size.width;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:self.frame.size.width];//
+        SelfHeight = self.frame.size.height;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:self.frame.size.height];//
+        MEMORY = SelfWidth * SelfHeight * 4;
+
+        [self initKeyboardWorkSpace];
+    }
+    return self;
+}
+
+// 初始化
+- (void)initKeyboardWorkSpace
+{
+    if (!penColorRed && !penColorGreen && !penColorBlue && !penColorAlpha) {
+        penWidth = [[GZUserDefaults getGroupValueForKey:@"penWidth"] intValue]; //笔画粗细
+        penColorBlue = [[GZUserDefaults getGroupValueForKey:@"penColorBlue"] floatValue];
+        penColorGreen = [[GZUserDefaults getGroupValueForKey:@"penColorGreen"] floatValue];
+        penColorRed = [[GZUserDefaults getGroupValueForKey:@"penColorRed"] floatValue];
+        penColorAlpha = [[GZUserDefaults getGroupValueForKey:@"penColorAlpha"] floatValue];
+        if (penWidth < 1 || penWidth > 10 || !penWidth) {
+            penWidth = 1;
+        }
+        if (penColorRed < 0 || penColorRed > 255 || !penColorRed) {
+            penColorRed = 0;
+        }
+        if (penColorGreen < 0 || penColorGreen > 255 || !penColorGreen) {
+            penColorGreen = 0;
+        }
+        if (penColorBlue < 0 || penColorBlue > 255 || !penColorBlue) {
+            penColorBlue = 0;
+        }
+        if (penColorAlpha < 0 || penColorAlpha > 1 || !penColorAlpha) {
+            penColorAlpha = 1;
+        }
+    }
+
+    userColor.b = penColorBlue;
+    userColor.r = penColorRed;
+    userColor.g = penColorGreen;
+
+    imRam = (unsigned char*)allocMemory(MEMORY);
+//    imRam = (unsigned char *)malloc((MEMORY));
+    memset(imRam, 0, MEMORY);
+
+    HWPEN_initializeEx(SelfWidth, SelfHeight, (DWORD*)imRam, 0, 1);
+    
+    HWPEN_SetPen(1, PENCIL, DARKBLUE, penWidth, 0);
+
+    HWPEN_SetUserColor(userColor);
+
+    penColorTemp = YES;
+}
+
+
+- (void)drawRect:(CGRect)rect
+{
+    if (!penColorTemp || !imRam) {
+        [self initKeyboardWorkSpace];
+    }
+
+    CGImageRef imageRef = NULL;
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little| kCGImageAlphaLast;
+    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, imRam, (MEMORY), nil);
+    CGColorSpaceRef crRef = CGColorSpaceCreateDeviceRGB();
+    
+    if (crRef == NULL) {
+        CGDataProviderRelease(provider);
+        return;
+    }
+    
+    if (provider != NULL) {
+        imageRef = CGImageCreate(SelfWidth, SelfHeight, 8, 32, SelfWidth * 4, crRef, bitmapInfo, provider, NULL, NO, 0);
+        CGDataProviderRelease(provider);
+    }
+    
+    CGColorSpaceRelease(crRef);
+    
+    if (imageRef != NULL) {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        
+        if (context != NULL) {
+            UIImage *img = [UIImage imageWithCGImage:imageRef];
+            CGContextSaveGState(context);
+            
+            CGRect touchRect = CGRectMake(0, 0, img.size.width ,img.size.height );
+            CGContextDrawImage(context, touchRect, imageRef);
+            CGContextRestoreGState(context);
+        }
+       
+        CGImageRelease(imageRef);
+        imageRef = NULL;
+    }
+}
+
+
+#pragma mark -- 手势操作
+// 点击
+- (void)strokeStartAtPoint:(CGPoint)point
+{
+    //CGRect rect = {0, 0, SelfWidth, SelfHeight};
+    //[self drawRect:rect];
+    CGFloat x = point.x;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.x];//
+    CGFloat y = point.y;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.y];//
+    NSLog(@"%f,%f",x, y);
+
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+
+    HWPEN_DrawLine(x, y, &re, 0, 255, 0);
+    
+    [self setNeedsDisplay];
+}
+// 移动
+- (void)strokeMoveToPoint:(CGPoint)point
+{
+    CGFloat x = point.x;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.x];//
+    CGFloat y = point.y;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.y];//
+    NSLog(@"%f,%f",x, y);
+
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+
+    HWPEN_DrawLine(x, y, &re, 0, 255, 0);
+
+    [self setNeedsDisplay];
+}
+// 抬起
+- (void)strokeEndAtPoint:(CGPoint)point
+{
+    CGFloat x = point.x;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.x];//
+    CGFloat y = point.y;//[[GZPublicMethod sharedPublicMethod] getPXWithPt:point.y];//
+    NSLog(@"%f,%f",x, y);
+
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+
+    HWPEN_DrawLine(-1, -1, &re, 0, 255, 0);
+//    HWPEN_FadeRect(rect, 60);
+
+    [self setNeedsDisplay];
+}
+
+
+// 清空笔迹
+- (void)clearStroke
+{
+    //memset(imRam, 0x00, MEMORY);
+    NSLog(@"~~ clearStroke");
+    if (imRam != nil) {
+        NSLog(@"~~ 释放  pencolor");
+        releaseMemory(imRam);
+        imRam = NULL;
+    }
+    
+    penColorTemp = false;
+    [self setNeedsDisplay];
+}
+
+- (void)releaseWorkspace {
+    if (imRam != nil) {
+        NSLog(@"~~ 释放  pencolor");
+        releaseMemory(imRam);
+        imRam = NULL;
+    }
+}
+
+- (void)dealloc {
+    NSLog(@"手写板 销毁");
+}
+@end

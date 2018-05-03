@@ -1,0 +1,175 @@
+#ifndef    HWCOLORPEN_H_
+#define    HWCOLORPEN_H_
+/* 画笔宽度 */
+#define MINPENWIDTH		1	// 最小画笔宽度
+#define MAXPENWIDTH		10	// 最大画笔宽度
+#define MAXNUMPOINT    100000//当前的画图板能够存放的采样点个数，包括抬笔标志
+/* 颜色变化速率 */
+#define MINCOLORRATE	10	// 最小颜色变化率
+#define MAXCOLORRATE	80	// 最大颜色变化率
+/* 颜色数目 */
+#define MONOCOLORNUM	15	// 单一颜色数目
+#define COMPCOLORNUM	13	// 彩色数目
+/* 彩色编号基准 */
+#define MULTICOLORBASE	100	// 彩色索引号基准值
+/* 笔画结束标记 */
+#define STROKEENDMARK	(-1)// 笔画结束标志
+/* 笔迹类型定义 */
+typedef enum {	
+	//SYSPEN=0;
+	PENCIL =1,			// 1-铅笔(PENCIL)
+	FOUNTAINPEN,	// 2-钢笔(FOUNTAINPEN)
+	BRUSHPEN		// 3-毛笔(BRUSHPEN)
+} THWPENSTYLE;
+/* 笔迹颜色定义 */
+typedef enum{
+	BLUE,			// 0-蓝色(BLUE)
+	GREEN,			// 1-绿色(GREEN)
+	CYAN,			// 2-青色(CYAN)
+	RED,			// 3-红色(RED)
+	PINK,			// 4-粉红色(PINK)
+	YELLOW,			// 5-黄色(YELLOW)
+	BLACK,			// 6-黑色(BLACK)
+	DARKBLUE,		// 7-深蓝色(DARKBLUE)
+	OLIVE,			// 8-橄榄色(OLIVE)
+	LIGHTBLUE,		// 9-浅蓝色(LIGHTBLUE)
+	MAROON,			// 10-栗色(MAROON)
+	PURPLE,			// 11-紫色(PURPLE)
+	DARKYELLOW,		// 12-暗黄色(DARKYELLOW)
+	SILVERGRAY,		// 13-银灰色(SILVERGRAY)
+	DARKGRAY,		// 14-黑灰色(DARKGRAY)
+	MULTICOLOR01=MULTICOLORBASE,
+	MULTICOLOR02,
+	MULTICOLOR03,
+	MULTICOLOR04,
+	MULTICOLOR05,
+	MULTICOLOR06,
+	MULTICOLOR07,
+	MULTICOLOR08,
+	MULTICOLOR09,
+	MULTICOLOR10,
+	MULTICOLOR11,
+	MULTICOLOR12,
+	MULTICOLOR13
+} THWPENCOLOR;
+#ifndef _color
+typedef struct _color
+{
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+	unsigned char alpha;
+} color;
+#endif
+typedef unsigned int        U32;
+typedef signed int			 S32;
+typedef unsigned char       U8;
+typedef U32 gdi_color;
+typedef struct 
+{
+	int x;
+	int y;
+}Point2;
+typedef struct tagRect
+{
+	int left;
+	int top;
+	int right;
+	int bottom;
+} TRect;
+#define TRUE 1
+#define FALSE 0
+#define NULL 0
+typedef unsigned long		DWORD;
+/* -------------------导出函数------------- */
+#ifdef __cplusplus
+extern "C"{
+#endif
+	/* 
+	功能:画图预处理函数
+	调用时机:在画图窗口建立时，调用此函数；
+	参数说明：
+
+
+	pDrawMemory:存放位图RGB值的内存,一个像素对应4个字节，ARGB，我们通过修改这个内存来实现画线的;
+	pDrawMemoryExtend：外部申请的比实际画图区域大的内存，大小为(nWight+200)*(nHeight+200)*4，即所申请的该块内存比实际画图区域的高度和宽度分别增加200，一个像素点对应4个字节。
+	nWight:画图区域的宽度
+	nHeight:画图区域的高度
+	isTopToBottom:pDrawMemory存放RGB值与像素点的对应关系。在WINDOWS平台下，是从最后一行开始存放的，从Bottom到Top的，此时取0；在Linux平台是从第一行开始存放的，此时取1
+	在实际上画图域的为（0,0）->(nWight-1,nHeight-1);默认的窗口左上角为（0，0）如果用户实际的画图区域的左上角不是（0，0），请根据实际情况偏移
+	nIsHigh:是否是高分辨率设备，取值为0或者1,1表示高分辨率设备，0表示低分辨率设备。
+	*/
+	int HWPEN_initializeEx( int nWidth, int nHeight, DWORD *pDrawMemory,int isTopToBottom,int nIsHigh);
+	/*
+	功能:汉王画笔属性设置函数；
+	入口参数:
+	nAntiLevel：反走样级别，范围为[0—3]，0表示不反走样,HWPEN_SetPen()函数里nPenStyle才生效,级别越高，反走样效果越好；
+	nPenStyle:画笔风格　可取PENCIL FOUNTAINPEN　BRUSHPEN
+	nColorType:颜色类型　
+	nPenWidth:画笔宽度，取值范围为 MINPENWIDTH - MAXPENWIDTH
+	nColorRate:彩笔颜色变化速率，取值范围为 MINCOLORRATE - MAXCOLORRATE　
+	返回值:
+	无
+	*/
+	void HWPEN_SetPen(int nAntiLevel,THWPENSTYLE nPenStyle, THWPENCOLOR nColorType, int nPenWidth, int nColorRate);
+	/* 
+	功能:采样点处理函数
+	调用时机:在MouseMove消息函数中调用此函数
+	入口参数:
+	x1: 当前采样点 X 坐标
+	y1: 当前采样点 Y 坐标
+	nPenAlpha：消隐模式绘画下，外围指定的画笔的透明度值，取值范围为：[0,255].
+	nFlag:表示是像皮状态还是画线状态，０表示画线，１表示擦除状态
+	nIsFadeFlag:当前模式是否是消隐绘画，0表示正常绘画，1表示消隐模式绘画
+	说明：在MouseUp也调用一次这个函数HWPEN_DrawLine(-1，-1);，参数赋(-1,-1)表抬笔
+	*/
+	void HWPEN_DrawLine(int x1,int y1,TRect* pRect,int nFlag,int nPenAlpha,int nIsFadeFlag);
+
+	/*
+	功能:重新制定位图缓存地址
+	调用时机:在有些系统中（比如android），位图缓存可能发生移动，导致彩笔系统缓存的位图地址失效，此时调用该函数，使得彩笔系统指向正确的位图缓存
+	对于不发生移动的系统根本不需要调用该函数
+	入口参数:
+	DWORD * pdwPix 位图缓存
+	*/
+	void HWPEN_UpdateDrawMemory(DWORD *pdwPix);
+
+		/*
+	功能:对指定的区域，按照一定的消隐速度做消隐处理.
+	调用时机:消隐模式绘画下，对某一个区域做消隐处理时，非消隐绘画模式下，不需要调用该函数。
+	入口参数:
+	TRect Rect： 要做消隐处理的区域
+	int nStep：消隐的速度，调用一次该函数，对应区域透明度减少的值，该值越大，消隐越明显。取值范围为0到100
+	*/
+	void HWPEN_FadeRect(TRect Rect,int nStep);
+	
+			/*
+	功能：重置pDrawMemoryExtend，使pDrawMemoryExtend与pDrawMemory保持一致
+	调用时机：外部进行画布清空之后调用，注意要在已清空pDrawMemory对应的画布之后再调用该函数。
+	*/
+    
+    void HWPEN_SetUserColor(color c);
+
+#ifdef HWXERASE
+	/*
+	参数的意义跟HWPEN_DrawLine是一致的
+	*/
+	void HWX_StorkePoint(int x,int y,TRect *pRect,int nFlag);
+	/*
+	这个函数在退出画线函数的时候调用
+	*/
+	void HWX_ExitDrawManager();
+	/*
+	这个函数在清屏的时候调用
+	*/
+	void HWX_ClearDrawManager();
+#endif
+
+
+   
+
+   
+#ifdef __cplusplus
+}
+#endif
+#endif  

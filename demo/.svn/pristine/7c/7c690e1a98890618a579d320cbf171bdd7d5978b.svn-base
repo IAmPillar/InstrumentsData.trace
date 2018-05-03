@@ -1,0 +1,147 @@
+//
+//  UIStrokeShowerView.m
+//  HanvonInput
+//
+//  Created by hanvon on 16/9/18.
+//  Copyright © 2016年 hanvon. All rights reserved.
+//
+
+#import "UIStrokeShowerView.h"
+
+
+#define STROKE_WIDTH 5.0
+
+
+@interface UIStrokeShowerView ()
+{
+    float penWidth;
+    float penColorRed;
+    float penColorGreen;
+    float penColorBlue;
+    float penColorAlpha;
+}
+@property CGMutablePathRef strokePath;
+@property CGPoint firstPoint;
+@property CGPoint lastPoint;
+@end
+
+@implementation UIStrokeShowerView
+
+//add by myself
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = RGBA(210, 213, 219, 1.0);
+        [self initialize];
+    }
+    return self;
+}
+
+// 点击
+- (void)strokeStartAtPoint:(CGPoint)point
+{
+    _lastPoint = _firstPoint = point;
+    CGPathMoveToPoint(_strokePath, nil, _firstPoint.x, _firstPoint.y);
+//    [self setNeedsDisplayInRect:[self invalidateRect]];
+    [self setNeedsDisplay];
+}
+
+// 移动
+- (void)strokeMoveToPoint:(CGPoint)point
+{
+    _lastPoint = point;
+    CGPathAddLineToPoint(_strokePath, nil, _lastPoint.x, _lastPoint.y);
+//    [self setNeedsDisplayInRect:[self invalidateRect]];
+    [self setNeedsDisplay];
+
+    _firstPoint = _lastPoint;
+}
+
+// 抬起
+- (void)strokeEndAtPoint:(CGPoint)point
+{
+    _lastPoint = point;
+    CGPathAddLineToPoint(_strokePath, nil, _lastPoint.x, _lastPoint.y);
+//    [self setNeedsDisplayInRect:[self invalidateRect]];
+    [self setNeedsDisplay];
+}
+
+
+// 清空笔迹
+- (void)clearStroke
+{
+    if (CGPathIsEmpty(_strokePath)) {
+        return;
+    }
+    
+    _strokePath = CGPathCreateMutable();
+    [self setNeedsDisplay];
+}
+
+
+#pragma mark - Private
+// 初始化
+- (void)initialize
+{
+    _strokePath = CGPathCreateMutable();
+
+    penWidth = [[GZUserDefaults getGroupValueForKey:@"penWidth"] intValue]; //笔画粗细
+    penColorBlue = [[GZUserDefaults getGroupValueForKey:@"penColorBlue"] floatValue];
+    penColorGreen = [[GZUserDefaults getGroupValueForKey:@"penColorGreen"] floatValue];
+    penColorRed = [[GZUserDefaults getGroupValueForKey:@"penColorRed"] floatValue];
+    penColorAlpha = [[GZUserDefaults getGroupValueForKey:@"penColorAlpha"] floatValue];
+
+    if (penWidth < 1 || penWidth > 10) {
+        penWidth = 1;
+    }
+    if (penColorRed < 0 || penColorRed > 255) {
+        penColorRed = 0;
+    }
+    if (penColorGreen < 0 || penColorGreen > 255) {
+        penColorGreen = 0;
+    }
+    if (penColorBlue < 0 || penColorBlue > 255) {
+        penColorBlue = 0;
+    }
+    if (penColorAlpha < 0 || penColorAlpha > 1) {
+        penColorAlpha = 1;
+    }
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    // 设置属性
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, penWidth);
+    CGContextSetLineCap(context, kCGLineCapRound);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
+    CGContextSetShouldAntialias(context, YES);
+    CGContextSetStrokeColorWithColor(context,[RGBA(penColorRed, penColorGreen, penColorBlue, penColorAlpha) CGColor]);
+
+    // 画线
+    CGContextBeginPath(context);
+    CGContextAddPath(context, _strokePath);
+    CGContextStrokePath(context);
+}
+
+- (CGRect)invalidateRect
+{
+    CGRect rect = CGRectMake ((_firstPoint.x > _lastPoint.x) ? _lastPoint.x : _firstPoint.x,
+                              (_firstPoint.y > _lastPoint.y) ? _lastPoint.y : _firstPoint.y,
+                              fabs(_firstPoint.x - _lastPoint.x),
+                              fabs(_firstPoint.y - _lastPoint.y));
+    rect = CGRectInset(rect, -STROKE_WIDTH, -STROKE_WIDTH);
+    if (rect.origin.x < 0) {
+        rect.origin.x = 0;
+    }
+
+    if (rect.origin.y < 0) {
+        rect.origin.y = 0;
+    }
+    return rect;
+}
+
+- (void)dealloc {
+    NSLog(@"手写板 销毁");
+}
+@end

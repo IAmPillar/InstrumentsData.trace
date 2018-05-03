@@ -1,0 +1,14 @@
+//
+//  GZSymbolCollectionCell.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/9.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface GZSymbolCollectionCell : UICollectionViewCell
+@property (nonatomic,copy) UILabel *titleLabel; //标题
+- (void)setTitleText:(NSString*)text;
+@end

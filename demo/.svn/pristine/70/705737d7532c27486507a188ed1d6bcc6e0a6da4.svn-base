@@ -1,0 +1,993 @@
+//
+//  KeyboardViewController.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/4.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "KeyboardViewController.h"
+#import "GZCandidateBarView.h"
+#import "GZCandidateMoreView.h"
+#import "GZQwertyKeyboard.h"
+#import "GZWrightKeyboard.h"
+#import "GZNumberKeyboard.h"
+#import "GZSymbolKeyboard.h"
+
+#import "GZQwerty.h"
+#import "GZWright.h"
+
+
+@interface KeyboardViewController ()
+
+@property (nonatomic, strong) NSLayoutConstraint *heightConstraint; //键盘整体高度约束
+@property (nonatomic, assign) CGFloat keyboardHeight; //键盘高度
+
+@property (nonatomic, strong) UIView *backgroundView; //键盘背景色
+
+@property (nonatomic, strong) GZCandidateBarView *tabBar; //候选框
+@property (nonatomic, strong) GZCandidateMoreView *tabBarMore; //候选框 展示更多
+@property (nonatomic, strong) GZQwertyKeyboard *textKeyboard; //全键盘
+@property (nonatomic, strong) GZWrightKeyboard *wrightKeyboard; //手写键盘
+@property (nonatomic, strong) GZNumberKeyboard *numberKeyboard; //数字键盘
+@property (nonatomic, strong) GZSymbolKeyboard *symbolKeyboard; //符号键盘
+
+@end
+
+
+
+@implementation KeyboardViewController
+
+#pragma mark -- life cycle
+/**
+ *Host App在调用Extension的时候会首先调用
+ *如果实现了的话，会先执行里面的函数再viewDidLoad
+ */
+- (void)beginRequestWithExtensionContext:(NSExtensionContext *)context {
+    [super beginRequestWithExtensionContext:context];
+    NSLog(@"开始启动Extension");
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor clearColor];
+    NSLog(@"启动viewDidload");
+
+    if (!_backgroundView) {
+        CGFloat height = [self getKeyboardViewHeight];
+        _backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, height)];
+        [self.view addSubview:_backgroundView];
+    }
+
+
+    [self addNavigationBarView];
+
+    NSString *keyboardStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+    if ([keyboardStr isEqualToString:@"qwerty_pinyin"]) {
+        [self addKeyboardView:1];
+    }else if ([keyboardStr isEqualToString:@"qwerty_english"]) {
+        [self addKeyboardView:2];
+    }else if ([keyboardStr isEqualToString:@"wright"]) {
+        [self addKeyboardView:3];
+    }
+
+}
+- (void)updateViewConstraints {
+    [super updateViewConstraints];
+    NSLog(@"updateViewConstraints");
+}
+- (void)viewWillLayoutSubviews{
+    [super viewWillLayoutSubviews];
+    NSLog(@"viewWillLayoutSubviews");
+}
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    NSLog(@"viewWillAppear");
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    NSLog(@"viewDidAppear");
+    CGFloat height = [self getKeyboardViewHeight];
+    if (height == 210.0) {
+        //竖屏
+        [self setKeyboardViewHeight:1];
+    }else {
+        //横屏
+        [self setKeyboardViewHeight:2];
+    }
+
+    //夜间模式
+    NSNumber *nightMode = [GZUserDefaults getGroupValueForKey:@"nightMode"];
+    if ([nightMode isEqualToNumber:@1]) {
+        _backgroundView.backgroundColor = [UIColor blackColor];
+        _backgroundView.alpha = 0.6;
+    }else {
+        _backgroundView.backgroundColor = [UIColor blackColor];
+        _backgroundView.alpha = 0.3;
+    }
+}
+- (void)dealloc {
+    NSLog(@"main主页面 销毁");
+    [self removeSelfAllViews];
+}
+
+
+#pragma mark -- UI
+//导航
+//导航高度固定为40
+- (void)addNavigationBarView {
+    UIView *navigationBarView = [[UIView alloc] init];
+    navigationBarView.backgroundColor = [UIColor whiteColor];
+    navigationBarView.layer.borderWidth = 0.5;
+    navigationBarView.layer.borderColor = [RGBA(210, 213, 219, 1.0) CGColor];
+    navigationBarView.tag = 101;
+    [self.view addSubview:navigationBarView];
+
+    navigationBarView.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint *top =
+    [NSLayoutConstraint constraintWithItem: navigationBarView
+                                 attribute: NSLayoutAttributeTop
+                                 relatedBy: NSLayoutRelationEqual
+                                    toItem: self.view
+                                 attribute: NSLayoutAttributeTop
+                                multiplier: 1.0
+                                  constant: 0.0];
+    NSLog(@"1");
+    NSLayoutConstraint *left =
+    [NSLayoutConstraint constraintWithItem: navigationBarView
+                                 attribute: NSLayoutAttributeLeft
+                                 relatedBy: NSLayoutRelationEqual
+                                    toItem: self.view
+                                 attribute: NSLayoutAttributeLeft
+                                multiplier: 1.0
+                                  constant: 0.0];
+    NSLog(@"2");
+    //导航高度固定为40
+    NSLayoutConstraint *height =
+    [NSLayoutConstraint constraintWithItem: navigationBarView
+                                 attribute: NSLayoutAttributeHeight
+                                 relatedBy: NSLayoutRelationEqual
+                                    toItem: nil
+                                 attribute: NSLayoutAttributeNotAnAttribute
+                                multiplier: 1.0
+                                  constant: 40.0];
+    NSLog(@"3");
+    NSLayoutConstraint *width =
+    [NSLayoutConstraint constraintWithItem: navigationBarView
+                                 attribute: NSLayoutAttributeWidth
+                                 relatedBy: NSLayoutRelationEqual
+                                    toItem: self.view
+                                 attribute: NSLayoutAttributeWidth
+                                multiplier: 1.0
+                                  constant: 0.0];
+    NSLog(@"4");
+    [self.view addConstraints:@[top,left,height,width]];
+
+    //按钮
+    CGFloat buttonW = 30; //按钮的宽高
+    CGFloat space = (SCREEN_WIDTH - buttonW*5)/5.4; //左右边距相当于0.7个
+    NSArray *buttonImages = @[@"设置",@"手写",@"全键盘",@"九宫格",@"隐藏"];
+    for (int i=0; i<5; i++) {
+        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CGRectMake(space*0.7 + i*(buttonW+space), 5, buttonW, buttonW); //导航高度固定为40
+        button.backgroundColor = [UIColor lightGrayColor];
+        button.layer.shadowColor = [UIColor blackColor].CGColor;
+        button.layer.shadowOpacity = 1.0;
+        button.layer.shadowOffset = CGSizeMake(0, 3);
+        button.layer.shadowRadius = 5;
+        button.tag = 102+i;
+        [button addTarget:self action:@selector(didNavigationButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        [navigationBarView addSubview:button];
+
+        button.layer.cornerRadius = 15;
+        //button.clipsToBounds = YES;
+        [button setTitle:buttonImages[i] forState:UIControlStateNormal];
+        button.titleLabel.adjustsFontSizeToFitWidth = YES;
+    }
+}
+
+//候选框
+//高度40固定 与导航等高
+- (void)addCandidateBarView {
+    if (!_tabBar) {
+        _tabBar = [[GZCandidateBarView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40)];
+        [self.view addSubview:_tabBar];
+    }
+
+    __weak KeyboardViewController *weakSelf = self;
+
+    _tabBar.sendSelectedStr = ^(NSString *text) {
+
+        if (text.length == 0) {
+            [weakSelf removeAllCadidateContent];
+            return ;
+        }
+
+        NSLog(@"%@",text);
+        [weakSelf.textDocumentProxy insertText:text];
+
+        //区分键盘类别
+        NSString *keyboardtypeStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+
+
+        //手写
+        if ([keyboardtypeStr isEqualToString:@"wright"]) {
+
+            GZWright *getWright = [GZWright defaultWright];
+
+            //没有中文联想
+            NSNumber *lianxiang = [GZUserDefaults getGroupValueForKey:@"chineseAssociation"];
+            if ([lianxiang isEqualToNumber:@0]) {
+                [weakSelf removeAllCadidateContent];
+                [getWright keyboardReset];
+                return ;
+            }
+
+            //有中文联想
+            BOOL pre = [[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
+            if (pre) { //是否空串
+                [weakSelf.tabBar changeShowText:nil];
+                [getWright keyboardReset];
+                return ;
+            }
+
+            GZQwerty *getQwerty = [GZQwerty defaultQwerty]; //中文联想用的全键盘的方法
+            [getQwerty predicInput:text complation:^(NSArray *candiateArray) {
+                if (candiateArray.count != 0 && candiateArray) {
+                    [weakSelf.tabBar changeShowText:candiateArray];
+                }else{
+                    [weakSelf.tabBar changeShowText:nil];
+                }
+                [getWright keyboardReset];
+            }];
+        }
+
+        //全键盘 英文
+        if ([keyboardtypeStr isEqualToString:@"qwerty_english"]) {
+            //手写
+            //没有中文联想
+            GZQwerty *get = [GZQwerty defaultQwerty];
+            [get keyboardReset];
+            [weakSelf removeAllCadidateContent];
+            return ;
+        }
+
+        //全键盘 拼音
+        if ([keyboardtypeStr isEqualToString:@"qwerty_pinyin"]) {
+            GZQwerty *getdata = [GZQwerty defaultQwerty];
+
+            //没有中文联想
+            NSNumber *lianxiang = [GZUserDefaults getGroupValueForKey:@"chineseAssociation"];
+            if ([lianxiang isEqualToNumber:@0]) {
+                [weakSelf removeAllCadidateContent];
+                [getdata keyboardReset];
+                return ;
+            }
+
+            //有中文联想
+            [weakSelf.tabBar changeShowPinyin:nil]; //候选时，移除拼音view
+
+            BOOL pre = [[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
+            if (pre) { //是否空串
+                [weakSelf.tabBar changeShowText:nil];
+                [getdata keyboardReset];
+                return ;
+            }
+            [getdata predicInput:text complation:^(NSArray *candiateArray) {
+                if (candiateArray.count != 0 && candiateArray) {
+                    [weakSelf.tabBar changeShowText:candiateArray];
+                }else{
+                    [weakSelf.tabBar changeShowText:nil];
+                }
+                [getdata keyboardReset];
+            }];
+        }
+
+        //九宫格
+
+    };
+
+    //展示更多候选
+    _tabBar.sendShowMoreFunc = ^(BOOL isShowMore, NSArray *data) {
+        if (isShowMore && data) {
+            [weakSelf addCandidateMoreViewWithData:data];
+        }
+    };
+}
+
+//展示更多候选
+- (void)addCandidateMoreViewWithData:(NSArray*)data {
+    if (!_tabBarMore) {
+        CGFloat height = [self getKeyboardViewHeight];
+        _tabBarMore = [[GZCandidateMoreView alloc] initWithFrame:CGRectMake(0, 40, SCREEN_WIDTH, height) andData:data];
+    }
+
+    __weak KeyboardViewController *weakSelf = self;
+
+    _tabBarMore.sendSelectedStr = ^(NSString *text) {
+        if (text.length == 0) {
+            [weakSelf removeAllCadidateContent];
+            return ;
+        }
+
+        NSLog(@"%@",text);
+        [weakSelf.textDocumentProxy insertText:text];
+
+        
+
+    };
+}
+
+
+//键盘  1全键盘拼音 2全键盘英文 3手写键盘
+//键盘布局 水平间距5 垂直间距7 顶部间距3 底部间距3
+- (void)addKeyboardView:(int)type {
+
+    if (type == 1 || type == 2) {
+        if (_textKeyboard) {
+            NSLog(@"已经有全键盘了，直接退出创建");
+            return;
+        }
+        [self addQwertyKeyboardView:type];
+
+    }else if (type == 3) {
+        if (_wrightKeyboard) {
+            return;
+        }
+        [self addWrightKeyboardViw];
+
+    }else {
+
+    }
+
+}
+
+//全键盘
+- (void)addQwertyKeyboardView:(int)type {
+
+    NSString *keyboardStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+    if (![keyboardStr isEqualToString:@"qwerty_english"] && ![keyboardStr isEqualToString:@"qwerty_pinyin"]) {
+        return;
+    }
+
+    CGFloat height = [self getKeyboardViewHeight];
+
+    if (!_textKeyboard) {
+        _textKeyboard = [[GZQwertyKeyboard alloc] initWithFrame:CGRectMake(0, 40, SCREEN_WIDTH, height) andKeyboardType:type];
+        [self.view addSubview:_textKeyboard];
+    }
+
+    __weak KeyboardViewController *weakSelf = self;
+    __weak GZQwerty *getdata = [GZQwerty defaultQwerty];
+
+    //文本按键
+    _textKeyboard.sendSelectedStr = ^(NSString *text) {
+        //英文键盘 不联想 直接输入
+        NSString *keyboardtypeStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+        if ([keyboardtypeStr isEqualToString:@"qwerty_english"]) {
+            [weakSelf.textDocumentProxy insertText:text];
+            return ;
+        }
+
+        if ([text isEqualToString:@"'"] && ![weakSelf.tabBar isTabBarHasData]) {
+            //没有输入内容 只点击分隔符
+            return;
+        }
+        if (!weakSelf.tabBar) {
+            [weakSelf addCandidateBarView];
+        }
+
+        int asciiCode = [text characterAtIndex:0];
+
+        NSLog(@"%@--%d",text,asciiCode);
+        //候选结果
+        [getdata sendInput:asciiCode complation:^(NSString *compontText, NSArray *candiateArray) {
+            NSLog(@"%@--%lu",compontText,(unsigned long)candiateArray.count);
+            if (candiateArray.count != 0) {
+                [weakSelf.tabBar changeShowText:candiateArray];
+            }
+            if (compontText.length != 0) {
+                [weakSelf.tabBar changeShowPinyin:compontText];
+            }
+        }];
+    };
+
+    //功能按钮  删除按钮
+    _textKeyboard.sendDeleteTap = ^(BOOL isDelete) {
+        if (isDelete) {
+            if (weakSelf.tabBar && [weakSelf.tabBar isTabBarHasData]) {
+                [getdata sendInput:0x08 complation:^(NSString *compontText, NSArray *candiateArray) {
+                    if (candiateArray.count != 0) {
+                        [weakSelf.tabBar changeShowText:candiateArray];
+                    }
+                    if (compontText.length != 0) {
+                        [weakSelf.tabBar changeShowPinyin:compontText];
+                    }
+                    if (compontText.length == 0 || candiateArray.count == 0) {
+                        [getdata keyboardReset];
+                        [weakSelf removeAllCadidateContent];
+                    }
+                }];
+
+            }else {
+                [weakSelf.textDocumentProxy deleteBackward];
+            }
+        }
+    };
+
+    //功能按键
+    _textKeyboard.sendSelectedFunc = ^(int funcType) {
+        if (funcType > 0 && funcType) {
+            //1分隔 2删除 3符号 4下一个输入法 5数字  6空格 7中英切换 8回车
+            switch (funcType) {
+                case 1:{
+                    NSLog(@"分隔符");
+                    //分隔符不作处理 特殊情况 直接在文本中
+                    break;
+                }
+                case 2:{
+                    NSLog(@"删除");
+                    //删除按钮的调用属于特殊 有长按操作 不在这个方法中返回
+                    break;
+                }
+                case 3:{
+                    NSLog(@"符号");
+                    [getdata keyboardReset];
+                    [weakSelf removeAllCadidateContent];
+                    [weakSelf addSymbollKeyboardView];
+                    break;
+                }
+                case 4:{
+                    NSLog(@"下一个输入法");
+                    [weakSelf advanceToNextInputMode];
+                    break;
+                }
+                case 5:{
+                    NSLog(@"数字");
+                    [getdata keyboardReset];
+                    [weakSelf removeAllCadidateContent];
+                    [weakSelf addNumberKeyboardView];
+                    break;
+                }
+                case 6:{
+                    NSLog(@"空格");
+                    [weakSelf removeAllCadidateContent];
+                    [weakSelf.textDocumentProxy insertText:@" "];
+                    break;
+                }
+                case 7:{
+                    NSLog(@"中英切换");
+                    NSString *keyboardtypeStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+                    if ([keyboardtypeStr isEqualToString:@"qwerty_pinyin"]) {
+                        [weakSelf.textKeyboard changeKeyboardType:2];
+                        [GZUserDefaults saveValue:@"qwerty_english" forKey:@"keyboardType"];
+                    }else {
+                        [weakSelf.textKeyboard changeKeyboardType:1];
+                        [GZUserDefaults saveValue:@"qwerty_pinyin" forKey:@"keyboardType"];
+                    }
+                    break;
+                }
+                case 8:{
+                    NSLog(@"回车");
+                    [weakSelf removeAllCadidateContent];
+                    [weakSelf.textDocumentProxy insertText:@"\n"];
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
+    };
+}
+
+//手写键盘
+- (void)addWrightKeyboardViw {
+
+    NSString *keyboardStr = [GZUserDefaults getValueForKey:@"keyboardType"];
+    if (![keyboardStr isEqualToString:@"wright"]) {
+        return;
+    }
+
+    CGFloat height = [self getKeyboardViewHeight];
+
+    if (!_wrightKeyboard) {
+        _wrightKeyboard = [[GZWrightKeyboard alloc] initWithFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+        [self.view addSubview:_wrightKeyboard];
+    }
+
+    //设置手写的识别方式
+    [self setWrightRecgnizeModeWithKeyboardHeight:height];
+
+    __weak KeyboardViewController *weakSelf = self;
+    __weak GZWright *getWright = [GZWright defaultWright];
+
+    //手写回调
+    _wrightKeyboard.sendWrightPoint = ^(NSInteger status, CGPoint point, short x, short y) {
+
+        if (status == 0) {
+            //取消输入 重置键盘
+            [getWright keyboardReset];
+            [weakSelf.wrightKeyboard removeTraces];
+            [weakSelf removeAllCadidateContent];
+        }else if (status == 1) {
+            //调用笔迹
+            [getWright addPointX:(short)point.x Y:(short)point.y complation:^(NSArray *candiateArray) {
+
+            }];
+        }else if (status == 2){
+            //status == 2 笔迹两次调用 第二次获取候选
+            [getWright addPointX:(short)point.x Y:(short)point.y complation:nil];
+
+            NSLog(@"removeTracks");
+            [weakSelf.wrightKeyboard removeTracesAfter];
+
+            [getWright addPointX:x Y:y complation:^(NSArray *candiateArray) {
+                if (candiateArray && candiateArray.count != 0) {
+                    if (!weakSelf.tabBar) {
+                        [weakSelf addCandidateBarView];
+                    }
+                    [weakSelf.tabBar changeShowText:candiateArray];
+                }else{
+                    [weakSelf.tabBar changeShowText:nil];
+                }
+            }];
+        }
+    };
+    //按键回调
+    _wrightKeyboard.sendSelectedFunc = ^(int type) {
+        NSLog(@"%d",type);
+        //1逗号，2空格，3中英，4next 5删除 6符号 7数字 8回车
+        if (type == 1) {
+            NSLog(@"逗号");
+            [weakSelf.textDocumentProxy insertText:@"，"];
+        }else if (type == 2) {
+            NSLog(@"空格");
+            [weakSelf.textDocumentProxy insertText:@" "];
+        }else if (type == 3) {
+            NSLog(@"中英切换");
+            [GZUserDefaults saveValue:@"qwerty_english" forKey:@"keyboardType"];
+            [weakSelf addQwertyKeyboardView:2];
+            [weakSelf.wrightKeyboard removeFromSuperview];
+            weakSelf.wrightKeyboard = nil;
+        }else if (type == 4) {
+            NSLog(@"next");
+            [weakSelf advanceToNextInputMode];
+        }else if (type == 5) {
+            //删除
+            //因为涉及连续删除，删除功能单独回调
+        }else if (type == 6) {
+            NSLog(@"符号");
+            [weakSelf addSymbollKeyboardView];
+
+        }else if (type == 7) {
+            NSLog(@"数字");
+            [weakSelf addNumberKeyboardView];
+
+        }else if (type == 8) {
+            NSLog(@"回车");
+            [weakSelf.textDocumentProxy insertText:@"\n"];
+        }else {
+            return ;
+        }
+    };
+    //功能按钮  删除按钮
+    _wrightKeyboard.sendDeleteTap = ^(BOOL isDelete) {
+        if (isDelete) {
+            if (weakSelf.tabBar && [weakSelf.tabBar isTabBarHasData]) {
+                if ([weakSelf.tabBar isTabBarHasData]) {
+                    [weakSelf.tabBar deleteBackwardActionByNowCandidates:nil complation:^(BOOL isSucsess, BOOL isRemoveCandidateView) {
+                        if (isSucsess && isRemoveCandidateView) {
+                            [weakSelf removeAllCadidateContent];
+                            [getWright keyboardReset];
+                        }
+                    }];
+                }else {
+                    [weakSelf removeAllCadidateContent];
+                    [getWright keyboardReset];
+                }
+
+            }else {
+                [weakSelf.textDocumentProxy deleteBackward];
+            }
+        }
+    };
+
+}
+
+//数字键盘
+- (void)addNumberKeyboardView {
+    CGFloat height = [self getKeyboardViewHeight];
+
+    if (!_numberKeyboard) {
+        _numberKeyboard = [[GZNumberKeyboard alloc] initWithFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+        [self.view addSubview:_numberKeyboard];
+    }
+
+    __weak KeyboardViewController *weakSelf = self;
+    _numberKeyboard.sendSelectedStr = ^(NSString *text) {
+        NSLog(@"%@",text);
+        [weakSelf.textDocumentProxy insertText:text];
+    };
+    _numberKeyboard.sendSelectedFunc = ^(int funcType) {
+        if (funcType == 1) {
+            //删除
+            //因为涉及连续删除，删除功能单独回调
+        }else if (funcType == 2) {
+            //符号
+            NSLog(@"符号");
+        }else if (funcType == 3) {
+            //回车
+            [weakSelf.textDocumentProxy insertText:@"\n"];
+        }else if (funcType == 4) {
+            //返回
+            [weakSelf.numberKeyboard removeFromSuperview];
+            weakSelf.numberKeyboard = nil;
+        }else {
+            return ;
+        }
+    };
+    //功能按钮  删除按钮
+    _numberKeyboard.sendDeleteTap = ^(BOOL isDelete) {
+        if (isDelete) {
+            [weakSelf.textDocumentProxy deleteBackward];
+        }
+    };
+}
+
+//符号键盘
+- (void)addSymbollKeyboardView {
+    CGFloat height = [self getKeyboardViewHeight];
+
+    if (!_symbolKeyboard) {
+        _symbolKeyboard = [[GZSymbolKeyboard alloc] initWithFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+        [self.view addSubview:_symbolKeyboard];
+    }
+
+    __weak KeyboardViewController *weakSelf = self;
+
+    _symbolKeyboard.sendSelectedStr = ^(NSString *text) {
+        NSLog(@"%@",text);
+        [weakSelf.textDocumentProxy insertText:text];
+    };
+
+    _symbolKeyboard.sendSelectedFunc = ^(int funcType) {
+        if (funcType == 1) {
+            //返回
+            [weakSelf.symbolKeyboard removeFromSuperview];
+            weakSelf.symbolKeyboard = nil;
+        }else if (funcType == 2) {
+            //锁定
+
+        }else if (funcType == 3) {
+            //删除
+            //因为涉及连续删除，删除功能单独回调
+        }else {
+            return ;
+        }
+    };
+    //功能按钮  删除按钮
+    _symbolKeyboard.sendDeleteTap = ^(BOOL isDelete) {
+        if (isDelete) {
+            [weakSelf.textDocumentProxy deleteBackward];
+        }
+    };
+
+}
+
+
+#pragma mark -- button click action
+//长按地球选择输入法
+- (void)handleInputModeListFromView:(UIView *)view withEvent:(UIEvent *)event {
+    [super handleInputModeListFromView:view withEvent:event];
+}
+
+//导航按钮点击
+- (void)didNavigationButtonTap:(UIButton*)sender {
+
+    if (_numberKeyboard) {
+        [_numberKeyboard removeFromSuperview];
+        _numberKeyboard = nil;
+    }
+    if (_symbolKeyboard) {
+        [_symbolKeyboard removeFromSuperview];
+        _symbolKeyboard = nil;
+    }
+    if (_tabBar) {
+        [self removeAllCadidateContent];
+    }
+    NSInteger tag = sender.tag;
+    switch (tag) {
+        case 102:{
+            NSLog(@"设置");
+            NSString *urlString = @"HanvonInput://";
+            UIResponder *responder = self;
+            while ((responder = [responder nextResponder]) != nil) {
+                if ([responder respondsToSelector:@selector(openURL:)] == YES) {
+                    [responder performSelector:@selector(openURL:) withObject:[NSURL URLWithString:urlString]];
+                }
+            }
+
+            //隐藏键盘
+            [self dismissKeyboard];
+
+            break;
+        }
+        case 103:{
+            NSLog(@"手写");
+            if (_wrightKeyboard) {
+                return;
+            }
+            if (_textKeyboard) {
+                [_textKeyboard removeFromSuperview];
+                _textKeyboard = nil;
+                GZQwerty *getQwerty = [GZQwerty defaultQwerty];
+                [getQwerty releaseWorkspace];
+            }
+            [GZUserDefaults saveValue:@"wright" forKey:@"keyboardType"];
+            [self addWrightKeyboardViw];
+            break;
+        }
+        case 104:{
+            NSLog(@"全键盘");
+            if (_textKeyboard) {
+                return;
+            }
+            if (_wrightKeyboard) {
+                [_wrightKeyboard removeFromSuperview];
+                _wrightKeyboard = nil;
+                GZWright *getWright = [GZWright defaultWright];
+                [getWright releaseWorkspace];
+            }
+            [GZUserDefaults saveValue:@"qwerty_pinyin" forKey:@"keyboardType"];
+            [self addQwertyKeyboardView:1];
+
+            break;
+        }
+        case 105:
+            NSLog(@"九宫格");
+            break;
+        case 106:{
+            NSLog(@"隐藏");
+            [self dismissKeyboard];
+            //[self removeSelfAllViews];
+            break;
+        }
+        default:
+            break;
+    }
+
+}
+
+//清除候选框的内容
+- (void)removeAllCadidateContent {
+    if (_tabBar && [_tabBar isTabBarHasData]) {
+        [_tabBar changeShowText:nil];
+        [_tabBar changeShowPinyin:nil];
+        [_tabBar removeFromSuperview];
+        _tabBar = nil;
+    }
+}
+- (void)removeCadidateShowMoreView {
+    if (_tabBarMore) {
+        [_tabBarMore removeFromSuperview];
+        _tabBarMore = nil;
+    }
+}
+//清除所有视图
+- (void)removeSelfAllViews {
+    [self removeAllCadidateContent];
+
+    if (_numberKeyboard) {
+        [_numberKeyboard removeFromSuperview];
+        _numberKeyboard = nil;
+        NSLog(@"main-数字键 销毁");
+    }
+    if (_symbolKeyboard) {
+        [_symbolKeyboard removeFromSuperview];
+        _symbolKeyboard = nil;
+        NSLog(@"main-符号键 销毁");
+    }
+    if (_textKeyboard) {
+        [_textKeyboard removeFromSuperview];
+        _textKeyboard = nil;
+        NSLog(@"main-全键盘  销毁");
+    }
+    if (_wrightKeyboard) {
+        [_wrightKeyboard removeFromSuperview];
+        _wrightKeyboard = nil;
+        NSLog(@"main-手写键盘  销毁");
+    }
+
+    if (_backgroundView) {
+        [_backgroundView removeFromSuperview];
+        _backgroundView = nil;
+    }
+    //导航父视图
+    UIView *navigationBarView = (UIView*)[self.view viewWithTag:101];
+    if (navigationBarView) {
+        [navigationBarView removeFromSuperview];
+        navigationBarView = nil;
+    }
+    //导航按钮
+    for (int i=0; i<5; i++) {
+        UIButton *button = (UIButton*)[self.view viewWithTag:102+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+    }
+}
+
+
+#pragma mark -- 横竖屏切换
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator{
+    NSLog(@"viewWillTransitionToSize");
+    //    CGFloat newHeight = [UIScreen mainScreen].bounds.size.height*0.4;
+    //    [super viewWillTransitionToSize:CGSizeMake(size.width, newHeight) withTransitionCoordinator:coordinator];
+
+    [self performSelector:@selector(resetKeyboardView) withObject:nil afterDelay:0.3];
+}
+- (void)resetKeyboardView {
+    CGFloat height = [self getKeyboardViewHeight];
+    if (height == 210.0) {
+        //竖屏
+        [self setKeyboardViewHeight:1];
+        [self setNavigationBarViewType:1];
+        [self setCadidateViewType:1];
+    }else {
+        //横屏
+        [self setKeyboardViewHeight:2];
+        [self setNavigationBarViewType:2];
+        [self setCadidateViewType:2];
+    }
+
+    if (_textKeyboard) {
+        [_textKeyboard changeViewFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+    }
+    if (_numberKeyboard) {
+        [_numberKeyboard changeViewFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+    }
+    if (_symbolKeyboard) {
+        [_symbolKeyboard changeViewFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+    }
+    if (_wrightKeyboard) {
+        [_wrightKeyboard changeViewFrame:CGRectMake(0, 40, SCREEN_WIDTH, height)];
+        [self setWrightRecgnizeModeWithKeyboardHeight:height];
+    }
+}
+
+//切换手写的 识别方式
+- (void)setWrightRecgnizeModeWithKeyboardHeight:(CGFloat)height {
+    GZWright *getWright = [GZWright defaultWright];
+    //1中英文单字 2中文短句 3中文短句重叠 4自由写
+    if (height == 210.0) {
+        //竖屏
+        NSNumber *mode_V = [GZUserDefaults getGroupValueForKey:@"wrightMode_Vertical"];
+        if ([mode_V isEqualToNumber:@1]) {
+            //叠写
+            [getWright setWrightMode:3];
+        }else if ([mode_V isEqualToNumber:@2]) {
+            //行写
+            [getWright setWrightMode:2];
+        }else if ([mode_V isEqualToNumber:@3]) {
+            //自由写
+            [getWright setWrightMode:4];
+        }else {
+
+        }
+    }else {
+        //横屏
+        NSNumber *mode_H = [GZUserDefaults getGroupValueForKey:@"wrightMode_Horizontal"];
+        if ([mode_H isEqualToNumber:@1]) {
+            //叠写
+            [getWright setWrightMode:3];
+        }else if ([mode_H isEqualToNumber:@2]) {
+            //行写
+            [getWright setWrightMode:2];
+        }else if ([mode_H isEqualToNumber:@3]) {
+            //自由写
+            [getWright setWrightMode:4];
+        }else {
+
+        }
+    }
+}
+
+#pragma mark -- 设置键盘高度
+//获取键盘输入部分的高度  除去导航部分
+- (CGFloat)getKeyboardViewHeight {
+    CGFloat newHeight = [UIScreen mainScreen].bounds.size.height;
+    CGFloat newWidth = [UIScreen mainScreen].bounds.size.width;
+    CGFloat height; //输入部分的高度
+    if (newHeight > newWidth) {
+        //竖屏
+        height = 210.0;
+        _keyboardHeight = 250;
+    }else {
+        //横屏
+        height = 150.0;
+        _keyboardHeight = 190;
+    }
+    return height;
+}
+//设置键盘全局高度
+//1竖屏 2横屏
+- (CGFloat)setKeyboardViewHeight:(int)type {
+    if (type == 1) {
+        //竖屏
+        _keyboardHeight = 250;
+    }else {
+        //横屏
+        _keyboardHeight = 190;
+    }
+
+    if (!_heightConstraint) {
+        _heightConstraint =
+        [NSLayoutConstraint constraintWithItem: self.view
+                                     attribute: NSLayoutAttributeHeight
+                                     relatedBy: NSLayoutRelationEqual
+                                        toItem: nil
+                                     attribute: NSLayoutAttributeNotAnAttribute
+                                    multiplier: 0.0
+                                      constant: _keyboardHeight];
+    }else {
+        [self.view removeConstraint:_heightConstraint];
+        _heightConstraint.constant = _keyboardHeight;
+    }
+
+    //inputView和view不能同时都添加约束，会频繁崩溃
+    [self.view addConstraint:_heightConstraint];
+//    [self.inputView addConstraint:_heightConstraint];
+
+    return _keyboardHeight;
+}
+//设置键盘导航布局
+- (void)setNavigationBarViewType:(int)type {
+    if (type == 1) {
+        //竖屏
+    }else {
+        //横屏
+    }
+
+    CGFloat buttonW = 30; //按钮的宽高
+    CGFloat space = (SCREEN_WIDTH - buttonW*5)/5.4; //左右边距相当于0.7个
+    for (int i=0; i<5; i++) {
+        UIButton *button = (UIButton*)[self.view viewWithTag:102+i];
+        button.frame = CGRectMake(space*0.7 + i*(buttonW+space), 5, buttonW, buttonW); //导航高度固定为40
+    }
+}
+//设置候选框的布局
+- (void)setCadidateViewType:(int)type {
+    if (type == 1) {
+        //竖屏
+        [_tabBar changeViewFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40)];
+    }else {
+        //横屏
+        [_tabBar changeViewFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40)];
+    }
+    
+}
+
+
+#pragma mark -- change input method
+- (void)textWillChange:(id<UITextInput>)textInput {
+    // The app is about to change the document's contents. Perform any preparation here.
+    NSLog(@"textWillChange");
+}
+- (void)textDidChange:(id<UITextInput>)textInput {
+    NSLog(@"textDidChange");
+}
+
+#pragma mark -- memorry waring
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated
+}
+
+
+
+
+
+
+
+@end

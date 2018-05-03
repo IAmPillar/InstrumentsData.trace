@@ -1,0 +1,500 @@
+//
+//  GZSquared.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/11.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZSquared.h"
+#import "LibraryUtility.h"
+#import "HWIM_SDK5W.h"
+
+/* 结果缓存大小 */
+#define kBufferSize 1024
+#define kUnicharBufferSize  (kBufferSize>>1)
+#define kUnicharComposingSize   100
+#define kFilePathMax 512
+#define kShiftStatusSize    120
+#define kShiftDiff  ('A' - 'a')
+
+
+@interface GZSquared()
+{
+@private
+    HWIM_HANDLE imHandle;
+    char* imRam;
+    unsigned short imBuffer[kUnicharBufferSize];
+    unsigned short composingBuffer[kUnicharComposingSize];
+    BOOL shiftStatus[kShiftStatusSize];
+    NSInteger shiftLastIndex;
+
+    NSInteger candidateIndex; // 候选索引数量
+}
+@property (nonatomic, retain) NSOperationQueue *operationQueue; //线程队列
+
+@property (nonatomic, retain) NSString* userDictionary; // 用户字典
+@property (nonatomic, retain) NSString* resultBeforeNil; // 空结果之前的中间结果，提交如带有v、i起始的输入
+
+@property (nonatomic, retain) NSString* composingText;
+@property (nonatomic, retain) NSString* predictRoot;
+
+@end
+
+
+
+@implementation GZSquared
++ (id)defaultSquared{
+    NSLog(@"创建defaultQwerty");
+    static GZSquared *share = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSLog(@"创建alloc");
+        share = [[self alloc] init];
+        [share initKeyboardWorkSpace];
+    });
+
+    return share;
+}
+
+// 初始化工作空间
+- (BOOL)initKeyboardWorkSpace {
+    NSLog(@"键盘 初始化工作空间");
+
+    if (NULL == imRam) {
+        imRam = (char*)allocMemory(HWKEYIM_MIN_RAMSIZE);
+        memset(&imHandle, 0, sizeof(HWIM_HANDLE));
+
+        if (HWERR_SUCCESS != HWKIM_Init(&imHandle, (HWCBK_LoadDict)&loadFile, (HWCBK_ReleaseDict)&releaseMemory, (HWCBK_SaveDict)&saveFile)) {
+            return NO;
+        }
+
+        if (HWERR_SUCCESS != HWKIM_SetWorkSpace(&imHandle, imRam, HWKEYIM_MIN_RAMSIZE)) {
+            return NO;
+        }
+    }
+
+    //NSLanguageType languageType = 0;
+    NSString* systemDict = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] bundlePath], @"ml-sys.dic"];
+    NSString* userDict = [[[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"ml-user.dic"] path];
+    NSInteger language = HWLANG_Simp_Chinese;
+
+    NSFileManager* manager = [NSFileManager defaultManager];
+    if (![manager fileExistsAtPath:userDict]) {
+        userDict = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] bundlePath], [userDict lastPathComponent]];
+    }
+
+
+    if (_userDictionary == nil || [_userDictionary compare:userDict] != NSOrderedSame) {
+        if (_userDictionary != nil) {
+            [self saveUserDictionary];
+            [self releaseDictionary];
+        }
+        self.userDictionary = userDict;
+
+        HWKIM_SetLanguageDict(&imHandle, (int)language, [systemDict UTF8String], 0);
+        HWKIM_SetUserDict(&imHandle, [_userDictionary UTF8String], 0);
+    }
+
+//    if (languageType != NSLanguageTypeEN) {
+//    }
+    HWKIM_SetInputMode(&imHandle,1);
+    HWKIM_SetPinyinFuzzy(&imHandle, 0);
+    HWKIM_SetKeyboardMode(&imHandle, HWIM_KEYBOARD_REDUCE);
+
+    return YES;
+}
+
+
+
+#pragma mark -- 输入输出操作
+//直接输入
+- (void)sendInput:(int)inputCode complation:(SuccesInput)data {
+
+    if (NULL == imRam) {
+        NSLog(@"没有工作空间");
+        [self initKeyboardWorkSpace];
+    }
+
+    if (inputCode == 0x8) {//HW_KEY_BackSpace_Code
+        if(shiftLastIndex > 0) {
+            --shiftLastIndex;
+        }
+
+    } else if ([self isBopomofo]) {
+        if (inputCode == 0x20)/*HW_KEY_SpaceBar_Code*/ {
+
+            return;
+        } else if (inputCode == 0x2c7 || inputCode == 0x2ca || inputCode == 0x2cb || inputCode == 0x2d9) {
+            return;
+        }
+    }
+    self.resultBeforeNil = @"";
+
+
+    if (!self.operationQueue) {
+        self.operationQueue = [[NSOperationQueue alloc] init] ;
+        self.operationQueue.maxConcurrentOperationCount = 1; //设置最大并发线程数
+    }
+
+    [self.operationQueue addOperationWithBlock:^{
+        unsigned int code = (unsigned int)inputCode;
+        NSLog(@"原始==%d，转换==%d",inputCode,code);
+        BOOL set = HWKIM_AddChar(&imHandle, code);
+        NSLog(@"input == %d",set);
+        NSArray *arr = [self doShowIntermediateResult:-1];
+        NSString *compontText = arr[0];
+        NSArray *candiateArray = arr[1];
+        NSArray *pinyinCandidates = [self doShowPinyinCandidates];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            data(compontText,candiateArray,pinyinCandidates);
+            return;
+        }];
+    }];
+}
+
+//选择某一候选
+- (void)sendSelectedIndex:(int)index andStr:(NSString*)str complation:(SuccesSelect)data {
+    if (NULL == imRam) {
+        NSLog(@"没有工作空间");
+        [self initKeyboardWorkSpace];
+    }
+    if (!self.operationQueue) {
+        self.operationQueue = [[NSOperationQueue alloc] init] ;
+        self.operationQueue.maxConcurrentOperationCount = 1; //设置最大并发线程数
+    }
+
+    NSLog(@"---%@",_resultBeforeNil);
+    _resultBeforeNil = [NSString stringWithFormat:@"%@%@",_resultBeforeNil,str];
+    NSLog(@"+++%@",_resultBeforeNil);
+
+    [self.operationQueue addOperationWithBlock:^{
+        HWKIM_ChooseCandWord(&imHandle, index);
+        NSArray *arr = [self doShowIntermediateResult:index];
+        NSString *compontText = arr[0];
+        NSArray *candiateArray = arr[1];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            int isFinish = HWKIM_IsFinish(&imHandle);
+            data(compontText,candiateArray,isFinish);
+            return;
+        }];
+    }];
+}
+
+//选择某一拼音候选
+- (void)sendSelectedPinyinIndex:(int)index andStr:(NSString*)str complation:(SuccesSelect)data {
+
+    if (NULL == imRam) {
+        NSLog(@"没有工作空间");
+        [self initKeyboardWorkSpace];
+    }
+    if (!self.operationQueue) {
+        self.operationQueue = [[NSOperationQueue alloc] init] ;
+        self.operationQueue.maxConcurrentOperationCount = 1; //设置最大并发线程数
+    }
+
+    //_resultBeforeNil = [NSString stringWithFormat:@"%@%@",_resultBeforeNil,str];
+
+    [self.operationQueue addOperationWithBlock:^{
+        //HWKIM_ChooseCandWord(&imHandle, index);
+        NSArray *arr = [self doShowIntermediateResult:index];
+        NSString *compontText = arr[0];
+        NSArray *candiateArray = arr[1];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            int isFinish = HWKIM_IsFinish(&imHandle);
+            data(compontText,candiateArray,isFinish);
+            return;
+        }];
+    }];
+}
+
+//联想输入
+- (void)predicInput:(NSString*)text complation:(SuccesPredict)data {
+
+    if (NULL == imRam) {
+        NSLog(@"没有工作空间");
+        [self initKeyboardWorkSpace];
+    }
+
+    if (!self.operationQueue) {
+        self.operationQueue = [[NSOperationQueue alloc] init] ;
+        self.operationQueue.maxConcurrentOperationCount = 1; //设置最大并发线程数
+    }
+
+    [self.operationQueue addOperationWithBlock:^{
+        NSArray *result = [self doPrediction:text];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            if (result.count == 0) {
+                data(nil);
+                return ;
+            }
+            data(result);
+            return;
+        }];
+    }];
+}
+
+//选择候选index是否结束
+- (BOOL)isSelectFinish {
+    int isFinish = HWKIM_IsFinish(&imHandle);
+    if (isFinish == 0) {
+        return NO;
+    }else if (isFinish == 1) {
+        return YES;
+    }else {
+        //错误
+        return YES;
+    }
+}
+
+//获取选择index候选最终结果
+- (NSString*)getSelecteResult {
+    return _resultBeforeNil;
+}
+
+//选择完成后 清理一下核心
+- (void)cleanSelectData {
+    _resultBeforeNil = @"";
+    HWKIM_InputStrClean(&imHandle);
+}
+
+// 重置
+- (void)keyboardReset {
+    self.composingText = nil;
+    self.predictRoot = nil;
+    shiftLastIndex = 0;
+    HWKIM_InputStrClean(&imHandle);
+}
+
+// 释放工作空间
+- (void)releaseWorkspace {
+
+    [self.operationQueue cancelAllOperations];
+
+    [self saveUserDictionary];
+    [self releaseDictionary];
+
+    self.resultBeforeNil = nil;
+    self.composingText = nil;
+    self.predictRoot = nil;
+
+    if (imRam) {
+        releaseMemory(imRam);
+        imRam = NULL;
+    }
+}
+
+#pragma mark -- 核心识别操作
+// 显示结果
+- (NSArray*)doShowIntermediateResult:(NSInteger)phoneIndex {
+
+    NSMutableArray *candidates = [NSMutableArray arrayWithCapacity:0];
+
+    candidateIndex = HWKIM_GetWordCandidates(&imHandle, (int)phoneIndex, imBuffer, kBufferSize);
+
+    // 显示中间结果  拼音
+    int composingLength = HWKIM_GetInputTransResult(&imHandle, composingBuffer);
+    if (composingLength > 0) {
+        self.composingText=@"";
+        for(int i = 0; i < composingLength ;i++){
+            int temp = composingBuffer[i];
+            self.composingText = [_composingText stringByAppendingString:[NSString stringWithFormat:@"%C",(unichar)temp]];
+        }
+
+    } else {
+        self.composingText = @"";
+    }
+
+    // 显示候选
+    if (candidateIndex <= 0) {
+        if (_composingText != nil) {
+            NSUInteger length = [_composingText length];
+            unichar data[length];
+            [_composingText getCharacters:data];
+            for (int i = 0; i < shiftLastIndex; ++i) {
+                if (shiftStatus[i]) {
+                    data[i] += kShiftDiff;
+                }
+            }
+            self.composingText = [NSString stringWithCharacters:data length:length];
+
+            [candidates addObject:@""];
+        }
+
+        NSArray *resultArr = [NSArray arrayWithObjects:self.composingText, candidates,nil];
+
+        return resultArr;
+    }
+
+    int count = 0;
+    int start, end, shiftIndex;
+    for (start = 0; start < kUnicharBufferSize && count < candidateIndex;) {
+        for (end = start; end < kUnicharBufferSize && imBuffer[end] != 0; ++end);
+
+        if (end >= kUnicharBufferSize) {
+            break;
+        }
+
+        if (shiftLastIndex > 0) {
+            for (shiftIndex = 0; shiftIndex < shiftLastIndex; ++shiftIndex) {
+                if (shiftStatus[shiftIndex]) {
+                    imBuffer[start + shiftIndex] += kShiftDiff;
+                }
+            }
+        }
+        NSString *tempStr = @"";
+        for(int i = start; i < end ; i++){
+            int temp = imBuffer[i];
+            //            NSString *str = [NSString stringWithFormat:@"%d",temp];
+            //            const char *tempChar = [str cStringUsingEncoding:NSASCIIStringEncoding];
+            tempStr = [tempStr stringByAppendingString:[NSString stringWithFormat:@"%C",(unichar)temp]];
+        }
+
+        //NSString *tempStr = [NSString stringWithCharacters:(imBuffer+start) length:end-start];
+        [candidates addObject:tempStr];
+        ++count;
+        start = end + 1;
+    }
+
+
+    NSArray *resultArr = [NSArray arrayWithObjects:self.composingText, candidates,nil];
+    return resultArr;
+}
+
+//获取拼音候选
+- (NSArray *)doShowPinyinCandidates {
+    
+    NSInteger numbers = HWKIM_GetPhoneticGroup(&imHandle, imBuffer);
+    if (numbers <= 0) {
+        return nil;
+    }
+
+    NSMutableArray *candidates = [NSMutableArray arrayWithCapacity:0];
+
+    int count = 0;
+    int start, end, shiftIndex;
+    for (start = 0; start < kUnicharBufferSize && count < numbers;) {
+        for (end = start; end < kUnicharBufferSize && imBuffer[end] != 0; ++end);
+
+        if (end >= kUnicharBufferSize) {
+            break;
+        }
+
+        NSString *tempStr = @"";
+        for(int i = start; i < end ; i++){
+            int temp = imBuffer[i];
+            tempStr = [tempStr stringByAppendingString:[NSString stringWithFormat:@"%C",(unichar)temp]];
+        }
+
+        //NSString *tempStr = [NSString stringWithCharacters:(imBuffer+start) length:end-start];
+        [candidates addObject:tempStr];
+        ++count;
+        start = end + 1;
+    }
+
+
+    return candidates;
+}
+
+//联想
+- (NSArray*)doPrediction:(NSString*)data {
+    NSInteger length = [data length];
+    NSLog(@"~~ data is %@, data length is %ld",data, (long)length);
+    //zjc 2014 0928只定一个字符
+    //length = 1;
+    unsigned short root[length + 1];
+    NSRange range;
+    int result;
+    self.predictRoot = nil;
+    NSMutableArray *predicts = [[NSMutableArray alloc] init];
+
+    for (int i = 0; i < length; ++i) {
+        range.location = i;
+        range.length = length - i;
+        [data getCharacters:root range:range];
+
+        root[length - i] = 0;
+        result = HWKIM_GetPredictResult(&imHandle, root, NULL, imBuffer, kBufferSize);
+
+        if (result < 1) {
+            continue;
+        }
+
+        self.predictRoot = [data substringWithRange:range];
+        int count = 0;
+        int start, end;
+        //        for (start = 0; start < 20; start ++){
+        //            NSLog(@"buffer[%d] is %x \n", start, imBuffer[start]);
+        //        }
+
+        for (start = 0; start < kUnicharBufferSize && count < result;) {
+            while (imBuffer[start] == 0) {
+                start++;
+            }
+            for (end = start; end < kUnicharBufferSize && imBuffer[end] != 0; ++end);
+            if (end >= kUnicharBufferSize) {
+                break;
+            }
+
+            NSString *tempStr = @"";
+            for(int i = start; i < end; i++){
+                int temp = imBuffer[i];
+                tempStr = [tempStr stringByAppendingString:[NSString stringWithFormat:@"%C",(unichar)temp]];
+            }
+            [predicts addObject:tempStr];
+            ++count;
+            start = end + 1;
+        }
+
+    }
+    return predicts;
+}
+
+
+
+
+
+#pragma mark -- private
+// 是否注音输入
+- (BOOL)isBopomofo {
+    return NO;
+}
+
+// composingText的最后一个字符是否为分隔符
+- (BOOL)isLastComposingCharSeparator {
+    if (_composingText == nil || [_composingText length] < 1) {
+        return NO;
+    }
+    unichar ch=[_composingText characterAtIndex:[_composingText length]-1];
+    return (ch == 0x27);
+}
+
+// composingText的最后一个字符是否为注音
+- (BOOL)isLastComposingCharBopomofoTone{
+    if (_composingText==nil || [_composingText length]<1) {
+        return NO;
+    }
+    unichar ch=[_composingText characterAtIndex:[_composingText length]-1];
+    return (ch == 0x02c9 || ch == 0x2c7 || ch == 0x2ca || ch == 0x2cb || ch == 0x2d9);
+}
+
+// 保存用户字典
+- (void)saveUserDictionary {
+    if (_userDictionary == nil || !_userDictionary) {
+        return;
+    }
+    HWKIM_SaveUserDict(&imHandle);
+}
+
+// 释放字典
+- (void)releaseDictionary {
+    if (!_userDictionary) {
+        return;
+    }
+    HWKIM_ReleaseLanguageDict(&imHandle);
+    HWKIM_ReleaseUserDict(&imHandle);
+    self.userDictionary = nil;
+}
+
+
+@end

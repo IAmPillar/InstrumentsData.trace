@@ -52,15 +52,6 @@
     double width = SCREEN_WIDTH;
     double height = width*ratio;
 
-    //    CGFloat y;
-    //    CGFloat height;
-    //    if (IS_IPHONE_X) {
-    //        y = 115;
-    //        height = SCREEN_HEIGHT-y;
-    //    }else{
-    //        y=0;
-    //        height = SCREEN_HEIGHT;
-    //    }
     scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, (SCREEN_HEIGHT-height)/2.0, width, height)];
     scroll.contentSize = CGSizeMake(SCREEN_WIDTH*num,height);
     scroll.contentOffset = CGPointMake(0, 0);
@@ -75,35 +66,14 @@
     for (int i=0; i<num; i++){
         NSString * imagePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"guide_%d",i+1] ofType:@"jpg"];
         UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
-        //        CGSize imageSize = image.size;
-        //        double ratio = imageSize.height/imageSize.width;
-        //        double width = SCREEN_WIDTH;
-        //        double height = width*ratio;
-
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(width*i, 0, width, height)];
         [imageView setImage:image];
         if (i==num-1){
             imageView.userInteractionEnabled=YES;
             UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(goActionShow)];
             [imageView addGestureRecognizer:tap];
-
-            //            UIImageView *goin = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 40)];
-            //            goin.center = CGPointMake(SCREEN_WIDTH/2, SCREEN_HEIGHT-90);
-            //            NSString * goinPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"guideButton"] ofType:@"png"];
-            //            [goin setImage:[UIImage imageWithContentsOfFile:goinPath]];
-            //            [imageView addSubview:goin];
         }
         [scroll addSubview:imageView];
-
-        //        //标题
-        //        double titleHeight = coordinate_Y(30);
-        //        double titleY = imageView.frame.origin.y-titleHeight;
-        //        UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*i, titleY, SCREEN_WIDTH, titleHeight)];
-        //        title.textColor = HexColorAlpha(@"#998347", 1);
-        //        title.textAlignment = NSTextAlignmentCenter;
-        //        title.text = arr_title[i];
-        //        title.font = Font_pingfang_SC(20);
-        //        [scroll addSubview:title];
     }
 
     double pageHeight = coordinate_Y(20);

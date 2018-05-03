@@ -24,18 +24,9 @@
 #import "GZPublicMethod.h"
 
 //键盘使用
-//#import "GZKeyboardSkin.h"
 #import "GZButton.h" //按钮声音
-//#import "GZButton+GZSetting.h"
 #import "UIColor+GZColorHex.h"
 #import "GZView.h"
-//#import "GZView+GZSetting.h"
-//#import "GZQueue.h"
 
-//键盘核心
-#import "LibraryUtility.h"
-#import "HWIM_SDK.h"
-//#import "HW_API.h"
-//#import "HW_RangeMask.h"
 
 #endif /* text_pch */

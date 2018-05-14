@@ -8,7 +8,7 @@
 
 #import "GZCandidateBarView.h"
 #import "GZCandidateCell.h"
-#import <AudioToolbox/AudioToolbox.h>
+//#import <AudioToolbox/AudioToolbox.h>
 
 #define pinyinHeight 15.0 //拼音串的高度
 #define lineHeight 0.5 //分割线高度

@@ -1,0 +1,792 @@
+//
+//  GZSymbolKeyboard.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/9.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZSymbolKeyboard.h"
+#import "GZSymbolCollectionCell.h"
+#import "GZView+GZSetting.h"
+//#import "UIColor+GZColorHex.h"
+//#import "GZKeyboardSkin.h"
+#import <AudioToolbox/AudioToolbox.h>
+
+
+@interface GZSymbolKeyboard()<UIScrollViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource>
+{
+    CGFloat collectionCellW;
+    CGFloat collectionCellH;
+    NSInteger selected; //目前已经选择的符号分类
+    int kbType; //常用符号的类型 0常用 1中文 2英文 3网络 4单位
+    NSTimer *timer; //定时器 删除按钮长按
+    NSTimer *delay; //延时执行 长按删除操作
+    BOOL isLock; //是否点击了锁定
+}
+@property (nonatomic,strong) UICollectionView *collectionView;
+@property (nonatomic,copy) NSArray *dataArray;
+@property (nonatomic,strong) NSMutableArray *common_keys; //常用符号 键数组
+@property (nonatomic,strong) NSMutableArray *common_all; //常用符号 健值对数组
+@end
+
+
+@implementation GZSymbolKeyboard
+
+- (instancetype)initWithFrame:(CGRect)frame andKeyboardType:(int)keyboardType {
+    self = [super initWithFrame:frame];
+    if (self) {
+        //创建view
+        self.backgroundColor = Color_background_kb;
+        kbType = keyboardType;
+        isLock = NO;
+
+        _common_all = [[[GZUserPlist sharedUserPlist] getSymbolsByName:@"common"] mutableCopy];
+        _common_keys = [[[GZUserPlist sharedUserPlist] getSymbolsAllKeysByName:@"common"] mutableCopy];
+
+        if (_common_all.count == 0 || _common_keys.count == 0) {
+            _common_keys = [NSMutableArray arrayWithObjects:@"，",@"。",@"？",@"、",@"：",@"~",@"（",@"）", @"·",@"@",@"‘",@"’",@"＃",@"*",@"｜",nil];
+            _common_all = [NSMutableArray arrayWithObjects:@{@"，":@1},@{@"。":@1},@{@"？":@1},@{@"、":@1},@{@"：":@1},@{@"~":@1},@{@"（":@1},@{@"）":@1},@{@"·":@1},@{@"@":@1},@{@"‘":@1},@{@"’":@1},@{@"＃":@1},@{@"*":@1},@{@"｜":@1}, nil];
+        }
+
+        if (keyboardType == 0) {
+            //常用
+            selected = 111;
+            _dataArray = _common_keys;
+        }else {
+            NSArray *data;
+            if (keyboardType == 1) {
+                //中文
+                selected = 112;
+                data = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"、",@"：",@"；",@"......",@"~",@"——",@"“",@"”",@"《",@"》",@"（",@"）", @"’",@"‘",@"｛",@"｝",@"【",@"】",@"·",@"＃",@"*",@"｜",nil];
+            }else if (keyboardType == 2) {
+                //英文
+                selected = 113;
+                data = [NSArray arrayWithObjects:@",",@".",@"?",@"!",@"'",@":",@"...",@"~",@"@",@";",@"_",@"|",@"`",@"=",@"+",@"-",@"*",@"/",@"(",@")",@"<",@">",@"[",@"]",@"{",@"}",@"$",@"¥",@"%",@"&", nil];
+            }else if (keyboardType == 3) {
+                //网络
+                selected = 114;
+                data = [NSArray arrayWithObjects:@".",@"@",@"-",@"_",@"/",@"www.",@"http://",@"https://",@".com",@".cn",@".net",@".org",@"@sohu.com",@"@qq.com",@"@126.com",@"@163.com",@"@sina.com",@"@gmail.com",@"@yahoo.com.cn",@"@hotmail.com",@"@msn.com",@"@live.com",@"@263.com",nil];
+            }else if (keyboardType == 4) {
+                //单位
+                selected = 115;
+                data = [NSArray arrayWithObjects:@"℃",@"℉",@"°",@"㎡",@"m³",@"㎜",@"㎝",@"㎞",@"㎎",@"㎏",@"㏄",@"＄",@"￥",@"€",@"£",@"₤", nil];
+            }
+            _dataArray = data;
+        }
+
+
+        [self createViews:frame];
+    }
+    return self;
+}
+
+- (void)changeViewFrame:(CGRect)newFrame {
+
+    self.frame = newFrame;
+
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat bottomViewH = 35; //底部固定视图高度
+    CGFloat height = newFrame.size.height - top - bottom - spaceY - bottomViewH;
+
+    CGFloat cellNum; //每行最多放几个cell
+    if (IS_IPAD_ONLYIphone) {
+        cellNum = 5.0;
+    }else {
+        if (IS_IPHONE_6P || IS_IPHONE_X || IS_IPHONE_6) {
+            cellNum = 4.0;
+        }else if (IS_IPHONE_5) {
+            cellNum = 3.0;
+        }else {
+            cellNum = 3.0;
+        }
+    }
+
+    CGFloat buttonW = (newFrame.size.width - spaceX*3 - cellNum+1)/(cellNum+1); //符号按钮宽1 左边的导航宽 cellNum-1是collection的cell之间的间距
+
+    collectionCellW = buttonW;
+    collectionCellH = height/5.0;
+
+    //左侧导航
+    CGFloat scrollButtonH = height/4.0;
+    CGFloat scrollButtonW = buttonW;
+
+    UIView *scrollsuperView = (UIView*)[self viewWithTag:110];//[[UIView alloc] initWithFrame:];
+    scrollsuperView.frame = CGRectMake(spaceX, top, scrollButtonW, height);
+
+    NSArray *scrollSubs = [NSArray arrayWithObjects:@"常用",@"中文",@"英文",@"网络",@"单位", nil];
+    int num = (int)scrollSubs.count;
+
+    UIScrollView *scroll = (UIScrollView*)[self viewWithTag:109];//[[UIScrollView alloc] initWithFrame:];
+    scroll.frame = CGRectMake(0, 0, scrollButtonW, height);
+    scroll.contentSize = CGSizeMake(scrollButtonW, scrollButtonH*num);
+
+
+    for (int i=0; i<num; i++) {
+        //按钮
+        UIButton *button = (UIButton*)[self viewWithTag:111+i];
+        button.frame = CGRectMake(0, i*(scrollButtonH+0.5), scrollButtonW, scrollButtonH);
+
+        //分割线
+        if (i != 5) {
+            UILabel *line = (UILabel*)[self viewWithTag:131+i];//[[UILabel alloc] initWithFrame:];
+            line.frame = CGRectMake(5, (i+1)*(scrollButtonH+0.5), scrollButtonW-10, 0.5);
+        }
+    }
+
+
+    //右侧符号
+    CGFloat collectionX = spaceX*2 + scrollButtonW;
+    CGFloat collectionW = newFrame.size.width - spaceX*3 - scrollButtonW;
+
+    UIView *collectionsuperView = (UIView*)[self viewWithTag:100];//[[UIView alloc] initWithFrame:];
+    collectionsuperView.frame = CGRectMake(collectionX, top, collectionW, height);
+
+    _collectionView.frame = CGRectMake(0, 0, collectionW, height);
+
+
+    //底部固定view
+    CGFloat superviewY = top + height + spaceY;
+    CGFloat superviewW = self.frame.size.width - spaceX*2;
+    UIView *superView = (UIView*)[self viewWithTag:120];//[[UIView alloc] initWithFrame:];
+    superView.frame = CGRectMake(spaceX, superviewY, superviewW, bottomViewH);
+
+    CGFloat supBttonW = superviewW/3.0;
+    for (int i=0; i<3; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:121+i];
+        button.frame = CGRectMake(i*supBttonW, 0, supBttonW, bottomViewH);
+    }
+}
+
+
+- (void)changeBackgroudColor {
+    //GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+
+    //NSString *skinName = [share getGroupValueForKey:@"keyboardSkin"];
+    //    GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    //背景图
+    //    if (skin.backgroudImage_kb) {
+    //        UIImageView *imageview = [[UIImageView alloc] initWithFrame:self.bounds];
+    //        imageview.image = [UIImage imageNamed:skin.backgroudImage_kb];
+    //        [self addSubview:imageview];
+    //    }
+    //背景色
+    self.backgroundColor = Color_background_kb;
+
+    _collectionView.backgroundColor = Color_background_kb;
+    [_collectionView reloadData];
+
+    //左侧
+    //NSArray *scrollSubs = [NSArray arrayWithObjects:@"常用",@"中文",@"英文",@"表情",@"邮箱",@"网址", nil];
+    for (int i=0; i<6; i++) {
+        //按钮
+        GZFunctionButton_symbol_l *button = (GZFunctionButton_symbol_l*)[self viewWithTag:111+i];
+        //[button setButtonStyleWithSkin:skinName];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+
+        //        //分割线
+        //        if (i != 5) {
+        //            UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(5, (i+1)*(scrollButtonH+0.5), scrollButtonW-10, 0.5)];
+        //            line.backgroundColor = Color_background_kb;
+        //            line.tag = 131+i;
+        //            [scroll addSubview:line];
+        //        }
+        if (selected-111 == i) {
+            button.backgroundColor = [UIColor colorWithHexString:float_Color_button_function alpha:1];
+        }
+    }
+    //底端
+    //NSArray *images = [NSArray arrayWithObjects:@"keyboard_back",@"keyboard_unlock",@"keyboard_clear", nil];
+    for (int i=0; i<3; i++) {
+        GZFunctionButton_symbol_b *button = (GZFunctionButton_symbol_b*)[self viewWithTag:121+i];
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        //[button setButtonStyleWithSkin:skinName];
+    }
+}
+
+//手动停止计时器
+- (void)stopTimer {
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+
+        if (!isLock && self.sendSelectedFunc) {
+            self.sendSelectedFunc(1);
+        }
+    }
+}
+
+
+#pragma mark -- ui
+- (void)createViews:(CGRect)frame {
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat bottomViewH = 35; //底部固定视图高度
+    CGFloat height = frame.size.height - top - bottom - spaceY - bottomViewH;
+
+    CGFloat cellNum; //每行最多放几个cell
+    if (IS_IPAD_ONLYIphone) {
+        cellNum = 5.0;
+    }else {
+        if (IS_IPHONE_6P || IS_IPHONE_X || IS_IPHONE_6) {
+            cellNum = 4.0;
+        }else if (IS_IPHONE_5) {
+            cellNum = 3.0;
+        }else {
+            cellNum = 3.0;
+        }
+    }
+
+    CGFloat buttonW = (frame.size.width - spaceX*3 - cellNum+1)/(cellNum+1); //符号按钮宽1 左边的导航宽 cellNum-1是collection的cell之间的间距
+
+    collectionCellW = buttonW;
+    collectionCellH = height/5.0;
+
+    //左侧导航
+    CGFloat scrollButtonH = height/4.0;
+    CGFloat scrollButtonW = buttonW;
+
+    //GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+    //NSString *skin = [share getGroupValueForKey:@"keyboardSkin"];
+
+    GZKeyboardSuspendView_left *scrollsuperView = [[GZKeyboardSuspendView_left alloc] initWithFrame:CGRectMake(spaceX, top, scrollButtonW, height)];
+    //[scrollsuperView setViewStyleWithSkin:skin];
+    scrollsuperView.backgroundColor = [UIColor whiteColor];
+    scrollsuperView.layer.cornerRadius = 5;
+    [self addSubview:scrollsuperView];
+    scrollsuperView.tag = 110;
+
+
+    NSArray *scrollSubs = [NSArray arrayWithObjects:@"常用",@"中文",@"英文",@"网络",@"单位", nil];
+    int num = (int)scrollSubs.count;
+
+    UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, scrollButtonW, height)];
+    scroll.delegate = self;
+    scroll.backgroundColor = Color_background_kb;
+    scroll.layer.cornerRadius = 5;
+    scroll.showsVerticalScrollIndicator = NO;
+    scroll.contentSize = CGSizeMake(scrollButtonW, scrollButtonH*num); //scroll
+    scroll.tag = 109;
+    [scrollsuperView addSubview:scroll];
+
+    for (int i=0; i<num; i++) {
+        //按钮
+        GZFunctionButton_symbol_l *button = [GZFunctionButton_symbol_l buttonWithType:UIButtonTypeSystem];
+        //[button setButtonStyleWithSkin:skin];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+
+        button.titleLabel.font = [UIFont systemFontOfSize:18];
+        [button setTitle:scrollSubs[i] forState:UIControlStateNormal];
+        button.frame = CGRectMake(0, i*(scrollButtonH+0.5), scrollButtonW, scrollButtonH);
+        button.tag = 111+i;
+        [button addTarget:self action:@selector(didPartTap:) forControlEvents:UIControlEventTouchUpInside];
+        [scroll addSubview:button];
+
+        //分割线
+        if (i != 5) {
+            UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(5, (i+1)*(scrollButtonH+0.5), scrollButtonW-10, 0.5)];
+            line.backgroundColor = Color_background_kb;
+            line.tag = 131+i;
+            [scroll addSubview:line];
+        }
+
+        if (selected-111 == i) {
+            button.backgroundColor = [UIColor colorWithHexString:float_Color_button_function alpha:1];
+        }
+    }
+
+    //scroll滚动到指定位置
+    [self setScrollContentWithNum:kbType andButtonHeight:scrollButtonH];
+
+
+    //右侧符号
+    CGFloat collectionX = spaceX*2 + scrollButtonW;
+    CGFloat collectionW = frame.size.width - spaceX*3 - scrollButtonW;
+
+    GZKeyboardSuspendView *collectionsuperView = [[GZKeyboardSuspendView alloc] initWithFrame:CGRectMake(collectionX, top, collectionW, height)];
+    //[collectionsuperView setViewStyleWithSkin:skin];
+    collectionsuperView.backgroundColor = Color_background_kb;
+    collectionsuperView.layer.cornerRadius = 5;
+    [self addSubview:collectionsuperView];
+    collectionsuperView.tag = 100;
+
+    UICollectionViewFlowLayout *flow = [[UICollectionViewFlowLayout alloc] init];
+    flow.scrollDirection = UICollectionViewScrollDirectionVertical; //垂直滑动方向
+    flow.minimumInteritemSpacing = 1; //水平最小间距
+    flow.minimumLineSpacing = 1;
+
+    if (!_collectionView) {
+        //        GZKeyboardSkin *sk = [GZKeyboardSkin defaultKeyboardSkin];
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, collectionW, height) collectionViewLayout:flow];
+        _collectionView.backgroundColor = Color_background_kb;
+        _collectionView.dataSource = self;
+        _collectionView.delegate = self;
+        _collectionView.bounces = YES;
+        _collectionView.layer.cornerRadius = 5;
+        _collectionView.showsVerticalScrollIndicator = NO;
+        [_collectionView registerClass:[GZSymbolCollectionCell class] forCellWithReuseIdentifier:@"synbolCollectionCell"];
+        [collectionsuperView addSubview:_collectionView];
+    }
+
+
+    //底部固定view
+    CGFloat superviewY = top + height + spaceY;
+    CGFloat superviewW = self.frame.size.width - spaceX*2;
+
+    GZKeyboardSuspendView_bottom *superView = [[GZKeyboardSuspendView_bottom alloc] initWithFrame:CGRectMake(spaceX, superviewY, superviewW, bottomViewH)];
+    //[superView setViewStyleWithSkin:skin];
+    superView.backgroundColor = [UIColor colorWithHexString:float_Color_button_function alpha:1];
+    superView.layer.cornerRadius = 5;
+    [self addSubview:superView];
+    superView.tag = 120;
+
+    //NSArray *superViewSubs = [NSArray arrayWithObjects:@"返回",@"锁定",@"删除", nil];
+    NSArray *images = [NSArray arrayWithObjects:@"keyboard_back",@"keyboard_unlock",@"keyboard_clear", nil];
+    CGFloat supBttonW = superviewW/3.0;
+    for (int i=0; i<3; i++) {
+        GZFunctionButton_symbol_b *button = [GZFunctionButton_symbol_b buttonWithType:UIButtonTypeCustom];
+        //[button setButtonStyleWithSkin:skin];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+
+        button.frame = CGRectMake(i*supBttonW, 0, supBttonW, bottomViewH);
+        button.tag = 121+i;
+        [button setImage:[UIImage imageNamed:images[i]] forState:UIControlStateNormal];
+        [superView addSubview:button];
+
+        if (i != 2) {
+            [button addTarget:self action:@selector(didFuncTap:) forControlEvents:UIControlEventTouchUpInside];
+        }else {
+            [button addTarget:self action:@selector(didTouchDown) forControlEvents:UIControlEventTouchDown];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpInside];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpOutside]; //移动手指出按钮
+        }
+    }
+}
+
+//每个item之间的间距
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 1.0;
+}
+//cell的大小
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    CGSize size = [[GZPublicMethod sharedPublicMethod] getStringSize:_dataArray[indexPath.row] withFont:[UIFont systemFontOfSize:18] wordSpace:@2 lineSpace:3.0];
+
+    CGFloat resultWidth;
+    if (size.width <= collectionCellW) {
+        resultWidth = collectionCellW;
+    }else if (size.width <= collectionCellW*2 + 1) {
+        resultWidth = collectionCellW*2 + 1;
+    }else if (size.width <= collectionCellW*3 +2) {
+        resultWidth = collectionCellW*3 + 2;
+    }else if (size.width <= collectionCellW*4 +3) {
+        resultWidth = collectionCellW*4 + 3;
+    }else if (size.width <= collectionCellW*5 +4) {
+        resultWidth = collectionCellW*5 + 4;
+    }else {
+        resultWidth = collectionCellW;
+    }
+
+    return CGSizeMake(resultWidth, collectionCellH);
+}
+//定义每个Section 的 margin
+-(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0, 0, 0, 0);//分别为上、左、下、右
+}
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return _dataArray.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellID = @"synbolCollectionCell";
+    GZSymbolCollectionCell *cell = (GZSymbolCollectionCell*)[collectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
+    [cell setTitleText:_dataArray[indexPath.row]];
+
+    //GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    cell.backgroundColor = [UIColor whiteColor];
+    cell.titleLabel.textColor = [UIColor blackColor];
+    cell.titleLabel.backgroundColor = [UIColor clearColor];
+    return cell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    GZSymbolCollectionCell *cell = (GZSymbolCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
+    cell.titleLabel.backgroundColor = float_Color_button_hightlight;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        cell.titleLabel.backgroundColor = [UIColor whiteColor];
+    });
+    //[collectionView deselectItemAtIndexPath:indexPath animated:YES];
+
+    [self playSound:1103];
+
+    //存储符号使用频次 数据
+    [self resetDataByIndex:(int)indexPath.row];
+
+    if (self.sendSelectedStr) {
+        NSString *str =_dataArray[indexPath.row];
+        self.sendSelectedStr(str);
+    }
+
+    //不是锁定状态 选择完了就返回  也就是removeself
+    if (!isLock && self.sendSelectedFunc) {
+        self.sendSelectedFunc(1);
+    }
+}
+
+
+////当cell高亮时返回是否高亮
+//- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+//    return YES;
+//}
+//- (void)collectionView:(UICollectionView *)collectionView didHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+//    GZSymbolCollectionCell *cell = (GZSymbolCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
+//    cell.titleLabel.backgroundColor = float_Color_button_hightlight;
+//}
+//- (void)collectionView:(UICollectionView *)collectionView didUnhighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+//    GZSymbolCollectionCell *cell = (GZSymbolCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
+//    cell.titleLabel.backgroundColor = [UIColor whiteColor];
+//}
+
+
+
+
+#pragma mark -- plist相关
+//点击后 修改数据源 准备存储到plist
+//存储符号使用频次 数据
+- (void)resetDataByIndex:(int)index {
+    if (selected == 111) {
+        //目前在常用类别
+        NSString *ke = [_common_keys objectAtIndex:index];
+        int num = [[[_common_all objectAtIndex:index] allValues].firstObject intValue];
+        num++;
+        NSDictionary *dic = [NSDictionary dictionaryWithObject:@(num) forKey:ke];
+        [_common_all replaceObjectAtIndex:index withObject:dic];
+    }else {
+        //在其他类别
+        NSString *str =_dataArray[index];
+        int amount = 0; //记录循环次数
+        int num = (int)_common_keys.count;
+        for (int i=0; i<num; i++) {
+            NSString *va = _common_keys[i];
+            if ([va isEqualToString:str]) {
+                int num = [[[_common_all objectAtIndex:i] allValues].firstObject intValue];
+                num++;
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:@(num) forKey:va];
+                [_common_all replaceObjectAtIndex:i withObject:dic];
+                break;
+            }else {
+                amount ++;
+                continue;
+            }
+        }
+        //符号是新添加的
+        if (amount == num || num == 0) {
+            [_common_keys addObject:str];
+            [_common_all addObject:[NSDictionary dictionaryWithObject:@1 forKey:str]];
+        }
+    }
+}
+
+#pragma mark -- 导航按钮
+- (void)didPartTap:(UIButton*)tap {
+    NSInteger tagN = tap.tag;//@"常用",@"中文",@"英文",@"邮箱",@"网址
+
+    //scroll滚动到指定位置
+    CGFloat scrollButtonH = tap.frame.size.height;
+    [self setScrollContentWithNum:(int)tagN-111 andButtonHeight:scrollButtonH];
+
+
+    if (selected == tagN) {
+        return;
+    }else {
+        _dataArray = nil;
+    }
+
+    tap.backgroundColor = [UIColor colorWithHexString:float_Color_button_function alpha:1];
+
+    //GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    UIColor *nomalColor = [UIColor whiteColor];
+
+    UIButton *button1 = (UIButton*)[self viewWithTag:111];
+    UIButton *button2 = (UIButton*)[self viewWithTag:112];
+    UIButton *button3 = (UIButton*)[self viewWithTag:113];
+    UIButton *button4 = (UIButton*)[self viewWithTag:114];
+    UIButton *button5 = (UIButton*)[self viewWithTag:115];
+
+    NSArray *data;
+
+    switch (tagN) {
+        case 111:{
+            button2.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button3.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button4.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button5.backgroundColor = nomalColor;//[UIColor whiteColor];
+            data = _common_keys;
+            break;
+        }
+        case 112:{
+            button1.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button3.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button4.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button5.backgroundColor = nomalColor;//[UIColor whiteColor];
+            data = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"、",@"：",@"；",@"......",@"~",@"——",@"“",@"”",@"《",@"》",@"（",@"）", @"’",@"‘",@"｛",@"｝",@"【",@"】",@"·",@"＃",@"*",@"｜",nil];
+            break;
+        }
+        case 113:{
+            button1.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button2.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button4.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button5.backgroundColor = nomalColor;//[UIColor whiteColor];
+            data = [NSArray arrayWithObjects:@",",@".",@"?",@"!",@"'",@":",@"...",@"~",@"@",@";",@"_",@"|",@"`",@"=",@"+",@"-",@"*",@"/",@"(",@")",@"<",@">",@"[",@"]",@"{",@"}",@"$",@"¥",@"%",@"&", nil];
+            break;
+        }
+        case 114:{
+            button1.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button2.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button3.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button5.backgroundColor = nomalColor;//[UIColor whiteColor];
+            data = [NSArray arrayWithObjects:@".",@"@",@"-",@"_",@"/",@"//",@"www.",@"http://",@".com",@".cn",@".net",@".org",@"@sohu.com",@"@qq.com",@"@126.com",@"@163.com",@"@sina.com",@"@gmail.com",@"@msn.com",@"@live.com",@"@263.com",@"@hotmail.com",@"@yahoo.com.cn",nil];
+            break;
+        }
+        case 115:{
+            button1.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button2.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button3.backgroundColor = nomalColor;//[UIColor whiteColor];
+            button4.backgroundColor = nomalColor;//[UIColor whiteColor];
+            data = [NSArray arrayWithObjects:@"℃",@"℉",@"°",@"㎡",@"m³",@"㎜",@"㎝",@"㎞",@"㎎",@"㎏",@"㏄",@"＄",@"￥",@"€",@"£",@"₤", nil];
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    selected = tagN;
+    _dataArray = data;
+    [_collectionView reloadData];
+}
+
+- (void)didFuncTap:(UIButton*)tap {
+    UIButton *button = (UIButton*)tap;
+    NSInteger tagN = button.tag;
+    int type = 0; //1返回   2锁定  3删除
+
+    switch (tagN) {
+        case 121:
+            type = 1;
+            break;
+        case 122:{
+            type = 2;
+            isLock = !isLock;
+            if (isLock) {
+                [button setImage:[UIImage imageNamed:@"keyboard_lock"] forState:UIControlStateNormal];
+            }else {
+                [button setImage:[UIImage imageNamed:@"keyboard_unlock"] forState:UIControlStateNormal];
+            }
+            break;
+        }
+        case 123:
+            type = 3;
+            break;
+        default:
+            break;
+    }
+
+    if (type != 0 && self.sendSelectedFunc) {
+        self.sendSelectedFunc(type);
+    }
+}
+
+//删除按钮
+- (void)didTouchDown {
+    NSLog(@"didTouchDown");
+    [self deleteActionStart]; //延时问题
+
+    if (!delay) {
+        delay = [NSTimer scheduledTimerWithTimeInterval:0.15 target:self selector:@selector(delayAction) userInfo:nil repeats:NO];
+    }
+
+    //不是锁定状态 选择完了就返回  也就是removeself
+    if (!isLock && self.sendSelectedFunc) {
+        self.sendSelectedFunc(1);
+        return;
+    }
+}
+- (void)didTouchUp {
+    NSLog(@"didTouchUp");
+    [delay invalidate];
+    delay = nil;
+    [timer invalidate];
+    timer = nil;
+    [self deleteActionStop];
+}
+- (void)delayAction {
+    if (!timer) {
+        timer = [NSTimer scheduledTimerWithTimeInterval:0.12 target:self selector:@selector(deleteActionStart) userInfo:nil repeats:YES];
+    }
+}
+- (void)deleteActionStart {
+    NSLog(@"delete");
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(YES);
+    }
+}
+- (void)deleteActionStop {
+    NSLog(@"stop");
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(NO);
+    }
+}
+
+//scroll滚动到指定位置
+//0常用 1中文 2英文 3网络 4单位
+- (void)setScrollContentWithNum:(int)num andButtonHeight:(CGFloat)scrollButtonH{
+    UIScrollView *scroll = (UIScrollView*)[self viewWithTag:109];
+    CGFloat height = scroll.frame.size.height;
+    CGFloat passedLenth = num*(scrollButtonH+0.5); //选中按钮的y
+    CGFloat scrollCenterLenth = (height-scrollButtonH)/2.0; //按钮在scroll的中间位置 对应的y
+    CGFloat distanceLenth = passedLenth - scrollCenterLenth;
+    //int maxNum = (int)(scrollCenterLenth/(scrollButtonH+0.5)); //中间位置的长度能放几个完整的按钮
+    CGFloat maxDistanceLenth = scroll.contentSize.height - height; //最大的间距
+    if (distanceLenth > 0) {
+        if (distanceLenth < maxDistanceLenth) {
+            CGPoint point = CGPointMake(0, distanceLenth);
+            [scroll setContentOffset:point animated:YES];
+        }else {
+            [scroll setContentOffset:CGPointMake(0, maxDistanceLenth) animated:YES];
+        }
+    }else {
+        [scroll setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+}
+
+//按钮声音
+- (void)playSound:(int)soundID {
+    if ([[GZPublicMethod sharedPublicMethod] isAllowFullAccess]) {
+        NSLog(@"允许全部权限");
+        GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+        NSNumber *shock = [share getValueForKey:@"shock"];
+        NSNumber *sound = [share getValueForKey:@"sound"];
+        if ([shock isEqualToNumber:@1]) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); //震动
+        }
+        if ([sound isEqualToNumber:@1]) {
+            NSLog(@"声音开启");
+            AudioServicesPlaySystemSound(soundID);
+        }
+    }
+}
+
+
+- (void)dealloc {
+    NSLog(@"符号键盘 销毁");
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+    }
+
+    //存储plist
+    [[GZUserPlist sharedUserPlist] saveSymbols:[_common_all mutableCopy] withName:@"common"];
+
+    for (UIView *view in self.subviews) {
+        [view removeFromSuperview];
+    }
+
+
+    UIScrollView *scroll = (UIScrollView*)[self viewWithTag:109];
+    if (scroll) {
+        [scroll removeFromSuperview];
+        scroll = nil;
+    }
+    for (int i=0; i<6; i++) {
+        //按钮
+        UIButton *button = (UIButton*)[self viewWithTag:111+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+        //分割线
+        if (i != 5) {
+            UILabel *line = (UILabel*)[self viewWithTag:131+i];
+            if (line) {
+                [line removeFromSuperview];
+                line = nil;
+            }
+        }
+    }
+
+    for (int i=0; i<3; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:121+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+    }
+    UIView *scrollsuperView = (UIView*)[self viewWithTag:110];
+    if (scrollsuperView) {
+        [scrollsuperView removeFromSuperview];
+        scrollsuperView = nil;
+    }
+
+    UIView *collectionsuperView = (UIView*)[self viewWithTag:100];
+    if (collectionsuperView) {
+        [collectionsuperView removeFromSuperview];
+        collectionsuperView = nil;
+    }
+
+    UIView *superView = (UIView*)[self viewWithTag:120];
+    if (superView) {
+        [superView removeFromSuperview];
+        superView = nil;
+    }
+
+    if (_collectionView) {
+        [_collectionView removeFromSuperview];
+        _collectionView = nil;
+    }
+    if (_dataArray) {
+        _dataArray = nil;
+    }
+
+    if (_common_all) {
+        [_common_all removeAllObjects];
+        _common_all = nil;
+    }
+    if (_common_keys) {
+        [_common_keys removeAllObjects];
+        _common_keys = nil;
+    }
+}
+
+
+@end

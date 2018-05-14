@@ -1,0 +1,549 @@
+//
+//  GZStrokeKeyboard.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/12.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZStrokeKeyboard.h"
+
+@interface GZStrokeKeyboard()
+{
+    NSTimer *timer; //定时器 删除按钮长按
+    NSTimer *delay; //延时执行 长按删除操作
+}
+@end
+
+
+@implementation GZStrokeKeyboard
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        //创建view
+        [self add];
+    }
+    return self;
+}
+
+
+- (void)changeViewFrame:(CGRect)newFrame {
+    self.frame = newFrame;
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat width_bott = (self.frame.size.width - 7*spaceX)/(4+1.5*2); //底部按钮宽度(小的宽度  大的宽度是小的1.5倍)
+
+    CGFloat width = (SCREEN_WIDTH - 6*spaceX - 2*width_bott)/3.0; //字母按钮的宽度
+    CGFloat height = (self.frame.size.height - top - bottom - 3*spaceY)/4.0; //字母按钮的高度
+
+    //键盘按钮
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            NSInteger tag = 11 + i*3 + j;
+            GZKeyButton *button = (GZKeyButton*)[self viewWithTag:tag];
+            button.frame = CGRectMake(2*spaceX+width_bott + j*(width+spaceX), top + i*(height+spaceY), width, height);
+        }
+    }
+
+    //符号scroll
+    CGFloat scrollButtonH = height*3 + 2*spaceY;
+    CGFloat scrollButtonW = width_bott;
+    UIView *scrollsuperView = (UIView*)[self viewWithTag:51];
+    scrollsuperView.frame = CGRectMake(spaceX, top, scrollButtonW, scrollButtonH);
+
+    UIScrollView *scroll = (UIScrollView*)[self viewWithTag:52];
+    scroll.frame = CGRectMake(0, 0, scrollButtonW, scrollButtonH);
+
+    CGFloat scrollSubsH = height * 0.8;
+    //NSArray *scrollSubs = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"···", nil];
+    int nu = 5;
+    scroll.contentSize = CGSizeMake(scrollButtonW, (scrollSubsH+0.5) * nu);
+
+    for (int i=0; i<nu; i++) {
+        //按钮
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:61+i];
+        button.frame = CGRectMake(0, i*(scrollSubsH+0.5), scrollButtonW, scrollSubsH);
+
+        //分割线
+        if (i != nu-1) {
+            UILabel *line = (UILabel*)[self viewWithTag:81+i];
+            line.frame = CGRectMake(5, (i+1)*(scrollSubsH+0.5), scrollButtonW-10, 0.5);
+        }
+    }
+
+
+    //功能按钮 右
+    //NSArray *titles = [NSArray arrayWithObjects:@"",@"清空",@"@", nil];
+    //NSArray *images = [NSArray arrayWithObjects:@"keyboard_clear",@"",@"", nil];
+    for (int i=0; i<3; i++) {
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:101+i];
+        button.frame = CGRectMake(3*width + 5*spaceX + width_bott, top + i*(height+spaceY), width_bott, height);
+    }
+
+    //功能按钮 底
+    CGFloat width_bott_b = 1.5 * width_bott;
+    CGFloat y_bott = top + 3*height +3*spaceY;
+    //NSArray *titles_bott = [NSArray arrayWithObjects:@"符",@"",@"123",@"空格",@"中/英",@"回车", nil];
+    for (int i=0; i<6; i++) {
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:201+i];
+        if (i < 3) {
+            button.frame = CGRectMake(spaceX + i*(spaceX+width_bott), y_bott, width_bott, height);
+        }else if (i == 3) {
+            //空格
+            button.frame = CGRectMake(spaceX + 3*(spaceX+width_bott), y_bott, width_bott_b, height);
+        }else if (i == 4) {
+            //中英切换
+            CGFloat changeX = spaceX*5 + width_bott*3 + width_bott_b; //中英切换 x坐标
+            button.frame = CGRectMake(changeX, y_bott, width_bott, height);
+        }else {
+            //回车
+            CGFloat sureX = spaceX*6 + width_bott*4 + width_bott_b;
+            button.frame = CGRectMake(sureX, y_bott, width_bott_b, height);
+        }
+    }
+}
+
+- (void)changeBackgroudColor {
+    GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+    NSString * skinName = [share getGroupValueForKey:@"keyboardSkin"];
+    GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+
+    //背景图
+    if (skin.backgroudImage_kb) {
+        UIImageView *imageview = [[UIImageView alloc] initWithFrame:self.bounds];
+        imageview.image = [UIImage imageNamed:skin.backgroudImage_kb];
+        [self addSubview:imageview];
+    }
+    //背景色
+    self.backgroundColor = skin.backgroungColor_kb;
+
+    //按键
+    for (int i=0; i<9; i++) {
+        GZKeyButton *button = (GZKeyButton*)[self viewWithTag:11+i];
+        [button setButtonStyleWithSkin:skinName];
+    }
+
+    //左侧符号
+    //NSArray *scrollSubs = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"···", nil];
+    int nu = 5;
+    for (int i=0; i<nu; i++) {
+        //按钮
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:61+i];
+        [button setButtonStyleWithSkin:skinName];
+        //分割线
+        //        if (i != nu-1) {
+        //            UILabel *line = (UILabel*)[self viewWithTag:81+i];
+        //        }
+    }
+
+    //右侧 功能
+    for (int i=0; i<3; i++) {
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:101+i];
+        [button setButtonStyleWithSkin:skinName];
+    }
+
+    //底部 功能
+    //NSArray *names = @[@"符",@"",@"123",@"空格",@"中/英",@"回车"];
+    for (int i=0; i<6; i++) {
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:201+i];
+        [button setButtonStyleWithSkin:skinName];
+        if (i == 3) {
+            //空格
+            button.backgroundColor = skin.backgroungColor_btn;
+        }
+    }
+}
+
+//手动停止计时器
+- (void)stopTimer {
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+    }
+}
+
+#pragma mark -- ui
+- (void)add {
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat width_bott = (self.frame.size.width - 7*spaceX)/(4+1.5*2); //底部按钮宽度(小的宽度  大的宽度是小的1.5倍)
+
+    CGFloat width = (SCREEN_WIDTH - 6*spaceX - 2*width_bott)/3.0; //字母按钮的宽度
+    CGFloat height = (self.frame.size.height - top - bottom - 3*spaceY)/4.0; //字母按钮的高度
+
+    GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+    NSString * skin = [share getGroupValueForKey:@"keyboardSkin"];
+
+    //键盘按钮
+    NSArray *buttonNames = [NSArray arrayWithObjects:
+                            @[@"一",@"丨",@"丿"],
+                            @[@"乀",@"乛",@"通配"],
+                            @[@"分词",@"：",@"；"],
+                            nil];
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            GZKeyButton *button = [GZKeyButton buttonWithType:UIButtonTypeCustom];
+            button.frame = CGRectMake(2*spaceX+width_bott + j*(width+spaceX), top + i*(height+spaceY), width, height);
+            [button setButtonStyleWithSkin:skin];
+            button.titleLabel.font = [UIFont systemFontOfSize:18];
+            [button setTitle:buttonNames[i][j] forState:UIControlStateNormal];
+            button.tag = 11 + i*3 + j;
+
+            if (i == 2 && (j == 1 || j == 2)) {
+                [button addTarget:self action:@selector(didSymbolButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+            }else {
+                [button addTarget:self action:@selector(didKeyButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+            }
+            [self addSubview:button];
+        }
+    }
+
+
+    //符号scroll
+    CGFloat scrollButtonH = height*3 + 2*spaceY;
+    CGFloat scrollButtonW = width_bott;
+    GZKeyboardSuspendView_bottom *scrollsuperView = [[GZKeyboardSuspendView_bottom alloc] initWithFrame:CGRectMake(spaceX, top, scrollButtonW, scrollButtonH)];
+    [scrollsuperView setViewStyleWithSkin:skin];
+    [self addSubview:scrollsuperView];
+    scrollsuperView.tag = 51;
+
+    UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, scrollButtonW, scrollButtonH)];
+    scroll.backgroundColor = Color_background_kb;
+    scroll.layer.cornerRadius = 5;
+    scroll.showsVerticalScrollIndicator = NO;
+    scroll.tag = 52;
+    scroll.bounces = YES;
+    [scrollsuperView addSubview:scroll];
+
+    CGFloat scrollSubsH = height * 0.8;
+    NSArray *scrollSubs = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"···", nil];
+    int nu = (int)scrollSubs.count;
+    scroll.contentSize = CGSizeMake(scrollButtonW, (scrollSubsH+0.5) * nu);
+
+    for (int i=0; i<nu; i++) {
+        //按钮
+        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeSystem];
+        [button setButtonStyleWithSkin:skin];
+        button.titleLabel.font = [UIFont systemFontOfSize:18];
+        [button setTitle:scrollSubs[i] forState:UIControlStateNormal];
+        button.frame = CGRectMake(0, i*(scrollSubsH+0.5), scrollButtonW, scrollSubsH);
+        button.tag = 61+i;
+        [button addTarget:self action:@selector(didSymbolButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        [scroll addSubview:button];
+
+        //分割线
+        if (i != nu-1) {
+            UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(5, (i+1)*(scrollSubsH+0.5), scrollButtonW-10, 0.5)];
+            line.backgroundColor = Color_background_kb;
+            line.tag = 81+i;
+            [scroll addSubview:line];
+        }
+    }
+
+
+    //功能按钮 右
+    NSArray *titles = [NSArray arrayWithObjects:@"",@"清空",@"@", nil];
+    NSArray *images = [NSArray arrayWithObjects:@"keyboard_clear",@"",@"", nil];
+    for (int i=0; i<3; i++) {
+        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CGRectMake(3*width + 5*spaceX + width_bott, top + i*(height+spaceY), width_bott, height);
+        [button setButtonStyleWithSkin:skin];
+        button.titleLabel.font = [UIFont systemFontOfSize:18];
+        [button setTitle:titles[i] forState:UIControlStateNormal];
+        [button setImage:[UIImage imageNamed:images[i]] forState:UIControlStateNormal];
+        button.tag = 101+i;
+
+        if (i == 0) {
+            //删除
+            [button addTarget:self action:@selector(didTouchDown) forControlEvents:UIControlEventTouchDown];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpInside];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpOutside]; //移动手指出按钮
+        }else if (i == 1) {
+            //清空
+            [button addTarget:self action:@selector(didFuncButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        }else {
+            //符号
+            [button addTarget:self action:@selector(didSymbolButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [self addSubview:button];
+    }
+
+    //功能按钮 底
+    CGFloat width_bott_b = 1.5 * width_bott;
+    CGFloat y_bott = top + 3*height +3*spaceY;
+    NSArray *titles_bott = [NSArray arrayWithObjects:@"符",@"",@"123",@"空格",@"中/英",@"回车", nil];
+    for (int i=0; i<titles_bott.count; i++) {
+
+        //排除next小地球按钮
+        if (i == 1) {
+            continue;
+        }
+        
+        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        [button setButtonStyleWithSkin:skin];
+        button.tag = 201+i;
+
+        //点击事件
+        if (i == 3) {
+            //空格
+            [button addTarget:self action:@selector(didSymbolButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        }else {
+            [button addTarget:self action:@selector(didFuncButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        }
+
+        GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+
+        //坐标
+        if (i < 3) {
+            button.frame = CGRectMake(spaceX + i*(spaceX+width_bott), y_bott, width_bott, height);
+        }else if (i == 3) {
+            //空格
+            button.frame = CGRectMake(spaceX + 3*(spaceX+width_bott), y_bott, width_bott_b, height);
+            button.backgroundColor = skin.backgroungColor_btn;
+        }else if (i == 4) {
+            //中英切换
+            CGFloat changeX = spaceX*5 + width_bott*3 + width_bott_b; //中英切换 x坐标
+            button.frame = CGRectMake(changeX, y_bott, width_bott, height);
+        }else {
+            //回车
+            CGFloat sureX = spaceX*6 + width_bott*4 + width_bott_b;
+            button.frame = CGRectMake(sureX, y_bott, width_bott_b, height);
+        }
+
+        //标题
+        if (i == 0) {
+            [button setTitle:@"符" forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont systemFontOfSize:18];
+        }else if (i == 1) {
+            [button setImage:[UIImage imageNamed:@"keyboard_esrth"] forState:UIControlStateNormal];
+        }else if (i == 2) {
+            [button setTitle:@"123" forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont systemFontOfSize:18];
+        }else if (i == 3) {
+            [button setImage:[UIImage imageNamed:@"keyboard_space"] forState:UIControlStateNormal];
+            CGSize imageSize = button.imageView.bounds.size;
+            button.imageEdgeInsets = UIEdgeInsetsMake(imageSize.height/2.5,0, -imageSize.height/2.5, 0);
+//            [button setTitle:@"↼⇀" forState:UIControlStateNormal];
+//            button.titleLabel.font = [UIFont systemFontOfSize:25];
+//            [button setTitleColor:skin.titleColor_btn forState:UIControlStateNormal];
+        }else if (i == 4) {
+            [button setImage:[UIImage imageNamed:@"keyboard_ch_en"] forState:UIControlStateNormal];
+        }else {
+            [button setImage:[UIImage imageNamed:@"keyboard_enter"] forState:UIControlStateNormal];
+
+//            [button setTitle:@"换行" forState:UIControlStateNormal];
+//            button.titleLabel.font = [UIFont systemFontOfSize:18];
+        }
+
+        [self addSubview:button];
+    }
+}
+
+
+#pragma mark -- 按钮交互
+//键盘
+- (void)didKeyButtonTap:(UIButton*)sender {
+//    NSArray *buttonNames = [NSArray arrayWithObjects:
+//                            @[@"一",@"丨",@"丿"],
+//                            @[@"乀",@"乛",@"通配"],
+//                            @[@"分词",@"：",@"；"],
+//                            nil];
+    NSInteger tagN = sender.tag;
+    int text;
+    switch (tagN) {
+        case 11:
+            text = 1; //一
+            break;
+        case 12:
+            text = 2; //丨
+            break;
+        case 13:
+            text = 3; //丿
+            break;
+        case 14:
+            text = 4; //乀
+            break;
+        case 15:
+            text = 5; //乛
+            break;
+        case 16:
+            text = 6; //通配符
+            break;
+        case 17:
+            text = 7; //分词
+            break;
+        default:
+            text = -1;
+            break;
+    }
+
+    if (text > 0 && self.sendSelectedStr) {
+        self.sendSelectedStr(text);
+    }
+}
+
+//符号按钮
+- (void)didSymbolButtonTap:(UIButton*)sender {
+    //NSArray *scrollSubs = [NSArray arrayWithObjects:@"，",@"。",@"？",@"！",@"···", nil];
+    //61+i;
+    //:18  ;19  @103  空格204
+    NSInteger tagN = sender.tag;
+    NSString *type;
+    switch (tagN) {
+        case 18: {
+            type = @"：";
+            break;
+        }
+        case 19: {
+            type = @"；";
+            break;
+        }
+        case 103: {
+            type = @"@";
+            break;
+        }
+        case 204: {
+            type = @" ";
+            break;
+        }
+        case 61: {
+            type = @"，";
+            break;
+        }
+        case 62: {
+            type = @"。";
+            break;
+        }
+        case 63: {
+            type = @"？";
+            break;
+        }
+        case 64: {
+            type = @"！";
+            break;
+        }
+        case 65: {
+            type = @"···";
+            break;
+        }
+        default:
+            break;
+    }
+
+    if (type != 0 && self.sendSelectedSymbol) {
+        self.sendSelectedSymbol(type);
+    }
+}
+
+//功能按钮
+- (void)didFuncButtonTap:(UIButton*)sender {
+    //2清空 3符号 4下一个输入法 5数字 6中英切换 7回车
+    //NSArray *titles_bott = [NSArray arrayWithObjects:@"符",@"next",@"123",@"空格",@"中/英",@"回车", nil];
+    //201+i 除去204空格
+    //101删除 102清空
+    NSInteger tagN = sender.tag;
+    int type = -1;
+    switch (tagN) {
+        case 102:
+            type = 2;
+            break;
+        case 201:
+            type = 3;
+            break;
+        case 202:
+            type = 4;
+            break;
+        case 203:
+            type = 5;
+            break;
+        case 205:
+            type = 6;
+            break;
+        case 206:{
+            type = 7;
+            break;
+        }
+        default:
+            break;
+    }
+
+    if (type > 0 && self.sendSelectedFunc) {
+        self.sendSelectedFunc(type);
+    }
+}
+
+//删除按钮
+- (void)didTouchDown {
+    [self deleteActionStart]; //延时问题
+
+    if (!delay) {
+        delay = [NSTimer scheduledTimerWithTimeInterval:0.15 target:self selector:@selector(delayAction) userInfo:nil repeats:NO];
+    }
+}
+- (void)didTouchUp {
+    [delay invalidate];
+    delay = nil;
+    [timer invalidate];
+    timer = nil;
+    [self deleteActionStop];
+}
+- (void)delayAction {
+    if (!timer) {
+        timer = [NSTimer scheduledTimerWithTimeInterval:0.12 target:self selector:@selector(deleteActionStart) userInfo:nil repeats:YES];
+    }
+}
+- (void)deleteActionStart {
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(YES);
+    }
+}
+- (void)deleteActionStop {
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(NO);
+    }
+}
+
+
+#pragma mark -- dealloc
+- (void)dealloc {
+    NSLog(@"笔画键盘 销毁");
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+    }
+
+    for (UIView *view in self.subviews) {
+        if (view) {
+            [view removeFromSuperview];
+        }
+    }
+
+    for (int i=0; i<9; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:11+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+    }
+}
+
+
+@end

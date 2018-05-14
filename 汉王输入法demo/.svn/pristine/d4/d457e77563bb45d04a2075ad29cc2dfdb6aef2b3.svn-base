@@ -1,0 +1,88 @@
+//
+//  GZWrightKeyboardCore.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/29.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZWrightKeyboardCore.h"
+
+@interface GZWrightKeyboardCore() {
+    unsigned int imHandle[128];
+    char *imRam;
+    unsigned char *imRam_dic; //字典的存储空间指针
+}
+@end
+
+@implementation GZWrightKeyboardCore
+
+static GZWrightKeyboardCore *share;
+static dispatch_once_t onceToken;
+
++ (id)shareWrightKeyboardCore {
+    dispatch_once(&onceToken, ^{
+        share = [[self alloc] init];
+    });
+    return share;
+}
+- (id)init {
+    self = [super init];
+    if (self) {
+        [self initWrightKeyboardWorkSpace];
+    }
+    return self;
+}
+- (BOOL)initWrightKeyboardWorkSpace {
+    NSLog(@"手写键盘 初始化工作空间");
+    if (imRam == NULL) {
+        imRam = (char*)allocMemory(ENG_REC_RAM_SIZE);
+        //imRam = (char*)malloc(ENG_REC_RAM_SIZE);
+
+        //memset(imRam, 0, ENG_REC_RAM_SIZE);
+        //memset(&imHandle, 0, sizeof(imHandle));
+
+        int num = HWRC_SetWorkSpace(imHandle, imRam, ENG_REC_RAM_SIZE);
+        if (0 != num) {
+            NSLog(@"初始化空间失败0 %d",num);
+            return NO;
+        }
+    }
+
+    NSString *path = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] bundlePath], @"HW_REC_CN.bin"];
+    imRam_dic = (unsigned char*)loadFile([path UTF8String], NULL); //加载字典
+    int num = HWRC_SetRecogDic(imHandle, imRam_dic,HW_RC_LANGUAGE_CN);
+    if (0 != num) {
+        NSLog(@"初始化空间失败1 %d",num);
+        return NO;
+    }
+
+    return YES;
+}
+
+
+- (unsigned int *)getHandle {
+    return imHandle;
+}
+
+- (char*)getRam {
+    return imRam;
+}
+
+- (void)releaseWorkspace {
+    NSLog(@"wrightKeyboardRease");
+    if (imRam) {
+        releaseMemory(imRam);
+        //free(imRam);
+        imRam = NULL;
+    }
+    if (imRam_dic) {
+        releaseMemory(imRam_dic);
+        imRam_dic = NULL;
+    }
+    //releaseMemory(imHandle);
+
+    share = nil;
+    onceToken = 0;
+}
+@end

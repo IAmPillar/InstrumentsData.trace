@@ -1,0 +1,152 @@
+//
+//  GZUserPhrasesView.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/21.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZUserPhrasesView.h"
+
+
+
+@interface GZUserPhrasesView ()<UITableViewDelegate,UITableViewDataSource>
+@property (nonatomic,strong) UITableView *tableView;
+@property (nonatomic,strong) NSMutableArray *dataArr;
+@end
+
+
+@implementation GZUserPhrasesView
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        GZUserPlist *plist = [GZUserPlist sharedUserPlist];
+        NSArray *data = [plist getAllUsefulPhrases];
+        if (data.count == 0 || !data) {
+            data = [plist getAllUsefulPhrases_noInnit];
+        }
+        _dataArr = [[NSMutableArray alloc] initWithArray:data];
+        [self createUI];
+    }
+    return self;
+}
+
+
+- (void)changeViewFrame:(CGRect)newFrame {
+    self.frame = newFrame;
+    _tableView.frame = CGRectMake(0, 0, newFrame.size.width, newFrame.size.height);
+    UIView *view = (UIView*)[self viewWithTag:101];
+    view.frame = CGRectMake(0, 0, newFrame.size.width, 40);
+    UIButton *button = (UIButton*)[self viewWithTag:102];
+    button.frame = CGRectMake(0, 0, self.frame.size.width, 40);
+}
+
+- (void)changeBackgroudColor {
+    //GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    self.backgroundColor = Color_background_kb;
+    _tableView.backgroundColor = Color_background_kb;
+    UIView *view = (UIView*)[self viewWithTag:101];
+    view.backgroundColor = Color_background_kb;
+    UIButton *button = (UIButton*)[self viewWithTag:102];
+    button.backgroundColor = Color_background_kb;
+}
+
+
+#pragma mark -- UI
+- (void)createUI {
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height) style:UITableViewStylePlain];
+    _tableView.backgroundColor = [UIColor whiteColor];
+    _tableView.showsVerticalScrollIndicator = NO;
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    _tableView.tableFooterView = [[UIView alloc] init];
+    _tableView.tableHeaderView = [self createHeader];
+    [self addSubview:_tableView];
+}
+
+//tableHeader
+- (UIView*)createHeader {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 40)];
+    view.backgroundColor = [UIColor whiteColor];
+    view.tag = 101;
+
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, self.frame.size.width, 40);
+    [button setTitle:@"+点击添加新的短语" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(addNewPhrases:) forControlEvents:UIControlEventTouchUpInside];
+    button.tag = 102;
+    [view addSubview:button];
+
+    return view;
+}
+//table delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return _dataArr.count;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 44;
+}
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellID = @"userPhareseCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+    }
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+    cell.textLabel.text = _dataArr[indexPath.row];
+
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSString *phrases = _dataArr[indexPath.row];
+    if (self.sendSelectPhrases && phrases.length != 0) {
+        self.sendSelectPhrases(phrases);
+    }
+}
+
+#pragma mark -- 交互
+//添加新短语
+- (void)addNewPhrases:(UIButton*)sender {
+    if (self.sendEditPhrases) {
+        self.sendEditPhrases(YES);
+    }
+}
+
+
+#pragma mark -- dealloc
+- (void)dealloc {
+    NSLog(@"常用短语页，销毁");
+
+    if (_dataArr) {
+        [_dataArr removeAllObjects];
+        _dataArr = nil;
+    }
+    for (UIView *view in self.subviews) {
+        [view removeFromSuperview];
+    }
+    if (_tableView) {
+        [_tableView removeFromSuperview];
+        _tableView = nil;
+    }
+    UIView *view = (UIView*)[self viewWithTag:101];
+    if (view) {
+        [view removeFromSuperview];
+        view = nil;
+    }
+    UIButton *button = (UIButton*)[self viewWithTag:102];
+    if (button) {
+        [button removeFromSuperview];
+        button = nil;
+    }
+}
+
+
+@end

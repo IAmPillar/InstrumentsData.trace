@@ -1,0 +1,19 @@
+//
+//  GZCandidateMoreCell.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/16.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+
+/**
+ *更多候选 collection cell
+ ***/
+
+@interface GZCandidateMoreCell : UICollectionViewCell
+@property (nonatomic,copy) UILabel *titleLabel;
+- (void)setTitleText:(NSString*)text;
+@end

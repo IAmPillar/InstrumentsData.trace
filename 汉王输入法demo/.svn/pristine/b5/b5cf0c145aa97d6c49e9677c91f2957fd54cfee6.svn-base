@@ -1,0 +1,163 @@
+//
+//  GZChineseKeyboardCore.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/29.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZChineseKeyboardCore.h"
+
+
+@interface GZChineseKeyboardCore()
+{
+    HWIM_HANDLE imHandle;
+    char* imRam;
+    int dictionaryType; //初始化的字典类型 //0中文 1英文 2手写联想
+    BOOL isFirstInit; //是否是首次加载单例=字典未加载过
+}
+@end
+
+@implementation GZChineseKeyboardCore
+
+static GZChineseKeyboardCore *share;
+static dispatch_once_t onceToken;
+
++ (id)shareChineseKeyboardCore {
+    dispatch_once(&onceToken, ^{
+        share = [[self alloc] init];
+    });
+    return share;
+}
+- (id)init {
+    self = [super init];
+    if (self) {
+        dictionaryType = -1;
+        isFirstInit = YES;
+        [self initChineseKeyboardWorkSpace];
+    }
+    return self;
+}
+- (BOOL)initChineseKeyboardWorkSpace {
+    NSLog(@"chinese键盘 初始化工作空间");
+    imRam = (char*)allocMemory(HWKEYIM_MIN_RAMSIZE);
+    //memset(&imHandle, 0, sizeof(HWIM_HANDLE));
+
+    if (0 != HWKIM_Init(&imHandle, (HWCBK_LoadDict)&loadFile, (HWCBK_ReleaseDict)&releaseMemory, (HWCBK_SaveDict)&saveFile)) {
+        NSLog(@"初始化失败 1");
+        return NO;
+    }
+    if (0 != HWKIM_SetWorkSpace(&imHandle, imRam, HWKEYIM_MIN_RAMSIZE)) {
+        NSLog(@"初始化失败 2");
+        return NO;
+    }
+
+    return YES;
+}
+
+
+- (HWIM_HANDLE *)getHandle {
+    return &imHandle;
+}
+
+- (char*)getRam {
+    return imRam;
+}
+
+- (void)cleanData {
+    HWKIM_InputStrClean(&imHandle);
+}
+
+- (void)releaseWorkspace {
+    HWKIM_InputStrClean(&imHandle);
+    if (0 != HWKIM_SaveUserDict(&imHandle)) {
+        NSLog(@"键盘--SaveUserDict");
+    }
+    if (0 != HWKIM_ReleaseLanguageDict(&imHandle)) {
+        NSLog(@"键盘--ReleaseLanguageDict");
+    }
+    if (0 != HWKIM_ReleaseUserDict(&imHandle)) {
+        NSLog(@"键盘--ReleaseUserDict");
+    }
+    if (imRam) {
+        releaseMemory(imRam);
+        imRam = NULL;
+    }
+
+    share = nil;
+    onceToken = 0;
+}
+
+- (BOOL)changeDictionary:(int)type {
+    //0中文 1英文 2手写联想
+    if (type < 0) {
+        return NO;
+    }
+
+    if (type == dictionaryType) {
+        return NO;
+    }
+
+    dictionaryType = type;
+
+    if (!isFirstInit) {
+        HWKIM_InputStrClean(&imHandle);
+        if (0 != HWKIM_SaveUserDict(&imHandle)) {
+            NSLog(@"~change~--SaveUserDict");
+        }
+        if (0 != HWKIM_ReleaseLanguageDict(&imHandle)) {
+            NSLog(@"~change~--ReleaseLanguageDict");
+        }
+        if (0 != HWKIM_ReleaseUserDict(&imHandle)) {
+            NSLog(@"~change~--ReleaseUserDict");
+        }
+    }
+
+
+    NSString *systemDicStr = nil;
+    NSString *userDicStr = nil;
+    NSInteger language = 0;
+
+    if (type == 0) {
+        systemDicStr = @"ml-sys.dic";
+        userDicStr = @"ml-user.dic";
+        language = HWLANG_Simp_Chinese;
+    }else if (type == 1) {
+        systemDicStr = @"en-slm.dic";
+        userDicStr = @"ltk-user.dic";
+        language = HWLANG_English;
+    }else if (type == 2) {
+        systemDicStr = @"ml-sys.dic";
+        userDicStr = @"ml-user.dic";
+        language = HWLANG_Simp_Chinese;
+    }else {}
+
+    NSFileManager *manager = [NSFileManager defaultManager];
+    GZUserPlist *plist = [GZUserPlist sharedUserPlist];
+
+    NSString *systemD = [NSString stringWithFormat:@"%@/%@",[[NSBundle mainBundle] bundlePath], systemDicStr];
+    NSString *userD = [plist getUserDictionaryPath:userDicStr];
+    if (![manager fileExistsAtPath:userD]) {
+        [plist saveUserDictionary:userDicStr]; //中文全键盘、中文九键盘、中文笔画键盘
+        userD = [plist getUserDictionaryPath:userDicStr];
+    }
+
+    if (![plist isHaveUserDictionary:userDicStr]) {
+        NSLog(@"存储失败");
+        return NO;
+    }
+
+    if (0 != HWKIM_SetLanguageDict(&imHandle, (int)language, [systemD UTF8String], 0)) {
+        NSLog(@"~change~  HWKIM_SetLanguageDict");
+    }
+    if (0 != HWKIM_SetUserDict(&imHandle, [userD UTF8String], 0)) {
+        NSLog(@"~change~  HWKIM_SetUserDict");
+    }
+
+    isFirstInit = NO;
+    
+    return YES;
+}
+
+
+@end

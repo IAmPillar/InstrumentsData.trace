@@ -1,0 +1,27 @@
+//
+//  GZSquaredKeyboard.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/5.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZView.h"
+
+/**
+ *九宫格键盘
+ ***/
+
+@interface GZSquaredKeyboard : GZKeyboardBackgroundeView
+@property (nonatomic, copy) void(^sendSelectedStr)(int text); //文本按键返回 1分词 2-9
+@property (nonatomic, copy) void(^sendSelectedFunc)(int funcType); //功能按键返回  2清空 3符号 4下一个输入法 5数字 6中英切换 7回车
+@property (nonatomic, copy) void(^sendSelectedSymbol)(NSString* text); //文本符号按键返回
+@property (nonatomic, copy) void(^sendSelectedPinyin)(int tag, NSString* text); //拼音候选按键返回
+@property (nonatomic, copy) void(^sendDeleteTap)(BOOL isDelete); //删除功能键 返回 删除功能不在sendSelectedFunc中返回功能
+- (void)changeViewFrame:(CGRect)newFrame;
+- (void)changeBackgroudColor;
+- (void)changePinyinSelectButton:(NSArray*)data; //改变候选拼音按钮
+- (void)removePinyinSelectButton; //移除候选拼音按钮
+- (void)stopTimer; //手动停止计时器
+
+@end

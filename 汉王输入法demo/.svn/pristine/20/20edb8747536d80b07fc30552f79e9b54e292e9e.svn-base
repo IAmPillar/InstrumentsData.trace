@@ -1,0 +1,32 @@
+//
+//  text.pch
+//  text
+//
+//  Created by pillar‘s on 16/2/3.
+//  Copyright © 2016年 pillar‘s. All rights reserved.
+//
+
+#ifndef text_pch
+#define text_pch
+
+#ifdef DEBUG
+#define NSLog(...) NSLog(__VA_ARGS__)
+#define debugMethod() NSLog(@"%s", __func__)
+#else
+#define NSLog(...)
+#define debugMethod()
+#endif
+
+
+#import "Header.h"
+#import "GZUserDefaults.h"
+#import "GZUserPlist.h"
+#import "GZPublicMethod.h"
+#import "GZButton.h" //按钮声音
+#import "GZButton+GZSetting.h"
+#import "GZSoundPlay.h" //播放声音
+
+
+
+
+#endif /* text_pch */

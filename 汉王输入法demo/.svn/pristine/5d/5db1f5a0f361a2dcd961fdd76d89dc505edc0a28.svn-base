@@ -1,0 +1,35 @@
+//
+//  GZRequest.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2018/3/13.
+//  Copyright © 2018年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *网络请求
+ ***/
+
+@interface GZRequest : NSObject
+typedef void (^SuccessBlock)(id object);//成功回传数据
+typedef void (^FailureBlock)(NSError *error);//失败回传错误信息
+
++ (id)shareRequest;
+- (void)removeRequest;
+
+
+/***
+ 注意:body 字典类型,或数组类型
+ body若为数组类型,则要求放置类型 @[@"key=value",@"key2=value2",....],key与value就是键值对
+ 若为字典类型,则要求放置类型 @{@"key":@"value",@"key2":@"value2",....},与之前的相同
+ 一定要注意body的格式不要错.
+ **/
+- (void)postDataWithURL:(NSString *)URL
+                andBody:(id)body
+           completation:(SuccessBlock)success
+                failure:(FailureBlock)failure;
+
+
+@end

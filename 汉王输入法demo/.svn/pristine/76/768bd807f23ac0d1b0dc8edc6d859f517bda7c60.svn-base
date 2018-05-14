@@ -1,0 +1,30 @@
+//
+//  GZStroke.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/13.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *笔画键盘 核心库操作
+ ***/
+
+@interface GZStroke : NSObject
+typedef void (^InputBlock)(NSString *compontText, NSArray *candiateArray);//输入 成功回传数据
+typedef void (^SelectBlock)(NSString *compontText, NSArray *candiateArray);//选择候选 成功回传数据 0finish 1nofinish
+typedef void (^PredictBlock)(NSArray *candiateArray);//联想 成功回传数据
+
++ (id)defaultStroke;
+- (void)sendInput:(int)inputCode complation:(InputBlock)data; //键盘输入
+- (void)sendSelectedIndex:(int)index andStr:(NSString*)str selectComplation:(SelectBlock)selectdata predicComplation:(PredictBlock)predicdata; //点击候选按钮 有联想
+- (void)selectIndex:(int)index complation:(SelectBlock)selectdata; //选择候选 没有联想
+- (void)predicInput:(NSString*)text complation:(PredictBlock)data; //文字联想
+- (BOOL)isSelectFinish; //选择候选index是否结束
+- (NSString*)getResultStr; //候选结束，获取之前的选择 比如“好ren” //获取拼音
+- (void)keyboardReset; // 重置
+- (void)releaseWorkspace; // 释放工作空间
+- (void)quitOutApp; //退出app
+@end

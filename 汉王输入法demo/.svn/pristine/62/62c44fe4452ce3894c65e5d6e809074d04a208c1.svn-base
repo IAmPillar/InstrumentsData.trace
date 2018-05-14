@@ -1,0 +1,20 @@
+//
+//  GZUserPhrasesView.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/21.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZView.h"
+
+/**
+ *常用短语
+ ***/
+
+@interface GZUserPhrasesView : GZKeyboardBackgroundeView
+@property (nonatomic,copy) void(^sendSelectPhrases)(NSString *phrases);
+@property (nonatomic,copy) void(^sendEditPhrases)(BOOL edit); //点击编辑短语
+- (void)changeViewFrame:(CGRect)newFrame;
+- (void)changeBackgroudColor;
+@end

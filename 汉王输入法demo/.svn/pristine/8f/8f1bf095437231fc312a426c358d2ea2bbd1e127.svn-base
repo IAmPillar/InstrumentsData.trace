@@ -1,0 +1,530 @@
+//
+//  GZNumberKeyboard.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/4.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZNumberKeyboard.h"
+
+@interface GZNumberKeyboard ()
+{
+    NSTimer *timer; //定时器 删除按钮长按
+    NSTimer *delay; //延时执行 长安删除操作
+}
+
+@end
+
+
+
+@implementation GZNumberKeyboard
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        //创建view
+        self.backgroundColor = Color_background_kb;
+
+        [self createButtons];
+    }
+    return self;
+}
+
+
+
+- (void)changeViewFrame:(CGRect)newFrame {
+
+    self.frame = newFrame;
+
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat buttonH = (self.frame.size.height - top - bottom - spaceY*3)/4.0; //按钮的高度
+    CGFloat numButtonW = (self.frame.size.width - spaceX*6)/4.2; //数字按钮的宽度 功能按钮是数字按钮的0.6倍
+    CGFloat funcButtonW = numButtonW*0.6; //功能按钮宽度
+
+    //创建数字按钮部分
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<3; j++) {
+            UIButton *button = (UIButton*)[self viewWithTag:61+ i*3 + j];
+            button.frame = CGRectMake(spaceX*2 + funcButtonW + j*(numButtonW+spaceX), top + i*(buttonH+spaceY), numButtonW, buttonH);
+        }
+    }
+
+    //左侧快捷符号部分
+    CGFloat superViewH = self.frame.size.height - top - bottom - buttonH - spaceY;
+    CGFloat subH = (superViewH - 3*0.5)/4.0; //快捷符号的高度 //4*0.5分割线;
+
+    UIView *superView1 = (UIView*)[self viewWithTag:51];//[[UIView alloc] initWithFrame:];
+    superView1.frame = CGRectMake(spaceX, top, funcButtonW, superViewH);
+
+    for (int i=0; i<5; i++) {
+        //按钮
+        UIButton *button = (UIButton*)[self viewWithTag:81+i];
+        button.frame = CGRectMake(0, i*(subH+0.5), funcButtonW, subH);
+
+        //分割线
+        if (i != 4) {
+            UILabel *line = (UILabel*)[self viewWithTag:91+i];
+            line.frame = CGRectMake(5, button.frame.origin.y+subH, funcButtonW-10, 0.5);
+        }
+    }
+
+    //符号按钮
+    UIButton *button = (UIButton*)[self viewWithTag:201];
+    button.frame = CGRectMake(spaceX, top + superViewH +spaceY, funcButtonW, buttonH);
+
+    //右侧的功能按钮
+    CGFloat funcX = spaceX*5 + funcButtonW + numButtonW*3;
+    for (int i=0; i<4; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:101+i];//[GZFunctionButton buttonWithType:UIButtonTypeSystem];
+        button.frame = CGRectMake(funcX, top + i*(buttonH+spaceY), funcButtonW, buttonH);
+    }
+}
+
+- (void)changeBackgroudColor {
+    //GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+
+    //NSString *skinName = [share getGroupValueForKey:@"keyboardSkin"];
+    //    GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    //    //背景图
+    //    if (skin.backgroudImage_kb) {
+    //        UIImageView *imageview = [[UIImageView alloc] initWithFrame:self.bounds];
+    //        imageview.image = [UIImage imageNamed:skin.backgroudImage_kb];
+    //        [self addSubview:imageview];
+    //    }
+    //背景色
+    self.backgroundColor = Color_background_kb;
+
+    //按键
+    for (int i=0; i<12; i++) {
+        GZNumberButton *button = (GZNumberButton*)[self viewWithTag:61+i];
+        //[button setButtonStyleWithSkin:skinName];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    }
+
+    //左侧
+    //NSArray *superViewSubs = [NSArray arrayWithObjects:@"+",@"-",@"*",@"/",@".", nil];
+    for (int i=0; i<5; i++) {
+        //按钮
+        GZFunctionButton_symbol_l *button = (GZFunctionButton_symbol_l*)[self viewWithTag:81+i];
+        //[button setButtonStyleWithSkin:skinName];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    }
+
+    //右侧的功能按钮
+    //NSArray *funcArr = [NSArray arrayWithObjects:@"删除",@"#+=",@"回车",@"返回", nil];
+    for (int i=0; i<4; i++) {
+        GZFunctionButton *button = (GZFunctionButton*)[self viewWithTag:101+i];
+        //[button setButtonStyleWithSkin:skinName];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor colorWithHexString:float_Color_button_function alpha:1]];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    }
+}
+
+//手动停止计时器
+- (void)stopTimer {
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+    }
+}
+
+
+
+
+#pragma mark -- UI
+- (void)createButtons {
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    CGFloat bottom = 3.0;
+
+    CGFloat buttonH = (self.frame.size.height - top - bottom - spaceY*3)/4.0; //按钮的高度
+    CGFloat numButtonW = (self.frame.size.width - spaceX*6)/4.2; //数字按钮的宽度 功能按钮是数字按钮的0.6倍
+    CGFloat funcButtonW = numButtonW*0.6; //功能按钮宽度
+
+    //GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+    //NSString *skinname = [share getGroupValueForKey:@"keyboardSkin"];
+    //GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+
+    //创建数字按钮部分
+    NSArray *numArr = [NSArray arrayWithObjects:
+                       @[@"1",@"2",@"3"],
+                       @[@"4",@"5",@"6"],
+                       @[@"7",@"8",@"9"],
+                       @[@"返回",@"0",@"空格"],
+                       nil];
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<3; j++) {
+
+            if (i != 3 || (i == 3 && j != 0 && j != 2)) {
+                GZNumberButton *button = [GZNumberButton buttonWithType:UIButtonTypeSystem];
+                //[button setButtonStyleWithSkin:skinname];
+
+                [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+                [button setBackgroundColor:[UIColor whiteColor]];
+                [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                button.layer.cornerRadius = 5;
+
+                button.titleLabel.font = [UIFont systemFontOfSize:20];
+                [button addTarget:self action:@selector(didButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+                [button setTitle:numArr[i][j] forState:UIControlStateNormal];
+                button.frame = CGRectMake(spaceX*2 + funcButtonW + j*(numButtonW+spaceX), top + i*(buttonH+spaceY), numButtonW, buttonH);
+                button.tag = 61+ i*3 + j;
+                [self addSubview:button];
+
+            }else {
+                if (i == 3) {
+                    if (j == 0 || j == 2) {
+                        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+                        //[button setButtonStyleWithSkin:skinname];
+
+                        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+                        [button setBackgroundColor:[UIColor colorWithHexString:float_Color_button_function alpha:1]];
+                        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                        button.layer.cornerRadius = 5;
+
+                        button.frame = CGRectMake(spaceX*2 + funcButtonW + j*(numButtonW+spaceX), top + i*(buttonH+spaceY), numButtonW, buttonH);
+                        button.tag = 61+ i*3 + j;
+                        [self addSubview:button];
+                        if (j == 0) {
+                            //返回
+                            [button setImage:[UIImage imageNamed:@"keyboard_back"] forState:UIControlStateNormal];
+                            [button addTarget:self action:@selector(didFuncTap:) forControlEvents:UIControlEventTouchUpInside];
+                        }
+                        if (j == 2) {
+                            //空格
+                            [button setImage:[UIImage imageNamed:@"keyboard_space_w"] forState:UIControlStateNormal];
+
+                            CGSize imageSize = button.imageView.bounds.size;
+                            button.imageEdgeInsets = UIEdgeInsetsMake(imageSize.height/2.5,0, -imageSize.height/2.5, 0);
+
+                            [button addTarget:self action:@selector(didButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+                            //                            [button setTitle:@"↼⇀" forState:UIControlStateNormal];
+                            //                            button.titleLabel.font = [UIFont systemFontOfSize:25];
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    //左侧快捷符号部分
+    NSArray *superViewSubs = [NSArray arrayWithObjects:@"+",@"-",@"*",@"/", nil];
+    int num = (int)superViewSubs.count;
+
+    CGFloat superViewH = self.frame.size.height - top - bottom - buttonH - spaceY; //4*0.5分割线
+    CGFloat subH = (superViewH - (num-1)*0.5)/4.0; //快捷符号的高度 //3*0.5分割线;
+
+    GZKeyboardSuspendView_left *superView1 = [[GZKeyboardSuspendView_left alloc] initWithFrame:CGRectMake(spaceX, top, funcButtonW, superViewH)];
+    //[superView1 setViewStyleWithSkin:skinname];
+    superView1.backgroundColor = [UIColor whiteColor];
+    superView1.layer.cornerRadius = 5;
+    [self addSubview:superView1];
+    superView1.tag = 51;
+
+    for (int i=0; i<num; i++) {
+        //按钮
+        GZFunctionButton_symbol_l *button = [GZFunctionButton_symbol_l buttonWithType:UIButtonTypeSystem];
+        //[button setButtonStyleWithSkin:skinname];
+
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+
+        button.titleLabel.font = [UIFont systemFontOfSize:18];
+        [button addTarget:self action:@selector(didButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        [button setTitle:superViewSubs[i] forState:UIControlStateNormal];
+        button.frame = CGRectMake(0, i*(subH+0.5), funcButtonW, subH);
+        button.tag = 81+i;
+        [superView1 addSubview:button];
+
+        //分割线
+        if (i != 4) {
+            UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(5, button.frame.origin.y+subH, funcButtonW-10, 0.5)];
+            line.backgroundColor = Color_background_kb;
+            line.tag = 91+i;
+            [superView1 addSubview:line];
+        }
+    }
+
+    //符号按钮
+    GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+    //[button setButtonStyleWithSkin:skinname];
+    [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+    [button setBackgroundColor:[UIColor colorWithHexString:float_Color_button_function alpha:1]];
+    button.layer.cornerRadius = 5;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+
+    button.frame = CGRectMake(spaceX, top + superViewH +spaceY, funcButtonW, buttonH);
+    button.tag = 201;
+    button.titleLabel.font = [UIFont systemFontOfSize:18];
+    [button setTitle:@"#+=" forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(didFuncTap:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:button];
+
+    //右侧的功能按钮
+    CGFloat funcX = spaceX*5 + funcButtonW + numButtonW*3;
+    NSArray *funcArr = [NSArray arrayWithObjects:@"删除",@"·",@"#",@"回车", nil]; //删除 符 回车 返回
+    for (int i=0; i<4; i++) {
+        GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+        //[button setButtonStyleWithSkin:skinname];
+        [button setBackgroundImage:[UIImage imageNamed:@"key_hightlight"] forState:UIControlStateHighlighted];
+        [button setBackgroundColor:[UIColor colorWithHexString:float_Color_button_function alpha:1]];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        button.layer.cornerRadius = 5;
+
+        button.frame = CGRectMake(funcX, top + i*(buttonH+spaceY), funcButtonW, buttonH);
+        button.tag = 101+i;
+        [self addSubview:button];
+
+        if (i == 0) {
+            [button setImage:[UIImage imageNamed:@"keyboard_clear"] forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(didTouchDown) forControlEvents:UIControlEventTouchDown];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpInside];
+            [button addTarget:self action:@selector(didTouchUp) forControlEvents:UIControlEventTouchUpOutside]; //移动手指出按钮
+        }else if (i == 1 || i == 2){
+            button.titleLabel.font = [UIFont systemFontOfSize:18];
+            [button setTitle:funcArr[i] forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(didButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+        }else if (i == 3) {
+            [button setImage:[UIImage imageNamed:@"keyboard_enter"] forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(didFuncTap:) forControlEvents:UIControlEventTouchUpInside];
+            //            button.titleLabel.font = [UIFont systemFontOfSize:18];
+            //            [button setTitle:funcArr[i] forState:UIControlStateNormal];
+        }
+    }
+}
+
+
+
+
+
+
+
+#pragma mark -- button click action
+- (void)didButtonTap:(UIButton*)tap {
+    UIColor *color = tap.backgroundColor;
+    [UIView animateWithDuration:0.01 animations:^{
+        tap.backgroundColor = float_Color_button_hightlight;
+    } completion:^(BOOL finished) {
+        tap.backgroundColor = color;
+    }];
+
+    NSInteger tagN = tap.tag;
+    NSString *text = nil;
+
+    NSArray *numArr = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"返回",@"0",@" ",nil];
+    NSArray *superViewSubs = [NSArray arrayWithObjects:@"+",@"-",@"*",@"/", nil];
+
+    switch (tagN) {
+        case 61:
+            text = numArr[0];
+            break;
+        case 62:
+            text = numArr[1];
+            break;
+        case 63:
+            text = numArr[2];
+            break;
+        case 64:
+            text = numArr[3];
+            break;
+        case 65:
+            text = numArr[4];
+            break;
+        case 66:
+            text = numArr[5];
+            break;
+        case 67:
+            text = numArr[6];
+            break;
+        case 68:
+            text = numArr[7];
+            break;
+        case 69:
+            text = numArr[8];
+            break;
+            //        case 70:
+            //            text = numArr[9]; //返回
+            //            break;
+        case 71:
+            text = numArr[10];
+            break;
+        case 72:
+            text = numArr[11];
+            break;
+        case 81:
+            text = superViewSubs[0];
+            break;
+        case 82:
+            text = superViewSubs[1];
+            break;
+        case 83:
+            text = superViewSubs[2];
+            break;
+        case 84:
+            text = superViewSubs[3];
+            break;
+        case 102:
+            text = @".";
+            break;
+        case 103:
+            text = @"#";
+            break;
+        default:
+            break;
+    }
+
+    if (text.length != 0 && self.sendSelectedStr) {
+        self.sendSelectedStr(text);
+    }
+}
+
+- (void)didFuncTap:(UIButton*)tap {
+    NSInteger tagN = tap.tag;
+    int type = 0; //1删除  2符  3回车  4返回
+    switch (tagN) {
+        case 101:
+            //type = 1;
+            break;
+        case 201:
+            type = 2;
+            break;
+        case 104:
+            type = 3;
+            break;
+        case 70:
+            type = 4;
+            break;
+        default:
+            break;
+    }
+
+    if (type != 0 && self.sendSelectedFunc) {
+        self.sendSelectedFunc(type);
+    }
+}
+
+//删除按钮
+- (void)didTouchDown {
+    NSLog(@"didTouchDown");
+
+    [self deleteActionStart]; //延时问题
+
+    if (!delay) {
+        delay = [NSTimer scheduledTimerWithTimeInterval:0.15 target:self selector:@selector(delayAction) userInfo:nil repeats:NO];
+    }
+}
+- (void)didTouchUp {
+    NSLog(@"didTouchUp");
+    [delay invalidate];
+    delay = nil;
+    [timer invalidate];
+    timer = nil;
+    [self deleteActionStop];
+}
+- (void)delayAction {
+    if (!timer) {
+        timer = [NSTimer scheduledTimerWithTimeInterval:0.12 target:self selector:@selector(deleteActionStart) userInfo:nil repeats:YES];
+    }
+}
+- (void)deleteActionStart {
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(YES);
+    }
+}
+- (void)deleteActionStop {
+    if (self.sendDeleteTap) {
+        self.sendDeleteTap(NO);
+    }
+}
+
+
+
+- (void)dealloc {
+    NSLog(@"数字键盘 销毁");
+    if (delay) {
+        [delay invalidate];
+        delay = nil;
+    }
+    if (timer) {
+        [timer invalidate];
+        timer = nil;
+    }
+
+    for (UIView *view in self.subviews) {
+        [view removeFromSuperview];
+    }
+
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<3; j++) {
+            UIButton *button = (UIButton*)[self viewWithTag:61+ i*3 + j];
+            if (button) {
+                [button removeFromSuperview];
+                button = nil;
+            }
+        }
+    }
+
+    //左侧快捷符号部分
+    UIView *superView1 = (UIView*)[self viewWithTag:51];
+    if (superView1) {
+        [superView1 removeFromSuperview];
+        superView1 = nil;
+    }
+
+    for (int i=0; i<5; i++) {
+        //按钮
+        UIButton *button = (UIButton*)[self viewWithTag:81+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+        //分割线
+        if (i != 4) {
+            UILabel *line = (UILabel*)[self viewWithTag:91+i];
+            if (line) {
+                [line removeFromSuperview];
+                line = nil;
+            }
+        }
+    }
+
+    //右侧的功能按钮
+    for (int i=0; i<4; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:101+i];
+        if (button) {
+            [button removeFromSuperview];
+            button = nil;
+        }
+    }
+}
+
+
+
+
+
+@end

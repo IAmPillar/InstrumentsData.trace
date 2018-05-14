@@ -1,0 +1,30 @@
+//
+//  GZWright.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/4.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *手写轨迹核心
+ ***/
+
+@interface GZWright : NSObject
+typedef void (^SuccesWrightBlock)(NSArray *candiateArray);//输入 成功回传数据
+typedef void (^SuccesWrightPredict)(NSArray *candiateArray);//联想 成功回传数据
+
++ (id)defaultWright;
+- (void)addPointX:(short)x Y:(short)y complation:(SuccesWrightBlock)data;// 增加笔迹点
+- (void)setWrightMode:(short)wrihtMode; //书写识别方式 1中英文单字 2中文短句 3中文短句重叠 4自由写
+- (void)startTime; //开启计时器 记录两次输入间隔
+- (void)addPredictFunction; //添加联想功能
+- (void)predicInput:(NSString*)text complation:(SuccesWrightPredict)data; //文字联想
+- (void)keyboardReset; // 重置
+- (void)releasePredictWorkspace; //释放联想的工作空间
+- (void)releaseWorkspace; // 释放工作空间
+- (void)quitOutApp; //退出app
+@end
+

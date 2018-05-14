@@ -1,0 +1,329 @@
+//
+//  StrokeShowerView.m
+//  HanvonNotePad
+//
+//  Created by gao guoling on 11-10-20.
+//  Copyright (c) 2011年 Hanwang Technology Co. All rights reserved.
+//
+
+#import "StrokeShowerView.h"
+#import "HWColorPen.h"
+#import "LibraryUtility.h"
+
+//malloc
+#include <stdio.h>
+
+//判断设备是否是64位
+//#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/machine.h>
+
+#define STROKE_WIDTH 5.0
+
+
+@interface StrokeShowerView ()
+{
+    int bit; //32位 64位
+    int bit_pixel; //32位 64位 对应的像素数
+    CGFloat SelfWidth;
+    CGFloat SelfHeight;
+    CGFloat MEMORY;
+
+    unsigned char *imRam;
+
+    int penWidth;
+    float penColorRed;
+    float penColorGreen;
+    float penColorBlue;
+    float penColorAlpha;
+    int penStyle;//1铅笔 2钢笔 3毛笔
+
+    //int wrightMode; //书写识别方式 左下角的文字样式 1中英文单字符 2中文短句 3中文短句重叠 4自由写
+}
+@end
+
+@implementation StrokeShowerView
+
+- (instancetype)initWithFrame:(CGRect)frame andWrightMode:(int)mode {
+    self = [super initWithFrame:frame];
+    if (self) {
+        GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+
+        penWidth = [[share getGroupValueForKey:@"penWidth"] intValue]; //笔画粗细
+        penColorBlue = [[share getGroupValueForKey:@"penColorBlue"] floatValue];
+        penColorGreen = [[share getGroupValueForKey:@"penColorGreen"] floatValue];
+        penColorRed = [[share getGroupValueForKey:@"penColorRed"] floatValue];
+        penColorAlpha = [[share getGroupValueForKey:@"penColorAlpha"] floatValue];
+        penStyle = [[share getGroupValueForKey:@"penStyle"] intValue]; //1铅笔 2钢笔 3毛笔
+
+        if (penWidth < 1 || penWidth > 10 || !penWidth) {
+            penWidth = 1;
+        }
+        if (penColorRed < 0 || penColorRed > 255 || !penColorRed) {
+            penColorRed = 0;
+        }
+        if (penColorGreen < 0 || penColorGreen > 255 || !penColorGreen) {
+            penColorGreen = 0;
+        }
+        if (penColorBlue < 0 || penColorBlue > 255 || !penColorBlue) {
+            penColorBlue = 0;
+        }
+        if (penColorAlpha < 0 || penColorAlpha > 1 || !penColorAlpha) {
+            penColorAlpha = 1;
+        }
+        if (!penStyle || penStyle < 1 || penStyle > 3) {
+            penStyle = 1;
+        }
+
+        BOOL is64Bit = [self is64bit];
+        if (is64Bit) {
+            bit = 64;
+            bit_pixel = 8;
+        }else {
+            bit = 32;
+            bit_pixel = 4;
+        }
+
+        [self initKeyboardWorkSpace];
+
+        //书写模式
+        //wrightMode = mode;
+    }
+    return self;
+}
+
+////1中英文单字符 2中文短句 3中文短句重叠 4自由写
+//- (void)changeWrightMode:(int)mode {
+//    //调用改变左下角字样，一般都是在横竖屏切换时，切换横竖会判断内存空间不为空
+//    if (imRam) {
+//        //releaseMemory(imRam);
+//        free(imRam);
+//        imRam = nil;
+//    }
+//    wrightMode = mode;
+//    [self setNeedsDisplay];
+//}
+
+- (void)changeFrame:(CGRect)rect {
+    self.frame = rect;
+    if (imRam) {
+        free(imRam);
+        imRam = nil;
+    }
+    [self initKeyboardWorkSpace];
+}
+
+
+#pragma mark -- 手写板操作
+// 初始化
+- (void)initKeyboardWorkSpace {
+    if (imRam != nil) {
+        return;
+    }
+
+    SelfWidth = self.frame.size.width;
+    SelfHeight = self.frame.size.height;
+    MEMORY = SelfWidth * SelfHeight * bit_pixel;
+
+    //    imRam = (unsigned char*)allocMemory(MEMORY);
+    imRam = (unsigned char *)malloc((MEMORY));
+    if (imRam == nil) {
+        NSLog(@"手写内存分配失败");
+        return;
+    }
+    memset(imRam, 0xFFFFFF7F, MEMORY); //内存空间中填充-1
+
+    if (0 != HWPEN_initializeEx(SelfWidth, SelfHeight, (DWORD*)imRam, 0, 1)) {
+        NSLog(@"initial 失败");
+        return ;
+    }
+
+    //    //画笔粗细做映射
+    //    int width_change = penWidth;
+    //    NSLog(@"画笔粗细%d",width_change);
+    //    NSLog(@"画笔类型%d",penStyle);
+
+    //    int nAntiLevel;
+    //    if (penStyle == 1) {
+    //        nAntiLevel = 0;
+    //    }else {
+    //        nAntiLevel = 3;
+    //    }
+
+    HWPEN_SetPen(2, penStyle, DARKBLUE, penWidth, 0);
+
+    color userColor;
+    userColor.b = penColorBlue;
+    userColor.r = penColorRed;
+    userColor.g = penColorGreen;
+    userColor.alpha = penColorAlpha;
+    HWPEN_SetUserColor(userColor);
+}
+
+
+- (void)drawRect:(CGRect)rect {
+    if (!imRam) {
+        NSLog(@"重新分配空间");
+        [self initKeyboardWorkSpace];
+    }
+
+    CGColorSpaceRef crRef = CGColorSpaceCreateDeviceRGB();
+    if (crRef == nil) {
+        return;
+    }
+
+    CGDataProviderRef provider = CGDataProviderCreateWithData(nil, imRam, (MEMORY), nil);
+    //    if (crRef == NULL) {
+    //        CGDataProviderRelease(provider);
+    //        return;
+    //    }
+    CGImageRef imageRef = nil;
+
+    if (provider != nil) {
+        CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+        CGBitmapInfo bitmapInfo;
+        NSInteger bitsPerComponent;
+        if (bit == 64) {
+            bitmapInfo = kCGImageAlphaPremultipliedLast | kCGImageByteOrder32Little;
+            bitsPerComponent = 8;
+        }else {
+            bitmapInfo = kCGImageAlphaLast | kCGImageByteOrder32Little;
+            bitsPerComponent = 6;
+        }
+
+        imageRef = CGImageCreate(SelfWidth, SelfHeight, bitsPerComponent, bit, SelfWidth * bit_pixel, crRef, bitmapInfo, provider, nil, NO, renderingIntent);
+        CGDataProviderRelease(provider);
+    }
+
+    CGColorSpaceRelease(crRef);
+
+    if (imageRef != nil) {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+
+        if (context != nil) {
+            UIImage *img = [UIImage imageWithCGImage:imageRef];
+            CGContextSaveGState(context);
+
+            CGRect touchRect = CGRectMake(0, 0, img.size.width ,img.size.height );
+
+            CGContextDrawImage(context, touchRect, imageRef);
+            CGContextRestoreGState(context);
+        }
+
+        CGImageRelease(imageRef);
+        UIGraphicsEndImageContext();
+        imageRef = nil;
+    }
+
+    //手写模式
+    //[self drawWrightMode];
+}
+
+////手写模式 1中英文单字符 2中文短句 3中文短句重叠 4自由写
+//- (void)drawWrightMode {
+//    NSString *wrightStr = nil;
+//    if (wrightMode == 1) {
+//        wrightStr = @"单字";
+//    }else if (wrightMode == 2) {
+//        wrightStr = @"行写";
+//    }else if (wrightMode == 3) {
+//        wrightStr = @"叠写";
+//    }else if (wrightMode == 4) {
+//        wrightStr = @"自由写";
+//    }
+//
+//    CGRect frame_word = CGRectMake(0, self.frame.size.height-20, 150, 20);
+//
+//    NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
+//    paraStyle.lineBreakMode = NSLineBreakByCharWrapping;
+//    paraStyle.alignment = NSTextAlignmentLeft;
+//    paraStyle.lineSpacing = 1.0; //设置行间距
+//    paraStyle.hyphenationFactor = 1.0;
+//    paraStyle.firstLineHeadIndent = 0.0;
+//    paraStyle.paragraphSpacingBefore = 0.0;
+//    paraStyle.headIndent = 0;
+//    paraStyle.tailIndent = 0;
+//    NSDictionary *atributes = @{
+//                                NSFontAttributeName:[UIFont systemFontOfSize:15],
+//                                NSParagraphStyleAttributeName:paraStyle,
+//                                NSKernAttributeName:@(3), //列间距
+//                                NSForegroundColorAttributeName:[UIColor lightGrayColor] //字体颜色
+//                                };
+//
+//    [wrightStr drawInRect:frame_word withAttributes:atributes];
+//}
+
+#pragma mark -- 手势操作
+// 点击
+- (void)strokeStartAtPoint:(CGPoint)point {
+    CGFloat x = point.x;
+    CGFloat y = point.y;
+
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+
+    HWPEN_DrawLine(x, y, &re, 0, 255, 0);
+
+    [self setNeedsDisplay];
+}
+// 移动
+- (void)strokeMoveToPoint:(CGPoint)point {
+    CGFloat x = point.x;
+    CGFloat y = point.y;
+
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+
+    HWPEN_DrawLine(x, y, &re, 0, 255, 0);
+
+    [self setNeedsDisplay];
+}
+// 抬起
+- (void)strokeEndAtPoint:(CGPoint)point {
+    TRect re = {0, 0, SelfWidth, SelfHeight};
+    HWPEN_DrawLine(-1, -1, &re, 0, 255, 0);
+
+    [self setNeedsDisplay];
+}
+
+
+// 清空笔迹
+- (void)clearStroke {
+    memset(imRam, 0xFFFFFF7F, MEMORY); //内存块填充-1
+    [self setNeedsDisplay];
+}
+
+- (void)releaseWorkspace {
+    if (imRam) {
+        //releaseMemory(imRam);
+        free(imRam);
+        imRam = nil;
+    }
+}
+
+//判断设备是否是64位
+- (BOOL)is64bit {
+    size_t size;
+    cpu_type_t type;
+
+    size = sizeof(type);
+    sysctlbyname("hw.cputype", &type, &size, NULL, 0);
+
+    if (type == CPU_TYPE_ARM64) {
+        // ARM 64-bit CPU
+        return YES;
+    } else if (type == CPU_TYPE_ARM) {
+        // ARM 32-bit CPU
+    } else {
+        // Something else.
+    }
+    return NO;
+}
+
+
+
+- (void)dealloc {
+    NSLog(@"手写板 销毁");
+    [self releaseWorkspace];
+    [self removeFromSuperview];
+}
+
+@end

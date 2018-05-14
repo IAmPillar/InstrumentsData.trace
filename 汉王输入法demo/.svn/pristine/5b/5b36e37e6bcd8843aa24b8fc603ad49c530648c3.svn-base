@@ -1,0 +1,25 @@
+//
+//  GZCandidateMoreView.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/16.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface GZCandidateMoreView : UIView
+
+- (instancetype)initWithFrame:(CGRect)frame andData:(NSArray*)dataArr;
+- (void)changeShowText:(NSArray*)textArr; //改变候选结果
+
+@property (nonatomic, copy) void(^sendSelectedStr)(NSString* text, int selectIndex);
+@property (nonatomic, copy) void(^sendSelectedFunc)(int funcType); //功能按键 //1返回   2重输  3删除
+@property (nonatomic, copy) void(^sendDeleteTap)(BOOL isDelete); //删除功能键 返回
+/**
+ *切换横竖屏时，传入的新高度
+ ***/
+- (void)changeViewFrame:(CGRect)newFrame;
+
+- (BOOL)stopTimer; //停止计时器  当返回yes时表示 计时器在开启中被关闭的  no表示计时器没有开启
+@end

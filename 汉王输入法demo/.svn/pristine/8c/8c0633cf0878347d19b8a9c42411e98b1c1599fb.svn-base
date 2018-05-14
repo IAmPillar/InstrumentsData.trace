@@ -1,0 +1,29 @@
+//
+//  GZQwerty.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/11/4.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *全键盘 核心库操作
+ ***/
+
+@interface GZQwerty : NSObject
+typedef void (^SuccesInputBlock)(NSString *compontText, NSArray *candiateArray);//输入 成功回传数据
+typedef void (^SuccesSelectBlock)(NSString *compontText, NSArray *candiateArray, int isFinish);//选择候选 成功回传数据 0finish 1nofinish
+typedef void (^SuccesPredictBlock)(NSArray *candiateArray);//联想 成功回传数据
+
++ (id)defaultQwerty; 
+- (void)sendInput:(int)inputCode complation:(SuccesInputBlock)data; //键盘输入
+- (void)sendSelectedIndex:(int)index andStr:(NSString*)str complation:(SuccesSelectBlock)data; //选择某一候选
+- (void)predicInput:(NSString*)text complation:(SuccesPredictBlock)data; //文字联想
+- (BOOL)isSelectFinish; //选择候选index是否结束
+- (NSString*)getSelecteResult; //获取选择index候选最终结果
+- (void)cleanSelectData; //选择完成后 清理一下核心
+- (void)keyboardReset; // 重置
+- (void)releaseWorkspace; // 释放工作空间
+@end

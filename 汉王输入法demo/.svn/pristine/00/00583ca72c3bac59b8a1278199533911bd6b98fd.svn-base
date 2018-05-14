@@ -1,0 +1,208 @@
+//
+//  GZKeyboardSelect.m
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/8.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import "GZKeyboardSelect.h"
+
+@implementation GZKeyboardSelect
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        //创建view
+        self.layer.borderWidth = 0.5;
+        self.layer.borderColor = [Color_background_kb CGColor];
+
+        [self createUI];
+        [self setData];
+    }
+    return self;
+}
+
+- (void)changeViewFrame:(CGRect)newFrame {
+
+    self.frame = newFrame;
+
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    //CGFloat bottom = 3.0;
+    CGFloat width = 80;
+    CGFloat height = 80;
+    NSArray *titles = [NSArray arrayWithObjects:@"手写",@"全键盘",@"九宫格",@"笔画", nil];
+    int num = (int)floorf((newFrame.size.width-spaceX)/(width+spaceX)); //一行能放的按钮个数
+    int row = (int)ceilf(titles.count/num) + 1; //最多能用几行
+    spaceX = spaceX + (newFrame.size.width - spaceX - num*(width+spaceX))/(num+1); //重新计算间距
+
+    for (int i=0; i<row; i++) {
+        int max = (int)titles.count - i*num;
+        for (int j=0; j<max; j++) {
+            UIButton *button = (UIButton*)[self viewWithTag:111 + i*num + j];
+            button.frame = CGRectMake(spaceX + j*(spaceX+width), top + i*(height+spaceY), width, height);
+        }
+    }
+}
+
+- (void)changeBackgroudColor {
+    GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+    self.backgroundColor = skin.backgroungColor_kb;
+}
+
+
+
+#pragma mark -- 创建UI
+- (void)createUI {
+    //键盘布局 水平间距5 垂直间距7
+    //键盘布局 顶部间距3 底部间距3
+    CGFloat spaceX = 5.0;
+    CGFloat spaceY = 7.0;
+    CGFloat top = 3.0;
+    //CGFloat bottom = 3.0;
+
+    NSArray *titles = [NSArray arrayWithObjects:@"手写",@"全键盘",@"九宫格",@"笔画", nil];
+    NSArray *images = [NSArray arrayWithObjects:@"navigation_writing",@"navigation_qwerty",@"navigation_squard",@"navigation_stroke", nil];
+    NSArray *images_select = [NSArray arrayWithObjects:@"navigation_writing-select",@"navigation_qwerty-select",@"navigation_squard-select",@"navigation_stroke-select", nil];
+    CGFloat width = 80;
+    CGFloat height = 80;
+
+    GZKeyboardSkin *skin = [GZKeyboardSkin defaultKeyboardSkin];
+
+    int num = (self.frame.size.width-spaceX)/(width+spaceX); //一行能放的按钮个数
+    int row = (int)ceilf(titles.count/num) + 1; //最多能用几行
+
+    spaceX = spaceX + (self.frame.size.width - spaceX - num*(width+spaceX))/(num+1); //重新计算间距
+
+    for (int i=0; i<row; i++) {
+        //int max = (int)titles.count - i*num;
+        for (int j=0; j<num; j++) {
+            GZFunctionButton *button = [GZFunctionButton buttonWithType:UIButtonTypeCustom];
+            button.backgroundColor = skin.backgroungColor_kb;
+            button.frame = CGRectMake(spaceX + j*(spaceX+width), top + i*(height+spaceY), width, height);
+            button.tag = 111 + i*num + j;
+            [button addTarget:self action:@selector(didSetTap:) forControlEvents:UIControlEventTouchUpInside];
+            button.titleLabel.font = [UIFont systemFontOfSize:16];
+
+            [button setTitle:titles[i*num + j] forState:UIControlStateNormal];
+
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [button setTitleColor:float_Color_button_hightlight forState:UIControlStateSelected];
+
+            [button setImage:[UIImage imageNamed:images[i*num + j]] forState:UIControlStateNormal];
+            [button setImage:[UIImage imageNamed:images_select[i*num +j]] forState:UIControlStateSelected];
+
+            CGFloat imageWith = button.imageView.frame.size.width;
+            CGFloat imageHeight = button.imageView.frame.size.height;
+            CGFloat labelWidth = button.titleLabel.frame.size.width;
+            CGFloat labelHeight = button.titleLabel.frame.size.height;
+            button.titleEdgeInsets = UIEdgeInsetsMake(0, -imageWith, -imageHeight-top/2.0, 0); //top是图和文字的间距
+            button.imageEdgeInsets = UIEdgeInsetsMake(-labelHeight-top/2.0, 0, 0, -labelWidth);
+
+            [self addSubview:button];
+
+            int max = (int)titles.count - (i*num + (j+1));
+            if (max == 0) {
+                return;
+            }
+        }
+    }
+}
+
+//设置按钮样式
+- (void)setData {
+    //NSArray *titles = [NSArray arrayWithObjects:@"联想输入",@"详细设置", nil];
+    GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+    NSString *keyboardStr = [share getValueForKey:@"keyboardType"];
+
+    int type;
+    if ([keyboardStr isEqualToString:@"wright"]) {
+        type = 1;
+    }else if ([keyboardStr isEqualToString:@"qwerty_pinyin"] || [keyboardStr isEqualToString:@"qwerty_english"]){
+        type = 2;
+    }else if ([keyboardStr isEqualToString:@"squared"]) {
+        type = 3;
+    }else if ([keyboardStr isEqualToString:@"stroke"]){
+        type = 4;
+    }else {
+        type = -2;
+    }
+
+    //NSArray *titles = [NSArray arrayWithObjects:@"手写",@"全键盘",@"九宫格",@"笔画", nil];
+    for (int i=0; i<4; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:111+i];
+        if (type == i+1) {
+            button.selected = YES;
+        }else {
+            button.selected = NO;
+        }
+    }
+}
+
+
+- (void)didSetTap:(UIButton*)sender {
+//    if (sender.selected) {
+//        return;
+//    }
+
+    int t = (int)(sender.tag - 111);
+
+    for (int i=0; i<3; i++) {
+        UIButton *button = (UIButton*)[self viewWithTag:111+i];
+        if (t == i) {
+            button.selected = YES;
+        }else {
+            button.selected = NO;
+        }
+    }
+
+    GZUserDefaults *share = [GZUserDefaults shareUserDefaults];
+
+    switch (t) {
+        case 0:{
+            [share saveValue:@"wright" forKey:@"keyboardType"];
+            [share saveValue:@"wright" forKey:@"lastKeyboard"];
+
+            if (self.sendSelectedFunc) {
+                self.sendSelectedFunc(1);
+            }
+            break;
+        }
+        case 1:{
+            [share saveValue:@"qwerty_pinyin" forKey:@"keyboardType"];
+            [share saveValue:@"qwerty_pinyin" forKey:@"lastKeyboard"];
+
+            if (self.sendSelectedFunc) {
+                self.sendSelectedFunc(2);
+            }
+            break;
+        }
+        case 2:{
+            [share saveValue:@"squared" forKey:@"keyboardType"];
+            [share saveValue:@"squared" forKey:@"lastKeyboard"];
+
+            if (self.sendSelectedFunc) {
+                self.sendSelectedFunc(3);
+            }
+            break;
+        }
+        case 3:{
+            [share saveValue:@"stroke" forKey:@"keyboardType"];
+            [share saveValue:@"stroke" forKey:@"lastKeyboard"];
+
+            if (self.sendSelectedFunc) {
+                self.sendSelectedFunc(4);
+            }
+            break;
+        }
+
+        default:
+            break;
+    }
+}
+
+@end

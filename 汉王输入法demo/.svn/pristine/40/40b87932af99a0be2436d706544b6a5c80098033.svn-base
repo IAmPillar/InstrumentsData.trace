@@ -1,0 +1,22 @@
+//
+//  GZWrightKeyboardCore.h
+//  HanvonKeyboard
+//
+//  Created by hanvon on 2017/12/29.
+//  Copyright © 2017年 hanvon. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *中文手写键盘
+ *调用核心库
+ *初始化工作空间、字典
+ ***/
+
+@interface GZWrightKeyboardCore : NSObject
++ (id)shareWrightKeyboardCore;
+- (unsigned int *)getHandle;
+- (char*)getRam;
+- (void)releaseWorkspace;
+@end
